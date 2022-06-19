@@ -4,10 +4,23 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="OpenTK" Version="4.7.4" />
+      <PackageReference Include="OpenTK.ImGui" Version="1.0.0" />
+      <PackageReference Include="Svelto.ECS" Version="3.3.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Rendering\Shaders\**">
+            <LogicalName>%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Rendering\Shaders" />
     </ItemGroup>
 
 </Project>
