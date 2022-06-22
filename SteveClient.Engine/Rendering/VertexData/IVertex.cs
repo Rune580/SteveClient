@@ -4,6 +4,8 @@ public interface IVertex
 {
     // I wish there was a way to force an inheriting class to implement a constant, while also being able to call that from an interface.
     int GetStride();
+
+    int GetSize();
     
     float[] VertexData { get; set; }
 }
@@ -17,15 +19,15 @@ public static class VertexExtensions
         if (vertices.Length == 0)
             throw new IndexOutOfRangeException("Vertex array can't be empty!");
 
-        int stride = vertices[0].GetStride();
+        int size = vertices[0].GetSize();
 
-        float[] data = new float[stride * vertices.Length];
+        float[] data = new float[size * vertices.Length];
         
         for (int i = 0; i < vertices.Length; i++)
         {
-            int offset = stride * i;
+            int offset = size * i;
             
-            Array.Copy(vertices[i].VertexData, 0, data, offset, stride);
+            Array.Copy(vertices[i].VertexData, 0, data, offset, size);
         }
 
         return data;

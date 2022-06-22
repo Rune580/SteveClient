@@ -10,6 +10,7 @@
     <ItemGroup>
       <PackageReference Include="OpenTK" Version="4.7.4" />
       <PackageReference Include="OpenTK.ImGui" Version="1.0.0" />
+      <PackageReference Include="Svelto.Common" Version="3.3.2" />
       <PackageReference Include="Svelto.ECS" Version="3.3.2" />
     </ItemGroup>
 
@@ -20,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Rendering\Shaders" />
+      <Folder Include="SimpleData" />
     </ItemGroup>
 
 </Project>

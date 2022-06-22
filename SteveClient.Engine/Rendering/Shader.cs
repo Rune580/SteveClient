@@ -8,8 +8,9 @@ public class Shader
     public readonly int Handle;
 
     private readonly Dictionary<string, int> _uniformLocations;
+    private readonly BakedShaderAttribute[] _shaderAttributes;
 
-    public Shader(string vertPath, string fragPath)
+    public Shader(string vertPath, string fragPath, params ShaderAttribute[] shaderAttributes)
     {
         var shaderSource = Assets.ReadEmbeddedShader(vertPath);
         var vertexShader = GL.CreateShader(ShaderType.VertexShader);
@@ -45,11 +46,59 @@ public class Shader
             
             _uniformLocations.Add(key, location);
         }
+        
+        _shaderAttributes = new BakedShaderAttribute[shaderAttributes.Length];
+
+        int offset = 0;
+        int stride = GetStride(shaderAttributes);
+
+        for (int i = 0; i < _shaderAttributes.Length; i++)
+        {
+            var attribute = shaderAttributes[i];
+            var location = GetAttribLocation(attribute.Name);
+
+            _shaderAttributes[i] = new BakedShaderAttribute(location, attribute.Size,
+                attribute.VertexAttribPointerType, attribute.Normalized, stride, offset);
+
+            offset += GetAttributeByteSize(attribute);
+        }
+    }
+
+    private int GetStride(ShaderAttribute[] shaderAttributes)
+    {
+        int stride = shaderAttributes.Sum(GetAttributeByteSize);
+
+        return stride;
+    }
+
+    private int GetAttributeByteSize(ShaderAttribute attribute)
+    {
+        int byteSize = attribute.VertexAttribPointerType switch
+        {
+            VertexAttribPointerType.Byte => sizeof(sbyte),
+            VertexAttribPointerType.UnsignedByte => sizeof(byte),
+            VertexAttribPointerType.Short => sizeof(short),
+            VertexAttribPointerType.UnsignedShort => sizeof(ushort),
+            VertexAttribPointerType.Int => sizeof(int),
+            VertexAttribPointerType.UnsignedInt => sizeof(uint),
+            VertexAttribPointerType.Float => sizeof(float),
+            VertexAttribPointerType.Double => sizeof(double),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        return byteSize * attribute.Size;
     }
 
     public void Use()
     {
         GL.UseProgram(Handle);
+
+        foreach (var attribute in _shaderAttributes)
+        {
+            GL.EnableVertexAttribArray(attribute.Location);
+            GL.VertexAttribPointer(attribute.Location, attribute.Size, attribute.VertexAttribPointerType,
+                attribute.Normalized, attribute.Stride, attribute.Offset);
+        }
     }
     
     public int GetAttribLocation(string attribName)
@@ -123,5 +172,41 @@ public class Shader
         GL.GetProgram(program, GetProgramParameterName.LinkStatus, out var code);
         if (code != (int) All.True)
             throw new Exception($"Error occurred whilst linking Program({program})");
+    }
+    
+    public readonly struct ShaderAttribute
+    {
+        public readonly string Name;
+        public readonly int Size;
+        public readonly VertexAttribPointerType VertexAttribPointerType;
+        public readonly bool Normalized;
+
+        public ShaderAttribute(string name, int size, VertexAttribPointerType vertexAttribPointerType, bool normalized)
+        {
+            Name = name;
+            Size = size;
+            VertexAttribPointerType = vertexAttribPointerType;
+            Normalized = normalized;
+        }
+    }
+    
+    public readonly struct BakedShaderAttribute
+    {
+        public readonly int Location;
+        public readonly int Size;
+        public readonly VertexAttribPointerType VertexAttribPointerType;
+        public readonly bool Normalized;
+        public readonly int Stride;
+        public readonly int Offset;
+
+        public BakedShaderAttribute(int location, int size, VertexAttribPointerType vertexAttribPointerType, bool normalized, int stride, int offset)
+        {
+            Location = location;
+            Size = size;
+            VertexAttribPointerType = vertexAttribPointerType;
+            Normalized = normalized;
+            Stride = stride;
+            Offset = offset;
+        }
     }
 }

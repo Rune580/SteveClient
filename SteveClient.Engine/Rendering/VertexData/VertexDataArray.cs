@@ -52,5 +52,15 @@ public class VertexDataArray
         return this;
     }
 
+    public VertexDataArray WithColor4(Color4 item)
+    {
+        Add(item.R);
+        Add(item.G);
+        Add(item.B);
+        Add(item.A);
+
+        return this;
+    }
+
     public static implicit operator float[](VertexDataArray right) => right._buffer;
 }
