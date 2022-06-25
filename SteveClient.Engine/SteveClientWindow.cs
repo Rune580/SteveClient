@@ -59,17 +59,10 @@ public class SteveClientWindow : GameWindow
     protected override void OnRenderFrame(FrameEventArgs e)
     {
         base.OnRenderFrame(e);
-
-        ImGuiController.Update(this, (float)e.Time);
+        
+        _gameLoop.TickGraphics(e.Time);
         
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
-
-        foreach (var menu in _menus)
-            menu.Draw();
-        
-        ImGuiController.Render();
-
-        _gameLoop.TickGraphics(e.Time);
 
         foreach (var renderLayer in RenderLayerDefinitions.Instances)
         {
@@ -79,7 +72,14 @@ public class SteveClientWindow : GameWindow
             renderLayer.Render();
             renderLayer.AfterRender();
         }
+
+        ImGuiController.Update(this, (float)e.Time);
+
+        foreach (var menu in _menus)
+            menu.Draw();
         
+        ImGuiController.Render();
+
         SwapBuffers();
     }
 

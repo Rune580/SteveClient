@@ -28,6 +28,8 @@ public static class PacketRegistry
         ServerBoundPacketMap[typeof(LoginStartPacket)] = 0x00;
         
         // Play
+        ServerBoundPacketMap[typeof(ClientStatusPacket)] = 0x06;
+        ServerBoundPacketMap[typeof(ClientSettingsPacket)] = 0x07;
         ServerBoundPacketMap[typeof(KeepAliveResponsePacket)] = 0x11;
     }
 
@@ -43,8 +45,9 @@ public static class PacketRegistry
 
         play[0x17] = typeof(DisconnectPacket);
         play[0x1E] = typeof(KeepAlivePacket);
-        play[0x22] = typeof(ChunkDataAndUpdateLightPacket);
+        play[0x1F] = typeof(ChunkDataAndUpdateLightPacket);
         play[0x23] = typeof(JoinGamePacket);
+        play[0x36] = typeof(PlayerPositionAndLookPacket);
 
         ClientBoundPacketMap[ConnectionState.Handshaking] = handshake;
         ClientBoundPacketMap[ConnectionState.Login] = login;

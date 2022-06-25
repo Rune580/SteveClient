@@ -6,6 +6,6 @@ public class UnknownPacket : ClientBoundPacket
 {
     public override void Read(in InPacketBuffer packetBuffer)
     {
-        Console.WriteLine($"Unknown packet of id {PacketId:x2} received!");
+        
     }
 }

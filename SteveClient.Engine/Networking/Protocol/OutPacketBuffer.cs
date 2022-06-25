@@ -30,6 +30,11 @@ public class OutPacketBuffer
         ByteBuffer.AddRange(bytes);
     }
 
+    public void WriteSignedByte(sbyte value)
+    {
+        ByteBuffer.Add((byte)value);
+    }
+
     public void WriteLong(long value)
     {
         ByteBuffer.AddRange(BitConverter.GetBytes(value).Reverse());

@@ -1,6 +1,8 @@
 ﻿using OpenTK.Mathematics;
 using SmartNbt.Tags;
+using SteveClient.Engine.Networking.Packets.ServerBound.Play;
 using SteveClient.Engine.Networking.Protocol;
+using static SteveClient.Engine.Networking.Packets.ServerBound.Play.ClientStatusPacket;
 
 namespace SteveClient.Engine.Networking.Packets.ClientBound.Play;
 
@@ -52,5 +54,8 @@ public class JoinGamePacket : ClientBoundPacket
             DeathDimensionName = packetBuffer.ReadString();
             // Todo read position
         }
+        
+        new ClientSettingsPacket().SendToServer();
+        new ClientStatusPacket(ClientStatusAction.PerformRespawn).SendToServer();
     }
 }

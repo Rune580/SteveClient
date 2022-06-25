@@ -59,6 +59,11 @@ public class InPacketBuffer : Stream
         return new Vector2i(ReadInt(), ReadInt());
     }
 
+    public Vector3d ReadVector3d()
+    {
+        return new Vector3d(ReadDouble(), ReadDouble(), ReadDouble());
+    }
+
     public bool ReadBool()
     {
         return ReadUnsignedByte() == 1;
@@ -76,6 +81,21 @@ public class InPacketBuffer : Stream
         return ReadString(ReadVarInt());
     }
 
+    public float ReadFloat()
+    {
+        return BitConverter.ToSingle(ReadByteArray(4).Reverse());
+    }
+
+    public double ReadDouble()
+    {
+        return BitConverter.ToDouble(ReadByteArray(8).Reverse());
+    }
+
+    public short ReadShort()
+    {
+        return BitConverter.ToInt16(ReadByteArray(2).Reverse());
+    }
+
     public int ReadInt()
     {
         return BitConverter.ToInt32(ReadByteArray(4).Reverse());
@@ -86,9 +106,25 @@ public class InPacketBuffer : Stream
         return BitConverter.ToInt64(ReadByteArray(8).Reverse());
     }
 
+    public long[] ReadLongArray()
+    {
+        long[] longArray = new long[ReadVarInt()];
+        for (int i = 0; i < longArray.Length; i++)
+            longArray[i] = ReadLong();
+        return longArray;
+    }
+
     public int ReadVarInt()
     {
         return ReadVarIntFunc(ReadUnsignedByte);
+    }
+
+    public int[] ReadVarIntArray()
+    {
+        int[] intArray = new int[ReadVarInt()];
+        for (int i = 0; i < intArray.Length; i++)
+            intArray[i] = ReadVarInt();
+        return intArray;
     }
     
     public byte ReadUnsignedByte()
@@ -113,6 +149,11 @@ public class InPacketBuffer : Stream
         Array.Copy(ByteBuffer, Offset, bytes, 0, length);
         Offset += length;
         return bytes;
+    }
+
+    public byte[] ReadByteArray()
+    {
+        return ReadByteArray(ReadVarInt());
     }
 
     private int ReadVarIntFunc(Func<byte> readFunc)
