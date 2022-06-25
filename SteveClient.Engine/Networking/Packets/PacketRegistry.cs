@@ -28,6 +28,7 @@ public static class PacketRegistry
         ServerBoundPacketMap[typeof(LoginStartPacket)] = 0x00;
         
         // Play
+        ServerBoundPacketMap[typeof(TeleportConfirmPacket)] = 0x00;
         ServerBoundPacketMap[typeof(ClientStatusPacket)] = 0x06;
         ServerBoundPacketMap[typeof(ClientSettingsPacket)] = 0x07;
         ServerBoundPacketMap[typeof(KeepAliveResponsePacket)] = 0x11;

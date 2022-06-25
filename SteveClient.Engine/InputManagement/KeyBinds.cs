@@ -11,6 +11,7 @@ public static class KeyBinds
     public static readonly KeyBind CameraUp = new("Camera Up", Keys.Q);
     public static readonly KeyBind CameraDown = new("Camera Down", Keys.E);
     public static readonly KeyBind Pause = new("Pause", Keys.Escape);
+    public static readonly KeyBind TeleportToPlayer = new("Teleport to Player", Keys.T);
     
     public struct KeyBind
     {

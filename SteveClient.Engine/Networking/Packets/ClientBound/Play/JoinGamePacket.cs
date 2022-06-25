@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using SmartNbt.Tags;
+using SteveClient.Engine.Engines;
 using SteveClient.Engine.Networking.Packets.ServerBound.Play;
 using SteveClient.Engine.Networking.Protocol;
 using static SteveClient.Engine.Networking.Packets.ServerBound.Play.ClientStatusPacket;
@@ -57,5 +58,7 @@ public class JoinGamePacket : ClientBoundPacket
         
         new ClientSettingsPacket().SendToServer();
         new ClientStatusPacket(ClientStatusAction.PerformRespawn).SendToServer();
+        
+        SpawnPlayerEntityEngine.JoinGamePackets.Enqueue(this);
     }
 }

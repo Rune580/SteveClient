@@ -20,3 +20,12 @@ public struct TransformComponent : IEntityComponent
 
     public new string ToString() => $"pos: {Position.ToString()}, rot: {Rotation.ToEulerAngles().ToString()}";
 }
+
+public static class TransformExtensions
+{
+    public static void Rotate(this ref TransformComponent transform, float yaw, float pitch)
+    {
+        Vector3 angles = transform.Rotation.ToEulerAngles();
+        transform.Rotation = Quaternion.FromEulerAngles(pitch, yaw, angles.Z);
+    }
+}

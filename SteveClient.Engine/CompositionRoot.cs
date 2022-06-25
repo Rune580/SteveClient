@@ -36,27 +36,32 @@ public class CompositionRoot
         var applyVelocityToSimpleRigidBodiesEngine = new ApplyVelocityToSimpleRigidBodiesEngine();
         var doMovementOnControllableCamerasEngine = new DoMovementOnControllableCamerasEngine();
         var updateCameraStateFromCamerasEngine = new UpdateCameraStateFromCamerasEngine();
+        var spawnPlayerEntityEngine = new SpawnPlayerEntityEngine(entityFactory);
+        var teleportPlayerEntityEngine = new TeleportPlayerEntityEngine();
+        
+        // Create render engines
         var renderModelFiltersEngine = new RenderModelFiltersEngine();
         
         // Add engines
         enginesRoot.AddEngine(applyVelocityToSimpleRigidBodiesEngine);
         enginesRoot.AddEngine(doMovementOnControllableCamerasEngine);
         enginesRoot.AddEngine(updateCameraStateFromCamerasEngine);
+        enginesRoot.AddEngine(spawnPlayerEntityEngine);
+        enginesRoot.AddEngine(teleportPlayerEntityEngine);
+        
+        // Add render engines
         enginesRoot.AddEngine(renderModelFiltersEngine);
         
         // Register scheduled engines
         Scheduler.RegisterScheduledEngine(applyVelocityToSimpleRigidBodiesEngine);
         Scheduler.RegisterScheduledEngine(doMovementOnControllableCamerasEngine);
+        Scheduler.RegisterScheduledEngine(spawnPlayerEntityEngine);
+        Scheduler.RegisterScheduledEngine(teleportPlayerEntityEngine);
         
         GraphicsScheduler.RegisterScheduledEngine(updateCameraStateFromCamerasEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderModelFiltersEngine);
         
         BuildCamera(entityFactory, clientSize);
-        
-        AddBlock(entityFactory, new Vector3(10, 0, 0));
-        AddBlock(entityFactory, new Vector3(-10, 0, 0));
-        AddBlock(entityFactory, new Vector3(0, 0, 10));
-        AddBlock(entityFactory, new Vector3(0, 0, -10));
     }
 
     private void LoadMinecraftData()

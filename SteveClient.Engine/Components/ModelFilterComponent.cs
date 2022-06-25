@@ -11,4 +11,6 @@ public struct ModelFilterComponent : IEntityComponent
     {
         ModelIndex = modelIndex;
     }
+    
+    public ModelFilterComponent(SimpleModel model) : this(model.Index) { }
 }
