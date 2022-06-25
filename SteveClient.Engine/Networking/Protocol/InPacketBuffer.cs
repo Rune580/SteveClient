@@ -1,0 +1,169 @@
+﻿using System.Net.Sockets;
+using System.Text;
+using OpenTK.Mathematics;
+using SmartNbt;
+using SmartNbt.Tags;
+using SteveClient.Engine.Networking.Exceptions;
+using SteveClient.Engine.Networking.Protocol.Utils;
+
+namespace SteveClient.Engine.Networking.Protocol;
+
+public class InPacketBuffer : Stream
+{
+    protected readonly byte[] ByteBuffer;
+    protected int Offset;
+
+    public InPacketBuffer(NetworkStream stream)
+    {
+        int packetSize = ReadVarIntFunc(() => (byte)stream.ReadByte());
+        
+        ByteBuffer = new byte[packetSize];
+        int bytesRead = stream.Read(ByteBuffer, 0, ByteBuffer.Length);
+
+        if (bytesRead != packetSize)
+            throw new InvalidPacketSizeException();
+    }
+
+    public InPacketBuffer(byte[] buffer)
+    {
+        ByteBuffer = buffer;
+    }
+
+    public byte[] ReadRest()
+    {
+        int length = ByteBuffer.Length - Offset;
+        return ReadByteArray(length);
+    }
+
+    public string[] ReadIdentifierArray()
+    {
+        int count = ReadVarInt();
+
+        string[] identifiers = new string[count];
+
+        for (int i = 0; i < count; i++)
+            identifiers[i] = ReadString();
+
+        return identifiers;
+    }
+
+    public NbtCompound ReadNbtCompound()
+    {
+        NbtReader reader = new NbtReader(this);
+        
+        return (NbtCompound)reader.ReadAsTag();
+    }
+
+    public Vector2i ReadChunkPos()
+    {
+        return new Vector2i(ReadInt(), ReadInt());
+    }
+
+    public bool ReadBool()
+    {
+        return ReadUnsignedByte() == 1;
+    }
+
+    public string ReadString(int length)
+    {
+        byte[] bytes = ReadByteArray(length);
+
+        return Encoding.UTF8.GetString(bytes);
+    }
+
+    public string ReadString()
+    {
+        return ReadString(ReadVarInt());
+    }
+
+    public int ReadInt()
+    {
+        return BitConverter.ToInt32(ReadByteArray(4).Reverse());
+    }
+
+    public long ReadLong()
+    {
+        return BitConverter.ToInt64(ReadByteArray(8).Reverse());
+    }
+
+    public int ReadVarInt()
+    {
+        return ReadVarIntFunc(ReadUnsignedByte);
+    }
+    
+    public byte ReadUnsignedByte()
+    {
+        if (Offset >= ByteBuffer.Length)
+            throw new EndOfStreamException();
+
+        byte b = ByteBuffer[Offset];
+        Offset++;
+        
+        return b;
+    }
+
+    public sbyte ReadSignedByte()
+    {
+        return (sbyte)ReadUnsignedByte();
+    }
+
+    public byte[] ReadByteArray(int length)
+    {
+        byte[] bytes = new byte[length];
+        Array.Copy(ByteBuffer, Offset, bytes, 0, length);
+        Offset += length;
+        return bytes;
+    }
+
+    private int ReadVarIntFunc(Func<byte> readFunc)
+    {
+        var value = 0;
+        var size = 0;
+        int b;
+        while (((b = readFunc()) & 0x80) == 0x80)
+        {
+            value |= (b & 0x7F) << (size++*7);
+            if (size > 5)
+                throw new IOException("This VarInt is an imposter!");
+        }
+        return value | ((b & 0x7F) << (size*7));
+    }
+    
+    public override void Flush()
+    {
+        throw new NotSupportedException();
+    }
+
+    public override int Read(byte[] buffer, int offset, int count)
+    {
+        int maxToRead = Math.Min(Math.Min(buffer.Length - offset, count), ByteBuffer.Length - Offset);
+        Array.Copy(ByteBuffer, Offset, buffer, offset, maxToRead);
+        Offset += maxToRead;
+        return maxToRead;
+    }
+
+    public override long Seek(long offset, SeekOrigin origin)
+    {
+        throw new NotSupportedException();
+    }
+
+    public override void SetLength(long value)
+    {
+        throw new NotSupportedException();
+    }
+
+    public override void Write(byte[] buffer, int offset, int count)
+    {
+        throw new NotSupportedException();
+    }
+
+    public override bool CanRead => true;
+    public override bool CanSeek => false;
+    public override bool CanWrite => false;
+    public override long Length => ByteBuffer.Length;
+    public override long Position
+    {
+        get => Offset;
+        set => throw new NotSupportedException();
+    }
+}

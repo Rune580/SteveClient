@@ -5,6 +5,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using SteveClient.Engine.InputManagement;
+using SteveClient.Engine.Menus;
 using SteveClient.Engine.Rendering.Definitions;
 
 namespace SteveClient.Engine;
@@ -12,9 +13,10 @@ namespace SteveClient.Engine;
 public class SteveClientWindow : GameWindow
 {
     private SteveGameLoop _gameLoop;
-    
+    private readonly List<IMenu> _menus = new();
+
     public ImGuiController ImGuiController = null!;
-    
+
     public SteveClientWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
     {
         
@@ -36,6 +38,13 @@ public class SteveClientWindow : GameWindow
         VertexDefinitions.Init();
 
         GL.ClearColor(0, 0, 0.1f, 1);
+        
+        RegisterMenus();
+    }
+
+    private void RegisterMenus()
+    {
+        _menus.Add(new ServerTesting());
     }
 
     protected override void OnResize(ResizeEventArgs e)
@@ -54,9 +63,12 @@ public class SteveClientWindow : GameWindow
         ImGuiController.Update(this, (float)e.Time);
         
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+
+        foreach (var menu in _menus)
+            menu.Draw();
         
         ImGuiController.Render();
-        
+
         _gameLoop.TickGraphics(e.Time);
 
         foreach (var renderLayer in RenderLayerDefinitions.Instances)

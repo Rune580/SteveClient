@@ -7,5 +7,5 @@ public static class RenderLayerDefinitions
 {
     public static readonly List<BaseRenderLayer> Instances = new();
 
-    public static readonly DefaultRenderLayer<PositionColor> PositionColorRenderLayer = new(VertexDefinitions.PositionColorDefinition);
+    public static readonly DefaultRenderLayer<PositionColor> PositionColorRenderLayer = new(VertexDefinitions.PositionColorTriangles);
 }

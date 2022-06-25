@@ -2,7 +2,9 @@
 using SteveClient.Engine.Components;
 using SteveClient.Engine.Descriptors;
 using SteveClient.Engine.Engines;
+using SteveClient.Engine.Networking;
 using SteveClient.Engine.Rendering.Models;
+using SteveClient.Minecraft.DataGen;
 using Svelto.ECS;
 using Svelto.ECS.Schedulers;
 
@@ -17,6 +19,10 @@ public class CompositionRoot
 
     public CompositionRoot(Vector2i clientSize)
     {
+        LoadMinecraftData();
+        
+        var client = new MinecraftNetworkingClient();
+        
         _submissionScheduler = new SimpleEntitiesSubmissionScheduler();
 
         Scheduler = new EngineScheduler(_submissionScheduler);
@@ -24,7 +30,8 @@ public class CompositionRoot
 
         var enginesRoot = new EnginesRoot(_submissionScheduler);
         var entityFactory = enginesRoot.GenerateEntityFactory();
-        
+        var entityFunctions = enginesRoot.GenerateEntityFunctions();
+
         // Create engines
         var applyVelocityToSimpleRigidBodiesEngine = new ApplyVelocityToSimpleRigidBodiesEngine();
         var doMovementOnControllableCamerasEngine = new DoMovementOnControllableCamerasEngine();
@@ -50,6 +57,11 @@ public class CompositionRoot
         AddBlock(entityFactory, new Vector3(-10, 0, 0));
         AddBlock(entityFactory, new Vector3(0, 0, 10));
         AddBlock(entityFactory, new Vector3(0, 0, -10));
+    }
+
+    private void LoadMinecraftData()
+    {
+        DataGenerator.GenerateData();
     }
 
     private void BuildCamera(IEntityFactory entityFactory, Vector2i clientSize)

@@ -8,8 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Iconic.Zlib.Netstandard" Version="1.0.0" />
       <PackageReference Include="OpenTK" Version="4.7.4" />
       <PackageReference Include="OpenTK.ImGui" Version="1.0.0" />
+      <PackageReference Include="SmartNbt" Version="1.0.0" />
       <PackageReference Include="Svelto.Common" Version="3.3.2" />
       <PackageReference Include="Svelto.ECS" Version="3.3.2" />
     </ItemGroup>
@@ -21,7 +23,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Engines\Tools" />
       <Folder Include="SimpleData" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SteveClient.Minecraft\SteveClient.Minecraft.csproj" />
     </ItemGroup>
 
 </Project>

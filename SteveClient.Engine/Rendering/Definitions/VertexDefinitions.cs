@@ -5,14 +5,14 @@ namespace SteveClient.Engine.Rendering.Definitions;
 
 public static class VertexDefinitions
 {
-    public static VertexDefinition<PositionColor> PositionColorDefinition;
-    public static VertexDefinition<PositionColor> DebugWireFrameDefinition;
+    public static VertexDefinition<PositionColor> PositionColorTriangles;
+    public static VertexDefinition<PositionColor> PositionColorLines;
 
     public static void Init()
     {
-        PositionColorDefinition = new VertexDefinition<PositionColor>(ShaderDefinitions.PositionColorShader, PrimitiveType.Triangles);
+        PositionColorTriangles = new VertexDefinition<PositionColor>(ShaderDefinitions.PositionColorShader, PrimitiveType.Triangles);
 
-        DebugWireFrameDefinition = new VertexDefinition<PositionColor>(ShaderDefinitions.PositionColorShader, PrimitiveType.Lines);
+        PositionColorLines = new VertexDefinition<PositionColor>(ShaderDefinitions.PositionColorShader, PrimitiveType.Lines);
     }
     
     public readonly struct VertexDefinition<TVertex> where TVertex : IVertex

@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteveClient", "SteveClient\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteveClient.Engine", "SteveClient.Engine\SteveClient.Engine.csproj", "{B6E4C805-B354-499A-9650-854C43221993}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteveClient.Minecraft", "SteveClient.Minecraft\SteveClient.Minecraft.csproj", "{20245475-0BB3-4EDD-B9DD-8D8B1C1ECE80}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{B6E4C805-B354-499A-9650-854C43221993}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6E4C805-B354-499A-9650-854C43221993}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6E4C805-B354-499A-9650-854C43221993}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20245475-0BB3-4EDD-B9DD-8D8B1C1ECE80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20245475-0BB3-4EDD-B9DD-8D8B1C1ECE80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20245475-0BB3-4EDD-B9DD-8D8B1C1ECE80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20245475-0BB3-4EDD-B9DD-8D8B1C1ECE80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
