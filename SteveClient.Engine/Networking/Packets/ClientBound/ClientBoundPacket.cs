@@ -10,7 +10,7 @@ public abstract class ClientBoundPacket : IClientBoundPacket
     
     public abstract void Read(in InPacketBuffer packetBuffer);
 
-    public static ClientBoundPacket FromPacketBuffer(InPacketBuffer packetBuffer)
+    public static void FromPacketBuffer(InPacketBuffer packetBuffer)
     {
         if (MinecraftNetworkingClient.Instance!.Connection!.CompressionThreshold > -1)
         {
@@ -32,13 +32,18 @@ public abstract class ClientBoundPacket : IClientBoundPacket
         }
         
         int packetId = packetBuffer.ReadVarInt();
-        Type packetType = PacketRegistry.GetClientBoundPacket(packetId);
+        Type packetType = typeof(UnknownPacket);
+
+        bool packetExists = PacketRegistry.TryGetClientBoundPacketRegistryEntry(packetId, out var registryEntry);
+        if (packetExists)
+            packetType = registryEntry.PacketType;
 
         ClientBoundPacket packet = (ClientBoundPacket)Activator.CreateInstance(packetType)!;
         packet.PacketId = packetId;
         
         packet.Read(packetBuffer);
 
-        return packet;
+        if (packetExists)
+            registryEntry.PacketReceived?.Invoke(packet);
     }
 }
