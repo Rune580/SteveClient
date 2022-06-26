@@ -2,6 +2,7 @@
 using SteveClient.Engine.Components;
 using SteveClient.Engine.Descriptors;
 using SteveClient.Engine.Engines;
+using SteveClient.Engine.Engines.PacketProcessing;
 using SteveClient.Engine.Networking;
 using SteveClient.Engine.Rendering.Models;
 using SteveClient.Minecraft.DataGen;
@@ -34,7 +35,7 @@ public class CompositionRoot
 
         // Create engines
         var applyVelocityToSimpleRigidBodiesEngine = new ApplyVelocityToSimpleRigidBodiesEngine();
-        var doMovementOnControllableCamerasEngine = new DoMovementOnControllableCamerasEngine();
+        var cameraControlsEngine = new CameraControlsEngine();
         var updateCameraStateFromCamerasEngine = new UpdateCameraStateFromCamerasEngine();
         var spawnPlayerEntityEngine = new SpawnPlayerEntityEngine(entityFactory);
         var teleportPlayerEntityEngine = new TeleportPlayerEntityEngine();
@@ -44,7 +45,7 @@ public class CompositionRoot
         
         // Add engines
         enginesRoot.AddEngine(applyVelocityToSimpleRigidBodiesEngine);
-        enginesRoot.AddEngine(doMovementOnControllableCamerasEngine);
+        enginesRoot.AddEngine(cameraControlsEngine);
         enginesRoot.AddEngine(updateCameraStateFromCamerasEngine);
         enginesRoot.AddEngine(spawnPlayerEntityEngine);
         enginesRoot.AddEngine(teleportPlayerEntityEngine);
@@ -54,7 +55,7 @@ public class CompositionRoot
         
         // Register scheduled engines
         Scheduler.RegisterScheduledEngine(applyVelocityToSimpleRigidBodiesEngine);
-        Scheduler.RegisterScheduledEngine(doMovementOnControllableCamerasEngine);
+        Scheduler.RegisterScheduledEngine(cameraControlsEngine);
         Scheduler.RegisterScheduledEngine(spawnPlayerEntityEngine);
         Scheduler.RegisterScheduledEngine(teleportPlayerEntityEngine);
         
@@ -73,7 +74,7 @@ public class CompositionRoot
     {
         EntityInitializer initializer =
             entityFactory.BuildEntity<ControllableCameraDescriptor>(Egid.Camera,
-                GameGroups.ControllableCameras.BuildGroup);
+                GameGroups.MainCamera.BuildGroup);
         
         initializer.Init(new TransformComponent());
         initializer.Init(new SimpleRigidBodyComponent());

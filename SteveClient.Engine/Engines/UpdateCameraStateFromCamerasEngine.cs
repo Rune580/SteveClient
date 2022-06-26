@@ -12,7 +12,7 @@ public class UpdateCameraStateFromCamerasEngine : IQueryingEntitiesEngine, ISche
     
     public void Execute(float delta)
     {
-        foreach (var ((transforms, cameras, count), _) in entitiesDB.QueryEntities<TransformComponent, CameraComponent>(GameGroups.ControllableCameras.Groups))
+        foreach (var ((transforms, cameras, count), _) in entitiesDB.QueryEntities<TransformComponent, CameraComponent>(GameGroups.MainCamera.Groups))
         {
             for (int i = 0; i < count; i++)
             {
@@ -20,7 +20,7 @@ public class UpdateCameraStateFromCamerasEngine : IQueryingEntitiesEngine, ISche
                 ref var camera = ref cameras[i];
 
                 if (camera.IsActive)
-                    CameraState.Update(camera.GetViewMatrix(transform.Position), camera.GetProjectionMatrix());
+                    CameraState.Update(camera.GetViewMatrix(transform.Position / 2), camera.GetProjectionMatrix());
             }
         }
     }

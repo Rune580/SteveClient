@@ -10,9 +10,11 @@ public static class GameGroups
     public abstract class Controllable : GroupTag<Controllable> { }
     public abstract class ModelFilters : GroupTag<ModelFilters> { }
     public abstract class MinecraftEntities : GroupTag<MinecraftEntities> { }
-    public abstract class Players: GroupTag<Players> { }
 
     // Groups
-    public abstract class ControllableCameras : GroupCompound<SimpleRigidBodies, Cameras, Controllable> { }
-    public abstract class PlayerEntities : GroupCompound<ModelFilters, MinecraftEntities, Players> { }
+    
+    
+    // Exclusive Groups / Singleton Entities
+    public abstract class MainCamera : GroupCompound<SimpleRigidBodies, Cameras, Controllable> { }
+    public abstract class Player : GroupCompound<MinecraftEntities, ModelFilters> { }
 }

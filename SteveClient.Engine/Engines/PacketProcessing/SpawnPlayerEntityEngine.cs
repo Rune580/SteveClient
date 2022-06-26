@@ -1,41 +1,33 @@
-﻿using System.Collections.Concurrent;
-using SteveClient.Engine.Components;
+﻿using SteveClient.Engine.Components;
 using SteveClient.Engine.Descriptors;
 using SteveClient.Engine.Networking.Packets.ClientBound.Play;
 using SteveClient.Engine.Rendering.Models;
 using Svelto.ECS;
 
-namespace SteveClient.Engine.Engines;
+namespace SteveClient.Engine.Engines.PacketProcessing;
 
-public class SpawnPlayerEntityEngine : IQueryingEntitiesEngine, IScheduledEngine
+public class SpawnPlayerEntityEngine : PacketProcessingEngine<JoinGamePacket>
 {
-    public static readonly ConcurrentQueue<JoinGamePacket> JoinGamePackets = new();
-    
     private readonly IEntityFactory _entityFactory;
-    
-    public EntitiesDB entitiesDB { get; set; }
-    public void Ready() { }
 
     public SpawnPlayerEntityEngine(IEntityFactory entityFactory)
     {
         _entityFactory = entityFactory;
     }
-    
-    public void Execute(float delta)
+
+    protected override void Execute(float delta, ConsumablePacket<JoinGamePacket> consumablePacket)
     {
-        if (JoinGamePackets.Count <= 0)
-            return;
+        JoinGamePacket packet = consumablePacket.Get();
         
-        if (!JoinGamePackets.TryDequeue(out var joinGamePacket))
-            return;
+        SpawnPlayerEntity(packet);
         
-        SpawnPlayerEntity(joinGamePacket);
+        consumablePacket.MarkConsumed();
     }
 
     private void SpawnPlayerEntity(JoinGamePacket joinGamePacket)
     {
         EntityInitializer initializer =
-            _entityFactory.BuildEntity<PlayerDescriptor>(Egid.NextId, GameGroups.PlayerEntities.BuildGroup);
+            _entityFactory.BuildEntity<PlayerDescriptor>(Egid.NextId, GameGroups.Player.BuildGroup);
         
         initializer.Init(new TransformComponent());
         initializer.Init(new MinecraftEntityComponent(joinGamePacket.EntityId));

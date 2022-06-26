@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.Components;
+using SteveClient.Engine.Engines.Rendering;
 using SteveClient.Engine.Rendering.Builders;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Models;
@@ -7,13 +8,9 @@ using Svelto.ECS;
 
 namespace SteveClient.Engine.Engines;
 
-public class RenderModelFiltersEngine : IQueryingEntitiesEngine, IScheduledEngine
+public class RenderModelFiltersEngine : BaseEngine
 {
-    public EntitiesDB entitiesDB { get; set; }
-    
-    public void Ready() { }
-
-    public void Execute(float delta)
+    public override void Execute(float delta)
     {
         RenderLayerDefinitions.PositionColorRenderLayer.Flush();
 

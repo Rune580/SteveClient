@@ -1,5 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using SteveClient.Engine.Engines;
 using SteveClient.Engine.Networking.Packets.ServerBound.Play;
 using SteveClient.Engine.Networking.Protocol;
 
@@ -24,7 +23,5 @@ public class PlayerPositionAndLookPacket : ClientBoundPacket
         DismountVehicle = packetBuffer.ReadBool();
         
         new TeleportConfirmPacket(TeleportId).SendToServer();
-        
-        TeleportPlayerEntityEngine.PositionAndLookPackets.Enqueue(this);
     }
 }

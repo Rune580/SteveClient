@@ -58,7 +58,5 @@ public class JoinGamePacket : ClientBoundPacket
         
         new ClientSettingsPacket().SendToServer();
         new ClientStatusPacket(ClientStatusAction.PerformRespawn).SendToServer();
-        
-        SpawnPlayerEntityEngine.JoinGamePackets.Enqueue(this);
     }
 }
