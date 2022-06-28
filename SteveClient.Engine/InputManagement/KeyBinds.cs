@@ -10,6 +10,7 @@ public static class KeyBinds
     public static readonly KeyBind CameraRight = new("Camera Right", Keys.D);
     public static readonly KeyBind CameraUp = new("Camera Up", Keys.Q);
     public static readonly KeyBind CameraDown = new("Camera Down", Keys.E);
+    public static readonly KeyBind ControlCamera = new("Control Camera", MouseButton.Right);
     public static readonly KeyBind Pause = new("Pause", Keys.Escape);
     public static readonly KeyBind TeleportToPlayer = new("Teleport to Player", Keys.T);
     

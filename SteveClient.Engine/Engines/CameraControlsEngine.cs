@@ -1,10 +1,11 @@
 ﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using SteveClient.Engine.Components;
 using SteveClient.Engine.ECS;
 using SteveClient.Engine.InputManagement;
 using SteveClient.Engine.Menus;
-using SteveClient.Engine.Rendering;
 using Svelto.ECS;
+using WindowState = SteveClient.Engine.Rendering.WindowState;
 
 namespace SteveClient.Engine.Engines;
 
@@ -25,7 +26,7 @@ public class CameraControlsEngine : BaseEngine
             entitiesDB.QueryUniqueEntityOptional<SimpleRigidBodyComponent, CameraComponent>(GameGroups.MainCamera.BuildGroup);
 
         if (rigidBodyCameraOptional.HasValue)
-            HandleCameraMovement(ref rigidBodyCameraOptional.Get1(), ref rigidBodyCameraOptional.Get2());
+            HandleCameraMovementAndRotation(ref rigidBodyCameraOptional.Get1(), ref rigidBodyCameraOptional.Get2());
 
         var cameraTransformOptional =
             entitiesDB.QueryUniqueEntityOptional<TransformComponent>(GameGroups.MainCamera.BuildGroup);
@@ -36,8 +37,19 @@ public class CameraControlsEngine : BaseEngine
             TeleportCameraToPlayer(ref cameraTransformOptional.Get1(), ref playerTransformOptional.Get1());
     }
 
-    private void HandleCameraMovement(ref SimpleRigidBodyComponent rigidBody, ref CameraComponent camera)
+    private void HandleCameraMovementAndRotation(ref SimpleRigidBodyComponent rigidBody, ref CameraComponent camera)
     {
+        if (KeyBinds.ControlCamera.IsReleased && InputManager.CursorState == CursorState.Grabbed)
+        {
+            InputManager.CursorState = CursorState.Normal;
+            _firstMove = true;
+        }
+        
+        if (!KeyBinds.ControlCamera.IsDown)
+            return;
+
+        InputManager.CursorState = CursorState.Grabbed;
+
         Vector3 velocity = Vector3.Zero;
         
         if (KeyBinds.CameraForward.IsDown)
@@ -56,7 +68,7 @@ public class CameraControlsEngine : BaseEngine
         rigidBody.Velocity = velocity;
 
         var mouse = InputManager.MouseState;
-
+        
         if (_firstMove)
         {
             _lastPos = new Vector2(mouse.X, mouse.Y);
@@ -75,6 +87,9 @@ public class CameraControlsEngine : BaseEngine
 
     private void TeleportCameraToPlayer(ref TransformComponent cameraTransform, ref TransformComponent playerTransform)
     {
+        DebugWidget.CameraPos = cameraTransform.Position;
+        DebugWidget.PlayerPos = playerTransform.Position;
+        
         if (!KeyBinds.TeleportToPlayer.IsPressed)
             return;
 

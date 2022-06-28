@@ -10,7 +10,7 @@ public class ChunkSection
     private const int Width = 16;
     
     private readonly List<int> _palette = new();
-    private readonly byte[][][] _blockStates;
+    private readonly short[][][] _blockStates;
 
     private short _blockCount; 
 
@@ -20,13 +20,13 @@ public class ChunkSection
         
         _palette.Add(singleValue);
 
-        byte[] x = new byte[16];
+        short[] x = new short[16];
         Array.Fill(x, (byte)0);
 
-        byte[][] z = new byte[16][];
+        short[][] z = new short[16][];
         Array.Fill(z, x);
         
-        _blockStates = new byte[16][][];
+        _blockStates = new short[16][][];
         Array.Fill(_blockStates, z);
     }
     
@@ -36,9 +36,9 @@ public class ChunkSection
         
         _palette.AddRange(palette);
 
-        byte[] x = new byte[16];
-        byte[][] z = new byte[16][];
-        _blockStates = new byte[16][][];
+        short[] x = new short[16];
+        short[][] z = new short[16][];
+        _blockStates = new short[16][][];
         
         Array.Fill(z, x);
         Array.Fill(_blockStates, z);
@@ -46,8 +46,16 @@ public class ChunkSection
         PopulateBlockStates(bitsPerEntry, data);
     }
 
-    public ref readonly BlockState this[Vector3i pos] => ref Data.Blocks.GetBlockStateFromBlockStateId(_palette[_blockStates[pos.Y][pos.Z][pos.X]]);
+    public int GetBlockState(int x, int y, int z)
+    {
+        return _palette[_blockStates[y][z][x]];
+    }
 
+    public void SetBlockState(int x, int y, int z, int blockStateId)
+    {
+        throw new NotImplementedException();
+    }
+    
     private void PopulateBlockStates(int bitsPerEntry, long[] dataArray)
     {
         uint valueMask = (uint)((1 << bitsPerEntry) - 1);
@@ -76,7 +84,7 @@ public class ChunkSection
 
                     data &= valueMask;
 
-                    _blockStates[y][z][x] = (byte)data;
+                    _blockStates[y][z][x] = (short)data;
                 }
             }
         }

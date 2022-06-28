@@ -8,20 +8,23 @@ namespace SteveClient.Engine.Networking.Packets.ClientBound.Play;
 
 public class ChunkDataAndUpdateLightPacket : ClientBoundPacket
 {
-    private const int ChunkSectionCount = MinecraftDefinition.WorldHeight / 16;
-    
-    
+    public Chunk Chunk;
     
     public override void Read(in InPacketBuffer packetBuffer)
     {
         Vector2i chunkPos = packetBuffer.ReadChunkPos();
         NbtCompound heightMaps = packetBuffer.ReadNbtCompound();
-        
-        InPacketBuffer dataBuffer = new InPacketBuffer(packetBuffer.ReadByteArray());
-        
-        ChunkSection[] chunkSections = new ChunkSection[ChunkSectionCount];
 
-        for (int i = 0; i < ChunkSectionCount; i++)
+        ChunkSection[] chunkSections = LoadChunkSections(new InPacketBuffer(packetBuffer.ReadByteArray()));
+
+        Chunk = new Chunk(chunkPos, chunkSections);
+    }
+
+    private ChunkSection[] LoadChunkSections(InPacketBuffer dataBuffer)
+    {
+        ChunkSection[] chunkSections = new ChunkSection[Chunk.ChunkSectionCount];
+        
+        for (int i = 0; i < Chunk.ChunkSectionCount; i++)
         {
             short blockCount = dataBuffer.ReadShort();
 
@@ -51,5 +54,7 @@ public class ChunkDataAndUpdateLightPacket : ClientBoundPacket
                 long[] dataArray = dataBuffer.ReadLongArray();
             }
         }
+
+        return chunkSections;
     }
 }

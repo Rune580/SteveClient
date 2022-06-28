@@ -33,12 +33,18 @@ public class CompositionRoot
         var entityFactory = enginesRoot.GenerateEntityFactory();
         var entityFunctions = enginesRoot.GenerateEntityFunctions();
 
+        var world = new World();
+
         // Create engines
         var applyVelocityToSimpleRigidBodiesEngine = new ApplyVelocityToSimpleRigidBodiesEngine();
         var cameraControlsEngine = new CameraControlsEngine();
         var updateCameraStateFromCamerasEngine = new UpdateCameraStateFromCamerasEngine();
         var spawnPlayerEntityEngine = new SpawnPlayerEntityEngine(entityFactory);
         var teleportPlayerEntityEngine = new TeleportPlayerEntityEngine();
+        var spawnOnlineEntityEngine = new SpawnOnlinePlayerEntityEngine(entityFactory, world);
+        var spawnChunkSectionEntityEngine = new SpawnChunkSectionEntityEngine(entityFactory, world);
+        var moveEntityEngine = new MoveEntityEngine(world);
+        var moveAndRotateEntityEngine = new MoveAndRotateEntityEngine(world);
         
         // Create render engines
         var renderModelFiltersEngine = new RenderModelFiltersEngine();
@@ -46,11 +52,15 @@ public class CompositionRoot
         // Add engines
         enginesRoot.AddEngine(applyVelocityToSimpleRigidBodiesEngine);
         enginesRoot.AddEngine(cameraControlsEngine);
-        enginesRoot.AddEngine(updateCameraStateFromCamerasEngine);
         enginesRoot.AddEngine(spawnPlayerEntityEngine);
         enginesRoot.AddEngine(teleportPlayerEntityEngine);
+        enginesRoot.AddEngine(spawnOnlineEntityEngine);
+        enginesRoot.AddEngine(spawnChunkSectionEntityEngine);
+        enginesRoot.AddEngine(moveEntityEngine);
+        enginesRoot.AddEngine(moveAndRotateEntityEngine);
         
         // Add render engines
+        enginesRoot.AddEngine(updateCameraStateFromCamerasEngine);
         enginesRoot.AddEngine(renderModelFiltersEngine);
         
         // Register scheduled engines
@@ -58,7 +68,11 @@ public class CompositionRoot
         Scheduler.RegisterScheduledEngine(cameraControlsEngine);
         Scheduler.RegisterScheduledEngine(spawnPlayerEntityEngine);
         Scheduler.RegisterScheduledEngine(teleportPlayerEntityEngine);
-        
+        Scheduler.RegisterScheduledEngine(spawnOnlineEntityEngine);
+        Scheduler.RegisterScheduledEngine(spawnChunkSectionEntityEngine);
+        Scheduler.RegisterScheduledEngine(moveEntityEngine);
+        Scheduler.RegisterScheduledEngine(moveAndRotateEntityEngine);
+
         GraphicsScheduler.RegisterScheduledEngine(updateCameraStateFromCamerasEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderModelFiltersEngine);
         

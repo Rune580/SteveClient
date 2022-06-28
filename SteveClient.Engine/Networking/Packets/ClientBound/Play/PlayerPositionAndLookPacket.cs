@@ -9,7 +9,7 @@ public class PlayerPositionAndLookPacket : ClientBoundPacket
     public Vector3d Position;
     public float Yaw;
     public float Pitch;
-    public byte Flags;
+    public RelativeFlags Flags;
     public int TeleportId;
     public bool DismountVehicle;
     
@@ -18,10 +18,20 @@ public class PlayerPositionAndLookPacket : ClientBoundPacket
         Position = packetBuffer.ReadVector3d();
         Yaw = packetBuffer.ReadFloat();
         Pitch = packetBuffer.ReadFloat();
-        Flags = packetBuffer.ReadUnsignedByte();
+        Flags = (RelativeFlags)packetBuffer.ReadUnsignedByte();
         TeleportId = packetBuffer.ReadVarInt();
         DismountVehicle = packetBuffer.ReadBool();
         
         new TeleportConfirmPacket(TeleportId).SendToServer();
+    }
+
+    [Flags]
+    public enum RelativeFlags
+    {
+        X = 1,
+        Y = 2,
+        Z = 4,
+        YRot = 8,
+        XRot = 16
     }
 }

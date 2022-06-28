@@ -64,6 +64,17 @@ public class InPacketBuffer : Stream
         return new Vector3d(ReadDouble(), ReadDouble(), ReadDouble());
     }
 
+    public Vector3d ReadDelta()
+    {
+        short x = ReadShort();
+        short y = ReadShort();
+        short z = ReadShort();
+
+        const int val = 128 * 32;
+
+        return new Vector3d((double)x / val, (double)y / val, (double)z / val);
+    }
+
     public bool ReadBool()
     {
         return ReadUnsignedByte() == 1;

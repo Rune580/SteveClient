@@ -51,5 +51,7 @@ public abstract class PacketProcessingEngine<TPacket> : BaseEngine
         public void MarkConsumed() => Consumed = true;
 
         public TSubPacket Get() => _packet;
+
+        public static implicit operator TSubPacket(ConsumablePacket<TSubPacket> right) => right.Get();
     }
 }

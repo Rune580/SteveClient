@@ -63,8 +63,10 @@ public class RenderBuilder
 
     public RenderBuilder WithTransform(ref TransformComponent transform)
     {
-        return Translate(transform.Position)
-            .Rotate(transform.Rotation);
+        return Rotate(transform.Rotation)
+            .Translate(transform.Position);
+        // return Translate(transform.Position)
+        //     .Rotate(transform.Rotation);
     }
 
     public RenderBuilder Translate(Vector3 translation)

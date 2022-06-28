@@ -45,7 +45,7 @@ public class SteveClientWindow : GameWindow
     private void RegisterMenus()
     {
         _menus.Add(new ServerTesting());
-        //_menus.Add(new DebugWidget());
+        _menus.Add(new DebugWidget());
     }
 
     protected override void OnResize(ResizeEventArgs e)

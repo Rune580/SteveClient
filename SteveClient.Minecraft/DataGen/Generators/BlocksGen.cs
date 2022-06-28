@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using SteveClient.Minecraft.Blocks;
+using SteveClient.Minecraft.Utils;
 
 namespace SteveClient.Minecraft.DataGen.Generators;
 
@@ -69,17 +70,11 @@ public static class BlocksGen
         string path = Path.Join(Path.GetFullPath("data"), $"{MinecraftDefinition.Version.Replace('.', '_')}_blocks.json");
 
         if (!File.Exists(path))
-            DownloadArticBlocksJson(path).ConfigureAwait(true).GetAwaiter().GetResult();
+        {
+            string blocksUrl = $"{ArticBaseUrl}{MinecraftDefinition.Version}/{MinecraftDefinition.Version.Replace('.', '_')}_blocks.json";
+            WebHelper.DownloadFile(blocksUrl, path);
+        }
 
         return path;
-    }
-
-    private static async Task DownloadArticBlocksJson(string path)
-    {
-        string blocksUrl = $"{ArticBaseUrl}{MinecraftDefinition.Version}/{MinecraftDefinition.Version.Replace('.', '_')}_blocks.json";
-
-        using var httpClient = new HttpClient(); // Todo reuse client
-
-        await File.WriteAllBytesAsync(Path.GetFullPath(path), await httpClient.GetByteArrayAsync(blocksUrl));
     }
 }
