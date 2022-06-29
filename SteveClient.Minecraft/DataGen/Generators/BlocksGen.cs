@@ -39,7 +39,11 @@ public static class BlocksGen
                         
                 int blockStateId = currentState.GetProperty("stateId").GetInt32();
                 
-                BlockState blockState = new BlockState(blockId, blockStateId);
+                BlockState blockState = new BlockState(
+                    blockId,
+                    blockStateId,
+                    currentState.GetProperty("collisionShape").GetString()!
+                );
 
                 blockStates[blockStateId] = blockState;
             }
