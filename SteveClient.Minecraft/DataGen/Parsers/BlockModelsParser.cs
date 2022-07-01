@@ -1,4 +1,7 @@
-﻿namespace SteveClient.Minecraft.DataGen.Parsers;
+﻿using System.Text.Json;
+using SteveClient.Minecraft.Data.JsonSchema;
+
+namespace SteveClient.Minecraft.DataGen.Parsers;
 
 public class BlockModelsParser : IMinecraftAssetParser
 {
@@ -20,6 +23,22 @@ public class BlockModelsParser : IMinecraftAssetParser
 
     public void Parse()
     {
+        string[] files = Directory.GetFiles(LocalPath, "*.json", SearchOption.AllDirectories);
+
+        Dictionary<string, ModelJson> modelJsons = new Dictionary<string, ModelJson>();
         
+        foreach (var file in files)
+        {
+            var model = JsonSerializer.Deserialize<ModelJson>(File.ReadAllText(file)) ?? throw new InvalidOperationException();
+
+            if (model.Parent is not null)
+            {
+                model.Parent = model.Parent
+                    .Replace("minecraft:", "")
+                    .Replace("block/", "");
+            }
+            
+            modelJsons[Path.GetFileNameWithoutExtension(file)] = model;
+        }
     }
 }

@@ -3,6 +3,7 @@ using SteveClient.Engine.Components;
 using SteveClient.Engine.Rendering.Models;
 using SteveClient.Engine.Rendering.RenderLayers;
 using SteveClient.Engine.Rendering.VertexData;
+using SteveClient.Minecraft.Numerics;
 
 namespace SteveClient.Engine.Rendering.Builders;
 
@@ -35,9 +36,9 @@ public class RenderBuilder
     {
         IVertex[] vertices = renderLayer.GetVertexFactory().Consume(_vertices.ToArray(), _normals.ToArray(), _colors.ToArray(), _uvs.ToArray());
 
-        BakedModel bakedModel = new BakedModel(vertices.VertexData(), _indices.ToArray(), _model);
+        BakedRenderData bakedRenderData = new BakedRenderData(vertices.VertexData(), _indices.ToArray(), _model);
   
-        renderLayer.UploadBakedModel(bakedModel);
+        renderLayer.UploadBakedModel(bakedRenderData);
         
         _vertices.Clear();
         _normals.Clear();

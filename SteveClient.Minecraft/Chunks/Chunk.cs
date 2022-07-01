@@ -26,6 +26,12 @@ public class Chunk
         return ref Data.Blocks.GetBlockStateFromBlockStateId(blockStateId);
     }
 
+    public int GetBlockStateId(Vector3i pos)
+    {
+        int sectionIndex = GetSectionIndex(pos.Y);
+        return _chunkSections[sectionIndex].GetBlockState(pos.X, HeightLocalToSection(pos.Y, sectionIndex), pos.Z);
+    }
+
     public void SetBlockState(Vector3i pos, int blockStateId)
     {
         int sectionIndex = GetSectionIndex(pos.Y);

@@ -14,7 +14,7 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer where TVertex : IVert
     private readonly int _vertexBufferObject;
     private readonly int _vertexArrayObject;
 
-    private readonly List<BakedModel> _bakedModels = new();
+    private readonly List<BakedRenderData> _bakedModels = new();
 
     private int _elements;
 
@@ -50,9 +50,9 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer where TVertex : IVert
         GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.DynamicDraw);
     }
 
-    public override void UploadBakedModel(BakedModel model)
+    public override void UploadBakedModel(BakedRenderData renderData)
     {
-        _bakedModels.Add(model);
+        _bakedModels.Add(renderData);
     }
 
     public override void RebuildBuffers()

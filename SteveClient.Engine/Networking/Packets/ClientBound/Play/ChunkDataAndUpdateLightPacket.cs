@@ -37,7 +37,7 @@ public class ChunkDataAndUpdateLightPacket : ClientBoundPacket
             else
             {
                 int[] palette = dataBuffer.ReadVarIntArray();
-                long[] dataArray = dataBuffer.ReadLongArray();
+                ulong[] dataArray = dataBuffer.ReadUnsignedLongArray();
 
                 chunkSections[i] = new ChunkSection(blockCount, bitsPerEntry, palette, dataArray);
             }

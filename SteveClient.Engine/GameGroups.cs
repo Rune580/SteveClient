@@ -11,6 +11,7 @@ public static class GameGroups
     public abstract class ModelFilters : GroupTag<ModelFilters> { }
     public abstract class Entities : GroupTag<Entities> { }
     public abstract class PlayerTag : GroupTag<PlayerTag> { }
+    public abstract class WorldBlocks : GroupTag<WorldBlocks> { }
 
     // Groups
     public abstract class MinecraftEntities : GroupCompound<Entities, ModelFilters> { }
@@ -18,6 +19,5 @@ public static class GameGroups
     // Exclusive Groups / Singleton Entities
     public abstract class MainCamera : GroupCompound<SimpleRigidBodies, Cameras, Controllable> { }
     public abstract class Player : GroupCompound<PlayerTag, Entities, ModelFilters> { }
-
-    public static readonly ExclusiveGroup ChunkSections = new();
+    public abstract class ChunkSections : GroupTag<ChunkSections> { }
 }

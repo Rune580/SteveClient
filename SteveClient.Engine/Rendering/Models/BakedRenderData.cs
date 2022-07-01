@@ -2,13 +2,13 @@
 
 namespace SteveClient.Engine.Rendering.Models;
 
-public readonly struct BakedModel
+public readonly struct BakedRenderData
 {
     public readonly float[] Vertices;
     public readonly uint[] Indices;
     public readonly Matrix4 Model;
 
-    public BakedModel(float[] vertices, uint[] indices, Matrix4 model)
+    public BakedRenderData(float[] vertices, uint[] indices, Matrix4 model)
     {
         Vertices = vertices;
         Indices = indices;

@@ -10,35 +10,35 @@ public class ChunkSection
     private const int Width = 16;
     
     private readonly List<int> _palette = new();
-    private readonly short[][][] _blockStates;
+    private readonly byte[][][] _blockStates;
 
-    private short _blockCount; 
-
+    private short _blockCount;
+    
     public ChunkSection(short blockCount, int singleValue)
     {
         _blockCount = blockCount;
         
         _palette.Add(singleValue);
 
-        short[] x = new short[16];
+        byte[] x = new byte[16];
         Array.Fill(x, (byte)0);
 
-        short[][] z = new short[16][];
+        byte[][] z = new byte[16][];
         Array.Fill(z, x);
         
-        _blockStates = new short[16][][];
+        _blockStates = new byte[16][][];
         Array.Fill(_blockStates, z);
     }
     
-    public ChunkSection(short blockCount, int bitsPerEntry, int[] palette, long[] data)
+    public ChunkSection(short blockCount, int bitsPerEntry, int[] palette, ulong[] data)
     {
         _blockCount = blockCount;
         
         _palette.AddRange(palette);
 
-        short[] x = new short[16];
-        short[][] z = new short[16][];
-        _blockStates = new short[16][][];
+        byte[] x = new byte[16];
+        byte[][] z = new byte[16][];
+        _blockStates = new byte[16][][];
         
         Array.Fill(z, x);
         Array.Fill(_blockStates, z);
@@ -56,8 +56,9 @@ public class ChunkSection
         throw new NotImplementedException();
     }
     
-    private void PopulateBlockStates(int bitsPerEntry, long[] dataArray)
+    private void PopulateBlockStates(int bitsPerEntry, ulong[] dataArray)
     {
+        int blocksPerArray = 64 / bitsPerEntry;
         uint valueMask = (uint)((1 << bitsPerEntry) - 1);
 
         for (int y = 0; y < Height; y++)
@@ -67,24 +68,16 @@ public class ChunkSection
                 for (int x = 0; x < Width; x++)
                 {
                     int blockNumber = (((y * Height) + z) * Width) + x;
-                    int startLong = (blockNumber * bitsPerEntry) / 64;
-                    int startOffset = (blockNumber * bitsPerEntry) % 64;
-                    int endLong = ((blockNumber + 1) * bitsPerEntry - 1) / 64;
+                    int index = blockNumber / blocksPerArray;
+                    int offset = (blockNumber * bitsPerEntry) % (blocksPerArray * bitsPerEntry);
 
-                    uint data;
-                    if (startLong == endLong) 
-                    {
-                        data = (uint)(dataArray[startLong] >> startOffset);
-                    } 
-                    else
-                    {
-                        int endOffset = 64 - startOffset;
-                        data = (uint)(dataArray[startLong] >> startOffset | dataArray[endLong] << endOffset);
-                    }
-
+                    uint data = (uint)(dataArray[index] >> offset);
                     data &= valueMask;
 
-                    _blockStates[y][z][x] = (short)data;
+                    if (data >= _palette.Count)
+                        throw new IndexOutOfRangeException();
+
+                    _blockStates[y][z][x] = (byte)data;
                 }
             }
         }

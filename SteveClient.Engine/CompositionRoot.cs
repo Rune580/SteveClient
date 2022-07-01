@@ -3,6 +3,7 @@ using SteveClient.Engine.Components;
 using SteveClient.Engine.Descriptors;
 using SteveClient.Engine.Engines;
 using SteveClient.Engine.Engines.PacketProcessing;
+using SteveClient.Engine.Engines.ServerWorld;
 using SteveClient.Engine.Networking;
 using SteveClient.Engine.Rendering.Models;
 using SteveClient.Minecraft.DataGen;
@@ -43,6 +44,7 @@ public class CompositionRoot
         var teleportPlayerEntityEngine = new TeleportPlayerEntityEngine();
         var spawnOnlineEntityEngine = new SpawnOnlinePlayerEntityEngine(entityFactory, world);
         var spawnChunkSectionEntityEngine = new SpawnChunkSectionEntityEngine(entityFactory, world);
+        var spawnBlockStateEntityEngine = new SpawnBlockStateEntityEngine(entityFactory, world);
         var moveEntityEngine = new MoveEntityEngine(world);
         var moveAndRotateEntityEngine = new MoveAndRotateEntityEngine(world);
         
@@ -56,6 +58,7 @@ public class CompositionRoot
         enginesRoot.AddEngine(teleportPlayerEntityEngine);
         enginesRoot.AddEngine(spawnOnlineEntityEngine);
         enginesRoot.AddEngine(spawnChunkSectionEntityEngine);
+        enginesRoot.AddEngine(spawnBlockStateEntityEngine);
         enginesRoot.AddEngine(moveEntityEngine);
         enginesRoot.AddEngine(moveAndRotateEntityEngine);
         
@@ -70,6 +73,7 @@ public class CompositionRoot
         Scheduler.RegisterScheduledEngine(teleportPlayerEntityEngine);
         Scheduler.RegisterScheduledEngine(spawnOnlineEntityEngine);
         Scheduler.RegisterScheduledEngine(spawnChunkSectionEntityEngine);
+        Scheduler.RegisterScheduledEngine(spawnBlockStateEntityEngine);
         Scheduler.RegisterScheduledEngine(moveEntityEngine);
         Scheduler.RegisterScheduledEngine(moveAndRotateEntityEngine);
 

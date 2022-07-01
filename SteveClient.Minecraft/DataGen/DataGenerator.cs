@@ -9,25 +9,25 @@ namespace SteveClient.Minecraft.DataGen;
 
 public static class DataGenerator
 {
+    private static readonly IMinecraftAssetParser[] AssetParsers =
+    {
+        new BlockTexturesParser(),
+        new BlockModelsParser()
+    };
+    
     public static void GenerateData()
     {
         BlocksGen.GenerateBlocks();
         ValidateMinecraftAssets();
+        AssetParsers.Parse();
     }
 
     private static void ValidateMinecraftAssets()
     {
-        IMinecraftAssetParser[] assetParsers =
-        {
-            new BlockModelsParser()
-        };
-
-        if (assetParsers.DataExists())
+        if (AssetParsers.DataExists())
             return;
         
-        DownloadAndExtractAssets(assetParsers).ConfigureAwait(true).GetAwaiter().GetResult();
-        
-        
+        DownloadAndExtractAssets(AssetParsers).ConfigureAwait(true).GetAwaiter().GetResult();
     }
 
     private static async Task DownloadAndExtractAssets(IMinecraftAssetParser[] assetParsers)

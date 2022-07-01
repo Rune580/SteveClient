@@ -117,12 +117,25 @@ public class InPacketBuffer : Stream
         return BitConverter.ToInt64(ReadByteArray(8).Reverse());
     }
 
+    public ulong ReadUnsignedLong()
+    {
+        return BitConverter.ToUInt64(ReadByteArray(8).Reverse());
+    }
+
     public long[] ReadLongArray()
     {
         long[] longArray = new long[ReadVarInt()];
         for (int i = 0; i < longArray.Length; i++)
             longArray[i] = ReadLong();
         return longArray;
+    }
+
+    public ulong[] ReadUnsignedLongArray()
+    {
+        ulong[] array = new ulong[ReadVarInt()];
+        for (int i = 0; i < array.Length; i++)
+            array[i] = ReadUnsignedLong();
+        return array;
     }
 
     public int ReadVarInt()

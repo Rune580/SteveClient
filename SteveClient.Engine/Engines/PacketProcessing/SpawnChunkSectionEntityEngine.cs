@@ -34,7 +34,7 @@ public class SpawnChunkSectionEntityEngine : PacketProcessingEngine<ChunkDataAnd
             uint id = Egid.NextId;
 
             EntityInitializer initializer =
-                _entityFactory.BuildEntity<ChunkSectionDescriptor>(id, GameGroups.ChunkSections);
+                _entityFactory.BuildEntity<ChunkSectionDescriptor>(id, GameGroups.ChunkSections.BuildGroup);
 
 
             initializer.Init(new TransformComponent(new Vector3(chunkPos.X, 16 * i, chunkPos.Y)));

@@ -15,4 +15,10 @@ public static class MinecraftAssetParserExtensions
     {
         return assetParsers.All(assetParser => assetParser.DataExists());
     }
+
+    public static void Parse(this IMinecraftAssetParser[] assetParsers)
+    {
+        foreach (var assetParser in assetParsers)
+            assetParser.Parse();
+    }
 }
