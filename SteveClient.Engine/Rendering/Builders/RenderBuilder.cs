@@ -38,7 +38,7 @@ public class RenderBuilder
 
         BakedRenderData bakedRenderData = new BakedRenderData(vertices.VertexData(), _indices.ToArray(), _model);
   
-        renderLayer.UploadBakedModel(bakedRenderData);
+        renderLayer.UploadRenderData(bakedRenderData);
         
         _vertices.Clear();
         _normals.Clear();

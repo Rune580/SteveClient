@@ -1,4 +1,6 @@
-﻿namespace SteveClient.Minecraft.DataGen.Parsers;
+﻿using SteveClient.Minecraft.Data;
+
+namespace SteveClient.Minecraft.DataGen.Parsers;
 
 public class BlockTexturesParser : IMinecraftAssetParser
 {
@@ -20,6 +22,9 @@ public class BlockTexturesParser : IMinecraftAssetParser
 
     public void Parse()
     {
-        
+        string[] files = Directory.GetFiles(LocalPath, "*.png", SearchOption.AllDirectories); // Todo animated texture parsing
+
+        foreach (var file in files)
+            Textures.Add(file);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace SteveClient.Engine.Rendering.Models;
+﻿using SteveClient.Engine.Rendering.Models;
+
+namespace SteveClient.Engine.AssetManagement;
 
 public static class ModelRegistry
 {

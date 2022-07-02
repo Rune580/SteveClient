@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using OpenTK.Mathematics;
+using SteveClient.Minecraft.Data.JsonSchema.Converters;
 
 namespace SteveClient.Minecraft.Data.JsonSchema;
 
@@ -8,24 +9,24 @@ public class FacesJson
     [JsonPropertyName("down")]
     public FaceJson? Down { get; set; }
     
-    [JsonPropertyName("Up")]
+    [JsonPropertyName("up")]
     public FaceJson? Up { get; set; }
     
-    [JsonPropertyName("North")]
+    [JsonPropertyName("north")]
     public FaceJson? North { get; set; }
     
-    [JsonPropertyName("South")]
+    [JsonPropertyName("south")]
     public FaceJson? South { get; set; }
     
-    [JsonPropertyName("West")]
+    [JsonPropertyName("west")]
     public FaceJson? West { get; set; }
     
-    [JsonPropertyName("East")]
+    [JsonPropertyName("east")]
     public FaceJson? East { get; set; }
     
     public class FaceJson
     {
-        [JsonPropertyName("uv")]
+        [JsonPropertyName("uv"), JsonConverter(typeof(Vector4JsonConverter))]
         public Vector4 Uv { get; set; }
         
         [JsonPropertyName("texture")]

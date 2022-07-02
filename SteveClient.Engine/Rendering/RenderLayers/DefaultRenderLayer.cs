@@ -50,7 +50,7 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer where TVertex : IVert
         GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.DynamicDraw);
     }
 
-    public override void UploadBakedModel(BakedRenderData renderData)
+    public override void UploadRenderData(BakedRenderData renderData)
     {
         _bakedModels.Add(renderData);
     }

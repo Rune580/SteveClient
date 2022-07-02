@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using SteveClient.Engine.AssetManagement;
 
 namespace SteveClient.Engine.Rendering.Models;
 

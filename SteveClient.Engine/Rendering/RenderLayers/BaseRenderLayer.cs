@@ -19,7 +19,7 @@ public abstract class BaseRenderLayer
 
     public abstract void Upload(float[] vertices, uint[] indices);
 
-    public abstract void UploadBakedModel(BakedRenderData renderData);
+    public abstract void UploadRenderData(BakedRenderData renderData);
 
     public abstract void RebuildBuffers();
     

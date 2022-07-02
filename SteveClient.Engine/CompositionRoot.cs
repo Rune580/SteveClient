@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using SteveClient.Engine.AssetManagement;
 using SteveClient.Engine.Components;
 using SteveClient.Engine.Descriptors;
 using SteveClient.Engine.Engines;
@@ -6,6 +7,7 @@ using SteveClient.Engine.Engines.PacketProcessing;
 using SteveClient.Engine.Engines.ServerWorld;
 using SteveClient.Engine.Networking;
 using SteveClient.Engine.Rendering.Models;
+using SteveClient.Minecraft.Data;
 using SteveClient.Minecraft.DataGen;
 using Svelto.ECS;
 using Svelto.ECS.Schedulers;
@@ -86,6 +88,7 @@ public class CompositionRoot
     private void LoadMinecraftData()
     {
         DataGenerator.GenerateData();
+        TextureRegistry.Add(Textures.GetTextures());
     }
 
     private void BuildCamera(IEntityFactory entityFactory, Vector2i clientSize)
@@ -98,14 +101,5 @@ public class CompositionRoot
         initializer.Init(new SimpleRigidBodyComponent());
         initializer.Init(new CameraComponent(clientSize.X / (float)clientSize.Y));
         initializer.Init(new CameraControllerComponent(1.5f));
-    }
-
-    private void AddBlock(IEntityFactory entityFactory, Vector3 worldPos)
-    {
-        EntityInitializer initializer =
-            entityFactory.BuildEntity<StaticBlockDescriptor>(Egid.NextId, GameGroups.ModelFilters.BuildGroup);
-        
-        initializer.Init(new TransformComponent(worldPos));
-        initializer.Init(new ModelFilterComponent(Primitives.Cube.Index));
     }
 }

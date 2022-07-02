@@ -27,6 +27,26 @@ public static class VertexFactories
             return result;
         });
 
+    public static readonly VertexFactory PositionTextureColorFactory = new(typeof(PositionTextureColor),
+        (positions, _, colors, uvs) =>
+        {
+            if (positions is null)
+                throw new NullReferenceException();
+
+            if (colors is null)
+                throw new NullReferenceException();
+
+            if (uvs is null)
+                throw new NullReferenceException();
+
+            IVertex[] result = new IVertex[positions.Length];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = new PositionTextureColor(positions[i], uvs[i], colors[i]);
+
+            return result;
+        });
+
     #endregion
     
     public class VertexFactory

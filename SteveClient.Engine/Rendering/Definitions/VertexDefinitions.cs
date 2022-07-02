@@ -7,12 +7,15 @@ public static class VertexDefinitions
 {
     public static VertexDefinition<PositionColor> PositionColorTriangles;
     public static VertexDefinition<PositionColor> PositionColorLines;
+    public static VertexDefinition<PositionTextureColor> PositionTextureColorTriangles;
 
     public static void Init()
     {
         PositionColorTriangles = new VertexDefinition<PositionColor>(ShaderDefinitions.PositionColorShader, PrimitiveType.Triangles);
 
         PositionColorLines = new VertexDefinition<PositionColor>(ShaderDefinitions.PositionColorShader, PrimitiveType.Lines);
+
+        PositionTextureColorTriangles = new VertexDefinition<PositionTextureColor>(); // Todo SHADERS
     }
     
     public readonly struct VertexDefinition<TVertex> where TVertex : IVertex

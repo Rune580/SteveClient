@@ -6,9 +6,7 @@ public static class Textures
 
     public static void Add(string texturePath)
     {
-        string resourceName = Path.GetFileNameWithoutExtension(texturePath);
-
-        TextureMap[resourceName] = texturePath;
+        TextureMap[GetResourceName(texturePath)] = texturePath;
     }
 
     public static string GetPath(string resourceName)
@@ -16,5 +14,22 @@ public static class Textures
         resourceName = resourceName.Replace("minecraft:", "");
 
         return TextureMap[resourceName];
+    }
+
+    public static KeyValuePair<string, string>[] GetTextures()
+    {
+        return TextureMap.ToArray();
+    }
+
+    private static string GetResourceName(string path)
+    {
+        string textureName = Path.GetFileNameWithoutExtension(path);
+        string localPath = Path.GetRelativePath(Directory.GetCurrentDirectory(), path);
+
+        string[] paths = localPath.Replace("\\", "/").Split('/');
+
+        string resourcePath = String.Join('/', paths[1..^1]);
+
+        return $"{resourcePath}/{textureName}";
     }
 }
