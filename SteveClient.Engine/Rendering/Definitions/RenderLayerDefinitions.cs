@@ -8,4 +8,5 @@ public static class RenderLayerDefinitions
     public static readonly List<BaseRenderLayer> Instances = new();
 
     public static readonly DefaultRenderLayer<PositionColor> PositionColorRenderLayer = new(VertexDefinitions.PositionColorTriangles);
+    public static readonly DefaultRenderLayer<PositionTextureColor> PositionTextureColorLayer = new(VertexDefinitions.PositionTextureColorTriangles);
 }

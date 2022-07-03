@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using SteveClient.Engine.Rendering.Baked;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Models;
 using SteveClient.Engine.Rendering.VertexData;
@@ -7,14 +8,15 @@ using static SteveClient.Engine.Rendering.VertexData.VertexFactories;
 
 namespace SteveClient.Engine.Rendering.RenderLayers;
 
-public class DefaultRenderLayer<TVertex> : BaseRenderLayer where TVertex : IVertex
+public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHandler
+    where TVertex : IVertex
 {
     private readonly VertexDefinitions.VertexDefinition<TVertex> _definition;
     private readonly int _elementBufferObject;
     private readonly int _vertexBufferObject;
     private readonly int _vertexArrayObject;
 
-    private readonly List<BakedRenderData> _bakedModels = new();
+    private readonly List<IBakedRenderData> _renderData = new();
 
     private int _elements;
 
@@ -37,22 +39,9 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer where TVertex : IVert
 
     public override VertexFactory GetVertexFactory() => GetFactory(_definition.VertexType);
 
-    public override void Upload(float[] vertices, uint[] indices)
+    public void UploadRenderData(IBakedRenderData renderData)
     {
-        _elements = indices.Length;
-        
-        GL.BindVertexArray(_vertexArrayObject);
-        
-        GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-        GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
-        
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.DynamicDraw);
-    }
-
-    public override void UploadRenderData(BakedRenderData renderData)
-    {
-        _bakedModels.Add(renderData);
+        _renderData.Add(renderData);
     }
 
     public override void RebuildBuffers()
@@ -70,18 +59,18 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer where TVertex : IVert
         int vertexOffset = 0;
         int indexOffset = 0;
 
-        foreach (var bakedModel in _bakedModels)
+        foreach (var renderData in _renderData)
         {
-            _elements += bakedModel.Indices.Length;
+            _elements += renderData.Indices.Length;
             
-            var vertexSize = bakedModel.SizeOfVertices;
-            var indexSize = bakedModel.SizeOfIndices;
+            var vertexSize = renderData.SizeOfVertices;
+            var indexSize = renderData.SizeOfIndices;
             
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr)vertexOffset, vertexSize, bakedModel.Vertices);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr)vertexOffset, vertexSize, renderData.Vertices);
             
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
-            GL.BufferSubData(BufferTarget.ElementArrayBuffer, (IntPtr)indexOffset, indexSize, bakedModel.Indices);
+            GL.BufferSubData(BufferTarget.ElementArrayBuffer, (IntPtr)indexOffset, indexSize, renderData.Indices);
 
             vertexOffset += vertexSize;
             indexOffset += indexSize;
@@ -107,9 +96,12 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer where TVertex : IVert
     {
         int offset = 0;
         
-        foreach (var bakedModel in _bakedModels)
+        foreach (var bakedModel in _renderData)
         {
-            _definition.Shader.SetMatrix4("model", bakedModel.Model);
+            if (bakedModel.HasTexture)
+                bakedModel.UseTexture();
+            
+            _definition.Shader.SetMatrix4("model", bakedModel.Transform);
             _definition.Shader.SetMatrix4("view", CameraState.ViewMatrix);
             _definition.Shader.SetMatrix4("projection", CameraState.ProjectionMatrix);
             
@@ -126,6 +118,6 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer where TVertex : IVert
 
     public override void Flush()
     {
-        _bakedModels.Clear();
+        _renderData.Clear();
     }
 }

@@ -1,10 +1,9 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.AssetManagement;
 using SteveClient.Engine.Components;
-using SteveClient.Engine.Engines.Rendering;
 using SteveClient.Engine.Rendering.Builders;
 using SteveClient.Engine.Rendering.Definitions;
-using SteveClient.Engine.Rendering.Models;
+using SteveClient.Engine.Rendering.Utils;
 using Svelto.ECS;
 
 namespace SteveClient.Engine.Engines;
@@ -22,9 +21,9 @@ public class RenderModelFiltersEngine : BaseEngine
                 ref var transform = ref transforms[i];
                 ref var modelFilter = ref modelFilters[i];
 
-                var renderer = new RenderBuilder();
+                var renderBuilder = new SimpleRenderHelper();
 
-                renderer.WithMesh(ModelRegistry.Models[modelFilter.ModelIndex])
+                renderBuilder.WithMesh(ModelRegistry.Models[modelFilter.ModelIndex])
                     .WithColor(Color4.White)
                     .WithTransform(ref transform)
                     .Upload(RenderLayerDefinitions.PositionColorRenderLayer);

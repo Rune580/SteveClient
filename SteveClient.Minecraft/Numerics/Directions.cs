@@ -2,6 +2,7 @@
 
 public enum Directions
 {
+    None = -1,
     Down,
     Up,
     North,

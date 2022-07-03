@@ -12,10 +12,9 @@ public static class VertexDefinitions
     public static void Init()
     {
         PositionColorTriangles = new VertexDefinition<PositionColor>(ShaderDefinitions.PositionColorShader, PrimitiveType.Triangles);
-
         PositionColorLines = new VertexDefinition<PositionColor>(ShaderDefinitions.PositionColorShader, PrimitiveType.Lines);
-
-        PositionTextureColorTriangles = new VertexDefinition<PositionTextureColor>(); // Todo SHADERS
+        
+        PositionTextureColorTriangles = new VertexDefinition<PositionTextureColor>(ShaderDefinitions.PositionTextureColorShader, PrimitiveType.Triangles);
     }
     
     public readonly struct VertexDefinition<TVertex> where TVertex : IVertex

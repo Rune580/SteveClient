@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using OpenTK.Mathematics;
 using SteveClient.Minecraft.Data.JsonSchema.Converters;
+using SteveClient.Minecraft.Numerics;
 
 namespace SteveClient.Minecraft.Data.JsonSchema;
 
@@ -32,7 +33,7 @@ public class FacesJson
         [JsonPropertyName("texture")]
         public string Texture { get; set; }
         
-        [JsonPropertyName("cullface")]
-        public string CullFace { get; set; }
+        [JsonPropertyName("cullface"), JsonConverter(typeof(DirectionsJsonConverter))]
+        public Directions? CullFace { get; set; }
     }
 }

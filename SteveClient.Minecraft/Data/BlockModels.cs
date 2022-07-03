@@ -4,19 +4,19 @@ namespace SteveClient.Minecraft.Data;
 
 public static class BlockModels
 {
-    private static readonly Dictionary<string, BlockModel> Models = new();
+    private static readonly Dictionary<string, RawBlockModel> Models = new();
 
-    public static void Add(string resourceName, BlockModel model)
+    public static void Add(string resourceName, RawBlockModel model)
     {
         Models[resourceName] = model;
     }
 
-    public static BlockModel GetBlockModel(string resourceName)
+    public static RawBlockModel GetBlockModel(string resourceName)
     {
         return Models[resourceName];
     }
 
-    public static BlockModel[] GetBlockModels()
+    public static RawBlockModel[] GetBlockModels()
     {
         return Models.Values.ToArray();
     }

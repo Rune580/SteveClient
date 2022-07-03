@@ -33,8 +33,25 @@ public class Blocks
         return ref CollectionsMarshal.GetValueRefOrNullRef(Instance._blockStates, blockStateId);
     }
 
+    public static ref readonly BlockState GetDefaultBlockState(string blockResourceName)
+    {
+        return ref CollectionsMarshal.GetValueRefOrNullRef(Instance._blockStates, GetDefaultBlockStateId(blockResourceName));
+    }
+
+    public static int GetDefaultBlockStateId(string blockResourceName)
+    {
+        return Instance._resourceNameBlockStateMap[blockResourceName];
+    }
+
+    public static string GetResourceName(int blockStateId)
+    {
+        return Instance._blockStateResourceNameMap[blockStateId];
+    }
+
     private readonly Dictionary<int, Block> _blocks = new();
     private readonly Dictionary<int, BlockState> _blockStates = new();
+    private readonly Dictionary<string, int> _resourceNameBlockStateMap = new();
+    private readonly Dictionary<int, string> _blockStateResourceNameMap = new();
 
     private Blocks(Block[] blocks)
     {
@@ -46,7 +63,12 @@ public class Blocks
             _blocks[block.Id] = block;
 
             foreach (var (blockStateId, blockState) in block.BlockStates)
+            {
                 _blockStates[blockStateId] = blockState;
+                _blockStateResourceNameMap[blockStateId] = block.ResourceName;
+            }
+
+            _resourceNameBlockStateMap[block.ResourceName.Replace("minecraft:", "")] = block.DefaultStateId;
         }
         
         _instance = this;

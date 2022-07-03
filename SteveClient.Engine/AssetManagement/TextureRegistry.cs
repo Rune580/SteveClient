@@ -15,4 +15,9 @@ public static class TextureRegistry
             Textures[resourceName] = texture;
         }
     }
+
+    public static Texture GetTexture(string resourceName)
+    {
+        return Textures[resourceName];
+    }
 }

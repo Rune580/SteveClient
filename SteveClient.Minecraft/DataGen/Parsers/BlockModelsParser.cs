@@ -50,7 +50,7 @@ public class BlockModelsParser : IMinecraftAssetParser
             var textureMap = GetTextureMap(modelJson, modelJsons);
             var elements = GetElements(modelJson, modelJsons);
 
-            List<BlockFace> blockFaces = new List<BlockFace>();
+            List<RawBlockFace> blockFaces = new List<RawBlockFace>();
 
             foreach (var element in elements)
                 blockFaces.AddRange(GetBlockFaces(element));
@@ -64,15 +64,15 @@ public class BlockModelsParser : IMinecraftAssetParser
             if (blockFaces.Count == 0)
                 continue;
 
-            BlockModel model = new BlockModel(blockFaces.ToArray());
+            RawBlockModel model = new RawBlockModel(key, blockFaces.ToArray());
             
             BlockModels.Add(key, model);
         }
     }
 
-    private List<BlockFace> GetBlockFaces(ElementJson element)
+    private List<RawBlockFace> GetBlockFaces(ElementJson element)
     {
-        List<BlockFace> blockFaces = new List<BlockFace>();
+        List<RawBlockFace> blockFaces = new List<RawBlockFace>();
 
         if (element.Faces is null)
             return blockFaces;
@@ -100,13 +100,19 @@ public class BlockModelsParser : IMinecraftAssetParser
         return blockFaces;
     }
 
-    private BlockFace GetBlockFace(Vector3 from, Vector3 to, Directions direction, FacesJson.FaceJson faceJson)
+    private RawBlockFace GetBlockFace(Vector3 from, Vector3 to, Directions direction, FacesJson.FaceJson faceJson)
     {
-        BlockFace face = new BlockFace
+        Directions cull = Directions.None;
+
+        if (faceJson.CullFace.HasValue)
+            cull = faceJson.CullFace.Value;
+        
+        RawBlockFace face = new RawBlockFace
         {
             Texture = faceJson.Texture,
             UvMin = faceJson.Uv.Xy / 16,
-            UvMax = faceJson.Uv.Zw / 16
+            UvMax = faceJson.Uv.Zw / 16,
+            CullFace = cull
         };
 
         Vector3 min = from / 16;

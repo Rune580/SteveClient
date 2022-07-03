@@ -1,10 +1,13 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.AssetManagement;
+using SteveClient.Engine.AssetManagement.ModelLoading;
 using SteveClient.Engine.Components;
 using SteveClient.Engine.Descriptors;
 using SteveClient.Engine.Engines;
 using SteveClient.Engine.Engines.PacketProcessing;
+using SteveClient.Engine.Engines.Rendering;
 using SteveClient.Engine.Engines.ServerWorld;
+using SteveClient.Engine.Engines.Tools;
 using SteveClient.Engine.Networking;
 using SteveClient.Engine.Rendering.Models;
 using SteveClient.Minecraft.Data;
@@ -49,9 +52,11 @@ public class CompositionRoot
         var spawnBlockStateEntityEngine = new SpawnBlockStateEntityEngine(entityFactory, world);
         var moveEntityEngine = new MoveEntityEngine(world);
         var moveAndRotateEntityEngine = new MoveAndRotateEntityEngine(world);
+        var spawnBlockEntityEngine = new SpawnBlockModelEntityEngine(entityFactory);
         
         // Create render engines
         var renderModelFiltersEngine = new RenderModelFiltersEngine();
+        var renderBlockEntitiesEngine = new RenderBlockStateEntityEngine();
         
         // Add engines
         enginesRoot.AddEngine(applyVelocityToSimpleRigidBodiesEngine);
@@ -63,10 +68,12 @@ public class CompositionRoot
         enginesRoot.AddEngine(spawnBlockStateEntityEngine);
         enginesRoot.AddEngine(moveEntityEngine);
         enginesRoot.AddEngine(moveAndRotateEntityEngine);
+        enginesRoot.AddEngine(spawnBlockEntityEngine);
         
         // Add render engines
         enginesRoot.AddEngine(updateCameraStateFromCamerasEngine);
         enginesRoot.AddEngine(renderModelFiltersEngine);
+        enginesRoot.AddEngine(renderBlockEntitiesEngine);
         
         // Register scheduled engines
         Scheduler.RegisterScheduledEngine(applyVelocityToSimpleRigidBodiesEngine);
@@ -78,9 +85,11 @@ public class CompositionRoot
         Scheduler.RegisterScheduledEngine(spawnBlockStateEntityEngine);
         Scheduler.RegisterScheduledEngine(moveEntityEngine);
         Scheduler.RegisterScheduledEngine(moveAndRotateEntityEngine);
+        Scheduler.RegisterScheduledEngine(spawnBlockEntityEngine);
 
         GraphicsScheduler.RegisterScheduledEngine(updateCameraStateFromCamerasEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderModelFiltersEngine);
+        GraphicsScheduler.RegisterScheduledEngine(renderBlockEntitiesEngine);
         
         BuildCamera(entityFactory, clientSize);
     }
@@ -89,6 +98,7 @@ public class CompositionRoot
     {
         DataGenerator.GenerateData();
         TextureRegistry.Add(Textures.GetTextures());
+        BlockModelLoader.LoadBlockModels();
     }
 
     private void BuildCamera(IEntityFactory entityFactory, Vector2i clientSize)

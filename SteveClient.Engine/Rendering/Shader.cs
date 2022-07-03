@@ -63,6 +63,9 @@ public class Shader
             offset += GetAttributeByteSize(attribute);
         }
     }
+    
+    public Shader(string shaderName, params ShaderAttribute[] shaderAttributes) :
+        this($"{shaderName}.vert", $"{shaderName}.frag", shaderAttributes) { }
 
     private int GetStride(ShaderAttribute[] shaderAttributes)
     {

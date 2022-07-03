@@ -1,7 +1,5 @@
-﻿using System.Collections.Immutable;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using SteveClient.Engine.Rendering.Models;
-using SteveClient.Engine.Rendering.VertexData;
 
 namespace SteveClient.Engine.Rendering.Builders;
 
