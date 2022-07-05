@@ -110,10 +110,19 @@ public class BlockModelsParser : IMinecraftAssetParser
         RawBlockFace face = new RawBlockFace
         {
             Texture = faceJson.Texture,
-            UvMin = faceJson.Uv.Xy / 16,
-            UvMax = faceJson.Uv.Zw / 16,
             CullFace = cull
         };
+
+        if (faceJson.Uv.HasValue)
+        {
+            face.UvMin = faceJson.Uv.Value.Xy / 16f;
+            face.UvMax = faceJson.Uv.Value.Zw / 16f;
+        }
+        else
+        {
+            face.UvMin = Vector2.Zero;
+            face.UvMax = Vector2.One;
+        }
 
         Vector3 min = from / 16;
         Vector3 max = to / 16;

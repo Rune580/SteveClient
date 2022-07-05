@@ -79,8 +79,10 @@ public class BlockRenderHelper
 
     public BlockRenderHelper WithBlockModel(BlockModel blockModel)
     {
-        foreach (var quad in blockModel.Quads)
+        for (var i = 0; i < blockModel.Quads.Length; i++)
         {
+            var quad = blockModel.Quads[i];
+            
             Vector3[] vertices =
             {
                 blockModel.Vertices[quad.Vertices[0]],
@@ -88,9 +90,12 @@ public class BlockRenderHelper
                 blockModel.Vertices[quad.Vertices[2]],
                 blockModel.Vertices[quad.Vertices[3]]
             };
-            
-            TexturedQuad texturedQuad = new TexturedQuad(vertices, quad.Uvs, quad.TextureResourceName);
-            
+
+            int offset = i * 6;
+            uint[] triangles = blockModel.Indices[offset..(offset + 6)];
+
+            TexturedQuad texturedQuad = new TexturedQuad(vertices, quad.Uvs, triangles, quad.TextureResourceName);
+
             _quads.Add(texturedQuad);
         }
 

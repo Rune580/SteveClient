@@ -28,7 +28,7 @@ public class FacesJson
     public class FaceJson
     {
         [JsonPropertyName("uv"), JsonConverter(typeof(Vector4JsonConverter))]
-        public Vector4 Uv { get; set; }
+        public Vector4? Uv { get; set; }
         
         [JsonPropertyName("texture")]
         public string Texture { get; set; }
