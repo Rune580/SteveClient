@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using ImGuiNET;
+using OpenTK.Mathematics;
 
 namespace SteveClient.Engine.Rendering.VertexData;
 
@@ -9,6 +10,37 @@ public static class VertexFactories
     public static VertexFactory GetFactory(Type type) => VertexFactoryMap[type];
 
     #region Factories
+
+    public static readonly VertexFactory PositionFactory = new(typeof(Position),
+        (positions, _, _, _) =>
+        {
+            if (positions is null)
+                throw new NullReferenceException();
+
+            IVertex[] result = new IVertex[positions.Length];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = new Position(positions[i]);
+
+            return result;
+        });
+
+    public static readonly VertexFactory PositionTextureFactory = new(typeof(PositionTexture),
+        (positions, _, _, uvs) =>
+        {
+            if (positions is null)
+                throw new NullReferenceException();
+
+            if (uvs is null)
+                throw new NullReferenceException();
+
+            IVertex[] result = new IVertex[positions.Length];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = new PositionTexture(positions[i], uvs[i]);
+
+            return result;
+        });
 
     public static readonly VertexFactory PositionColorFactory = new(typeof(PositionColor),
         (positions, _, colors, _) =>

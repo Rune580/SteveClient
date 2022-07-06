@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="FreeTypeSharp" Version="2.0.0.12-ci" />
       <PackageReference Include="Iconic.Zlib.Netstandard" Version="1.0.0" />
       <PackageReference Include="OpenTK" Version="4.7.4" />
       <PackageReference Include="OpenTK.ImGui" Version="1.0.0" />
@@ -21,12 +22,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Rendering\Shaders\**">
+        <EmbeddedResource Include="Resources\Shaders\**">
             <LogicalName>%(Filename)%(Extension)</LogicalName>
         </EmbeddedResource>
+        <Content Include="Resources\Fonts\**">
+            <Link>fonts\%(Filename)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Resources" />
       <Folder Include="SimpleData" />
     </ItemGroup>
 

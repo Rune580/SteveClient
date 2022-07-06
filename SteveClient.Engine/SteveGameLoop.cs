@@ -1,4 +1,9 @@
-﻿namespace SteveClient.Engine;
+﻿using OpenTK.Mathematics;
+using SteveClient.Engine.Menus;
+using SteveClient.Engine.Rendering.Definitions;
+using SteveClient.Engine.Rendering.Font;
+
+namespace SteveClient.Engine;
 
 public class SteveGameLoop
 {
@@ -17,7 +22,18 @@ public class SteveGameLoop
         _graphicsFrameRate = 1;
 
         _main = new ScheduledAction(() => scheduler.Execute(GetLastDelta()), 1, false);
-        _graphics = new ScheduledAction(() => graphicsScheduler.Execute(GetLastGraphicsDelta()), _graphicsFrameRate, true);
+        
+        _graphics = new ScheduledAction(() =>
+        {
+            RenderLayerDefinitions.FlushAll();
+            
+            FontRenderer.DrawTextBillBoard(new FontString("Ligma Balls"), new Vector3(0, 1, 4), (1f / 32f) / 4f, DirectionMenu.Direction);
+            
+            FontRenderer.DrawTextBillBoard(new FontString("Bigma Lalls"), new Vector3(0, 1, 5), (1f / 32f) / 4f, DirectionMenu.Direction, Color4.Red);
+            
+            graphicsScheduler.Execute(GetLastGraphicsDelta());
+            RenderLayerDefinitions.RebuildAll();
+        }, _graphicsFrameRate, true);
     }
 
     public void Tick(double elapsedTime)

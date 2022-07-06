@@ -122,13 +122,21 @@ public class Shader
     public void SetMatrix4(string name, Matrix4 data)
     {
         GL.UseProgram(Handle);
-        GL.UniformMatrix4(_uniformLocations[name], true, ref data);
+        
+        if (!_uniformLocations.TryGetValue(name, out int loc))
+            return;
+        
+        GL.UniformMatrix4(loc, true, ref data);
     }
 
     public void SetMatrix4(string name, bool transpose, ref Matrix4 data)
     {
         GL.UseProgram(Handle);
-        GL.UniformMatrix4(_uniformLocations[name], transpose, ref data);
+        
+        if (!_uniformLocations.TryGetValue(name, out int loc))
+            return;
+        
+        GL.UniformMatrix4(loc, transpose, ref data);
     }
 
     /// <summary>
@@ -139,7 +147,11 @@ public class Shader
     public void SetVector4(string name, Vector4 data)
     {
         GL.UseProgram(Handle);
-        GL.Uniform4(_uniformLocations[name], data);
+        
+        if (!_uniformLocations.TryGetValue(name, out int loc))
+            return;
+        
+        GL.Uniform4(loc, data);
     }
 
     /// <summary>
@@ -150,13 +162,21 @@ public class Shader
     public void SetColor(string name, Color4 color)
     {
         GL.UseProgram(Handle);
-        GL.Uniform4(_uniformLocations[name], color);
+        
+        if (!_uniformLocations.TryGetValue(name, out int loc))
+            return;
+        
+        GL.Uniform4(loc, color);
     }
 
     public void SetUniform1(string name, int data)
     {
         GL.UseProgram(Handle);
-        GL.Uniform1(_uniformLocations[name], data);
+        
+        if (!_uniformLocations.TryGetValue(name, out int loc))
+            return;
+        
+        GL.Uniform1(loc, data);
     }
 
     private static void CompileShader(int shader)

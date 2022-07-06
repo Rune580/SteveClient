@@ -44,9 +44,12 @@ public class SteveClientWindow : GameWindow
 
     private void RegisterMenus()
     {
-        _menus.Add(new ServerTesting());
-        _menus.Add(new DebugWidget());
+        //_menus.Add(new ServerTesting());
+        //_menus.Add(new DebugWidget());
         _menus.Add(new BlockStateMenu());
+        _menus.Add(new WireframeWidget());
+        //_menus.Add(new DirectionMenu());
+        _menus.Add(new BlockPosMenu());
     }
 
     protected override void OnResize(ResizeEventArgs e)
@@ -70,9 +73,9 @@ public class SteveClientWindow : GameWindow
         {
             renderLayer.Bind();
             renderLayer.RebuildBuffers();
-            renderLayer.BeforeRender();
+            renderLayer.PreRender();
             renderLayer.Render();
-            renderLayer.AfterRender();
+            renderLayer.PostRender();
         }
 
         ImGuiController.Update(this, (float)e.Time);

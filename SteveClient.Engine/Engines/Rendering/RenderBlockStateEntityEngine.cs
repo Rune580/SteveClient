@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.AssetManagement;
 using SteveClient.Engine.Components;
+using SteveClient.Engine.Menus;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Utils;
 using SteveClient.Minecraft.Data;
@@ -19,8 +20,6 @@ public class RenderBlockStateEntityEngine : RenderingEngine
     
     public override void Execute(float delta)
     {
-        RenderLayerDefinitions.PositionTextureColorLayer.Flush();
-        
         foreach (var ((transforms, blockStates, count), _) in entitiesDB.QueryEntities<TransformComponent, MinecraftBlockStateComponent>(GameGroups.WorldBlocks.Groups))
         {
             for (int i = 0; i < count; i++)
@@ -34,12 +33,10 @@ public class RenderBlockStateEntityEngine : RenderingEngine
                     continue;
 
                 _renderHelper.WithBlockModel(ModelRegistry.BlockModels[resourceName])
-                    .WithTransform(ref transform)
+                    .Translate(BlockPosMenu.Position)
                     .WithColor(Color4.White)
-                    .Upload(RenderLayerDefinitions.PositionTextureColorLayer);
+                    .Upload(RenderLayerDefinitions.ScreenSpacePositionTextureLayer);
             }
         }
-        
-        RenderLayerDefinitions.PositionTextureColorLayer.RebuildBuffers();
     }
 }

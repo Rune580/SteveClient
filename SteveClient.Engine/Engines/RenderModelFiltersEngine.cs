@@ -12,8 +12,6 @@ public class RenderModelFiltersEngine : BaseEngine
 {
     public override void Execute(float delta)
     {
-        RenderLayerDefinitions.PositionColorRenderLayer.Flush();
-
         foreach (var ((transforms, modelFilters, count), _) in entitiesDB.QueryEntities<TransformComponent, ModelFilterComponent>(GameGroups.ModelFilters.Groups))
         {
             for (int i = 0; i < count; i++)
@@ -29,7 +27,5 @@ public class RenderModelFiltersEngine : BaseEngine
                     .Upload(RenderLayerDefinitions.PositionColorRenderLayer);
             }
         }
-        
-        RenderLayerDefinitions.PositionColorRenderLayer.RebuildBuffers();
     }
 }

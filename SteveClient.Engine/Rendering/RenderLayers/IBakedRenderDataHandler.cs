@@ -3,7 +3,7 @@ using SteveClient.Engine.Rendering.Models;
 
 namespace SteveClient.Engine.Rendering.RenderLayers;
 
-public interface IBakedRenderDataHandler
+public interface IBakedRenderDataHandler : IVertexConsumer
 {
     public void UploadRenderData(IBakedRenderData renderData);
 }

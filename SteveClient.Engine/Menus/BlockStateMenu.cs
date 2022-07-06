@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using ImGuiNET;
 using SteveClient.Engine.Engines.Tools;
 
@@ -18,7 +19,15 @@ public class BlockStateMenu : IMenu
         if (ImGui.Button("Load"))
         {
             string resourceName = GetResourceNameInput();
-            SpawnBlockModelEntityEngine.LoadBlockState(resourceName);
+
+            if (int.TryParse(resourceName, out int blockStateId))
+            {
+                SpawnBlockModelEntityEngine.LoadBlockState(blockStateId);
+            }
+            else
+            {
+                SpawnBlockModelEntityEngine.LoadBlockState(resourceName);
+            }
         }
 
         ImGui.End();

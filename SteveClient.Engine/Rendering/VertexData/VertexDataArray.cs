@@ -32,12 +32,29 @@ public class VertexDataArray
 
         return this;
     }
+    
+    public VertexDataArray WithVector2(float x, float y)
+    {
+        Add(x);
+        Add(y);
+
+        return this;
+    }
 
     public VertexDataArray WithVector3(Vector3 item)
     {
         Add(item.X);
         Add(item.Y);
         Add(item.Z);
+
+        return this;
+    }
+    
+    public VertexDataArray WithVector3(float x, float y, float z)
+    {
+        Add(x);
+        Add(y);
+        Add(z);
 
         return this;
     }
@@ -58,6 +75,16 @@ public class VertexDataArray
         Add(item.G);
         Add(item.B);
         Add(item.A);
+
+        return this;
+    }
+    
+    public VertexDataArray WithColor4(float r, float g, float b, float a)
+    {
+        Add(r);
+        Add(g);
+        Add(b);
+        Add(a);
 
         return this;
     }

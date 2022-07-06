@@ -11,18 +11,18 @@ namespace SteveClient.Engine.Rendering.RenderLayers;
 public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHandler
     where TVertex : IVertex
 {
-    private readonly VertexDefinitions.VertexDefinition<TVertex> _definition;
+    protected readonly VertexDefinitions.VertexDefinition<TVertex> Definition;
     private readonly int _elementBufferObject;
     private readonly int _vertexBufferObject;
     private readonly int _vertexArrayObject;
 
-    private readonly List<IBakedRenderData> _renderData = new();
+    protected readonly List<IBakedRenderData> RenderData = new();
 
-    private int _elements;
+    private uint _elements;
 
     public DefaultRenderLayer(VertexDefinitions.VertexDefinition<TVertex> vertexDefinition)
     {
-        _definition = vertexDefinition;
+        Definition = vertexDefinition;
         
         _vertexArrayObject = GL.GenVertexArray();
         _vertexBufferObject = GL.GenBuffer();
@@ -32,22 +32,24 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         
-        _definition.Shader.Use();
+        Definition.Shader.Use();
     }
 
-    public override Shader Shader => _definition.Shader;
+    public override Shader Shader => Definition.Shader;
 
-    public override VertexFactory GetVertexFactory() => GetFactory(_definition.VertexType);
+    public VertexFactory GetVertexFactory() => GetFactory(Definition.VertexType);
 
     public void UploadRenderData(IBakedRenderData renderData)
     {
-        _renderData.Add(renderData);
+        for (int i = 0; i < renderData.Indices.Length; i++)
+            renderData.Indices[i] =_elements + renderData.Indices[i];
+        
+        RenderData.Add(renderData);
+        _elements += (uint)(renderData.Vertices.Length / Definition.VertexSize);
     }
 
     public override void RebuildBuffers()
     {
-        _elements = 0;
-        
         GL.BindVertexArray(_vertexArrayObject);
         
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
@@ -59,10 +61,8 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
         int vertexOffset = 0;
         int indexOffset = 0;
 
-        foreach (var renderData in _renderData)
+        foreach (var renderData in RenderData)
         {
-            _elements += renderData.Indices.Length;
-            
             var vertexSize = renderData.SizeOfVertices;
             var indexSize = renderData.SizeOfIndices;
             
@@ -83,7 +83,7 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         
-        _definition.Shader.Use();
+        Definition.Shader.Use();
     }
 
     public override void BeforeRender()
@@ -96,16 +96,19 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
     {
         int offset = 0;
         
-        foreach (var bakedModel in _renderData)
+        foreach (var bakedModel in RenderData)
         {
             if (bakedModel.HasTexture)
                 bakedModel.UseTexture();
+
+            if (bakedModel.HasShaderProperties)
+                bakedModel.ApplyShaderProperties(Shader);
             
-            _definition.Shader.SetMatrix4("model", bakedModel.Transform);
-            _definition.Shader.SetMatrix4("view", CameraState.ViewMatrix);
-            _definition.Shader.SetMatrix4("projection", CameraState.ProjectionMatrix);
+            Definition.Shader.SetMatrix4("model", bakedModel.Transform);
+            Definition.Shader.SetMatrix4("view", CameraState.ViewMatrix);
+            Definition.Shader.SetMatrix4("projection", CameraState.ProjectionMatrix);
             
-            GL.DrawElements(_definition.PrimitiveType, bakedModel.Indices.Length, DrawElementsType.UnsignedInt, offset);
+            GL.DrawElements(Definition.PrimitiveType, bakedModel.Indices.Length, DrawElementsType.UnsignedInt, offset);
 
             offset += bakedModel.SizeOfIndices;
         }
@@ -118,6 +121,7 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
 
     public override void Flush()
     {
-        _renderData.Clear();
+        RenderData.Clear();
+        _elements = 0;
     }
 }

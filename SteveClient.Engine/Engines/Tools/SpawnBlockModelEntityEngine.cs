@@ -33,19 +33,24 @@ public class SpawnBlockModelEntityEngine : BaseEngine
         if (BlockStateQueue.IsEmpty)
             return;
 
-        if (!BlockStateQueue.TryDequeue(out var resourceName))
+        if (!BlockStateQueue.TryDequeue(out var blockStateId))
             return;
 
         var optional = entitiesDB.QueryUniqueEntityOptional<MinecraftBlockStateComponent>(GameGroups.WorldBlocks.BuildGroup);
         ref var component = ref optional.Get1();
 
-        component.BlockStateId = Blocks.GetDefaultBlockStateId(resourceName);
+        component.BlockStateId = blockStateId;
     }
 
-    private static readonly ConcurrentQueue<string> BlockStateQueue = new();
+    private static readonly ConcurrentQueue<int> BlockStateQueue = new();
 
     public static void LoadBlockState(string resourceName)
     {
-        BlockStateQueue.Enqueue(resourceName);
+        BlockStateQueue.Enqueue(Blocks.GetDefaultBlockStateId(resourceName));
+    }
+
+    public static void LoadBlockState(int blockStateId)
+    {
+        BlockStateQueue.Enqueue(blockStateId);
     }
 }

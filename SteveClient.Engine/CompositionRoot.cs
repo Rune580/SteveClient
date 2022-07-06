@@ -109,7 +109,7 @@ public class CompositionRoot
         
         initializer.Init(new TransformComponent());
         initializer.Init(new SimpleRigidBodyComponent());
-        initializer.Init(new CameraComponent(clientSize.X / (float)clientSize.Y));
+        initializer.Init(new CameraComponent(clientSize));
         initializer.Init(new CameraControllerComponent(1.5f));
     }
 }

@@ -22,6 +22,7 @@ public class BlockRenderHelper
         _quads = new List<TexturedQuad>();
         
         _currentColor = Color4.White;
+        _transform = Matrix4.CreateTranslation(Vector3.Zero);
     }
 
     public void Upload<TRenderLayer>(TRenderLayer renderLayer)
@@ -41,6 +42,7 @@ public class BlockRenderHelper
         }
         
         _quads.Clear();
+        _transform = Matrix4.CreateTranslation(Vector3.Zero);
     }
 
     public BlockRenderHelper WithColor(Color4 color)
@@ -92,9 +94,9 @@ public class BlockRenderHelper
             };
 
             int offset = i * 6;
-            uint[] triangles = blockModel.Indices[offset..(offset + 6)];
+            //uint[] triangles = blockModel.Indices[offset..(offset + 6)];
 
-            TexturedQuad texturedQuad = new TexturedQuad(vertices, quad.Uvs, triangles, quad.TextureResourceName);
+            TexturedQuad texturedQuad = new TexturedQuad(vertices, quad.Uvs, quad.TextureResourceName);
 
             _quads.Add(texturedQuad);
         }

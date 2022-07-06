@@ -11,10 +11,19 @@ public static class ShaderDefinitions
 
     public static Shader PositionColorShader { get; private set; }
     public static Shader PositionTextureColorShader { get; private set; }
-
+    public static Shader PositionTextureShader { get; private set; }
+    public static Shader DefaultFontShader { get; private set; }
+    public static Shader PosTexWireframeShader { get; private set; }
+    public static Shader LineShader { get; private set; }
+    
     public static void LoadShaders()
     {
         PositionColorShader = new Shader("PositionColor.vert", "PositionColor.frag", PositionAttribute, ColorAttribute);
         PositionTextureColorShader = new Shader("PositionTextureColor", PositionAttribute, UvAttribute, ColorAttribute);
+        PositionTextureShader = new Shader("PositionTexture", PositionAttribute, UvAttribute);
+        DefaultFontShader = new Shader("DefaultFont", PositionAttribute, UvAttribute);
+        
+        PosTexWireframeShader = new Shader("Wireframe", PositionAttribute, UvAttribute);
+        LineShader = new Shader("Line", PositionAttribute);
     }
 }

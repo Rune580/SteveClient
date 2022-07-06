@@ -11,6 +11,9 @@ public interface IBakedRenderData
     public bool HasTexture { get; }
     public void UseTexture();
     
+    public bool HasShaderProperties { get; }
+    public void ApplyShaderProperties(Shader shader);
+    
     public int SizeOfVertices { get; }
     public int SizeOfIndices { get; }
 }

@@ -20,7 +20,10 @@ public class UpdateCameraStateFromCamerasEngine : IQueryingEntitiesEngine, ISche
                 ref var camera = ref cameras[i];
 
                 if (camera.IsActive)
-                    CameraState.Update(camera.GetViewMatrix(transform.Position / 2), camera.GetProjectionMatrix());
+                    CameraState.Update(camera.GetViewMatrix(transform.Position / 2),
+                        camera.GetProjectionMatrix(),
+                        camera.GetScreenSpaceMatrix(),
+                        transform.Position, camera.Front, camera.Up, camera.Right);
             }
         }
     }
