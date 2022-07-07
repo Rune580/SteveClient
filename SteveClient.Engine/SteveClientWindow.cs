@@ -30,7 +30,7 @@ public class SteveClientWindow : GameWindow
 
         ImGuiController = new ImGuiController(ClientSize.X, ClientSize.Y);
         
-        var logic = new CompositionRoot(ClientSize);
+        var logic = new CompositionRoot();
         _gameLoop = new SteveGameLoop(logic.Scheduler, logic.GraphicsScheduler);
         _gameLoop.SetGraphicsFrameRate(144);
         
@@ -93,8 +93,8 @@ public class SteveClientWindow : GameWindow
         base.OnUpdateFrame(e);
         
         CursorState = InputManager.CursorState;
-        InputManager.UpdateState(KeyboardState, MouseState);
-        Rendering.WindowState.IsFocused = IsFocused;
+        InputManager.UpdateState(KeyboardState, MouseState, MousePosition);
+        Rendering.WindowState.Update(IsFocused, ClientSize);
 
         _gameLoop.Tick(e.Time);
     }

@@ -21,11 +21,11 @@ public class ScreenSpaceRenderLayer<TVertex> : DefaultRenderLayer<TVertex> where
             if (bakedModel.HasShaderProperties)
                 bakedModel.ApplyShaderProperties(Shader);
             
-            Definition.Shader.SetMatrix4("model", bakedModel.Transform);
-            Definition.Shader.SetMatrix4("view", CameraState.ScreenSpaceViewMatrix);
-            Definition.Shader.SetMatrix4("projection", CameraState.ScreenSpaceProjectionMatrix);
+            Shader.SetMatrix4("model", bakedModel.Transform);
+            Shader.SetMatrix4("view", CameraState.ScreenSpaceViewMatrix);
+            Shader.SetMatrix4("projection", CameraState.ScreenSpaceProjectionMatrix);
             
-            Definition.Shader.SetColor("color", Color4.White);
+            Shader.SetColor("color", Color4.White);
             
             GL.DrawElements(Definition.PrimitiveType, bakedModel.Indices.Length, DrawElementsType.UnsignedInt, offset);
 

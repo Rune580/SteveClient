@@ -8,10 +8,16 @@ uniform vec4 color;
 uniform sampler2D textureSampler;
 
 void main() {
-    vec4 sampled = vec4(1, 1, 1, texture(textureSampler, texCoord).r);
+    float dist = 0.5 - texture(textureSampler, texCoord).r;
     
-    if (sampled.a < 0.5)
+    vec2 dDist = vec2(dFdx(dist), dFdy(dist));
+    
+    float pixelDist = dist / length(dDist);
+    
+    float alpha = clamp(0.5 - pixelDist, 0, 1);
+    if (alpha == 0)
         discard;
     
-    FragColor = color * sampled;
+    vec4 text = vec4(1, 1, 1, alpha);
+    FragColor = color * text;
 }

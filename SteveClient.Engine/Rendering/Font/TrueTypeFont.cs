@@ -14,7 +14,7 @@ public class TrueTypeFont
     {
         string fontPath = ParsePath(font);
 
-        FreeTypeLibrary lib = new FreeTypeLibrary();
+        using FreeTypeLibrary lib = new FreeTypeLibrary();
 
         Face face = new Face(lib, fontPath);
 

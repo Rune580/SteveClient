@@ -11,7 +11,7 @@ public class BlockPosMenu : IMenu
         set => _direction = new System.Numerics.Vector3(value.X, value.Y, value.Z);
     }
 
-    private static System.Numerics.Vector3 _direction;
+    private static System.Numerics.Vector3 _direction = new System.Numerics.Vector3(0, 0, -1);
     
     public void Draw()
     {

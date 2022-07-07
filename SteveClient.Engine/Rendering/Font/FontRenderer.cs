@@ -1,12 +1,11 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.Rendering.Definitions;
-using SteveClient.Engine.Rendering.Utils;
 
 namespace SteveClient.Engine.Rendering.Font;
 
 public static class FontRenderer
 {
-    public static void DrawText(FontString text, Vector3 pos, float scale, Vector3 dir, Color4 color)
+    private static BakedTextRender BakeText(FontString text, Vector3 pos, float scale, Vector3 dir, Color4 color)
     {
         List<Character> characters = new List<Character>();
         List<Matrix4> transforms = new List<Matrix4>();
@@ -26,15 +25,22 @@ public static class FontRenderer
             offset += (c.Advance >> 6) * scale;
 
             Matrix4 scaleM = Matrix4.CreateScale(new Vector3(w, h, 1.0f));
-            Matrix4 translation = Matrix4.CreateTranslation(new Vector3(xRel, yRel, 0));
+            Matrix4 translation = Matrix4.CreateTranslation(new Vector3(xRel, -yRel, 0));
 
             Matrix4 transform = scaleM * translation * rotM * origin;
             
             characters.Add(c);
             transforms.Add(transform);
         }
+
+        return new BakedTextRender(characters.ToArray(), transforms.ToArray(), color);
+    }
+    
+    public static void DrawText(FontString text, Vector3 pos, float scale, Vector3 dir, Color4 color)
+    {
+        BakedTextRender textRender = BakeText(text, pos, scale, dir, color);
         
-        RenderLayerDefinitions.DefaultFontLayer.Upload(new BakedTextRender(characters.ToArray(), transforms.ToArray(), color));
+        RenderLayerDefinitions.WorldFontLayer.Upload(textRender);
     }
 
     public static void DrawText(FontString text, Vector3 pos, float scale, Vector3 dir)
@@ -42,19 +48,16 @@ public static class FontRenderer
         DrawText(text, pos, scale, dir, Color4.White);
     }
 
-    private static Quaternion Face(Vector3 pos)
+    public static void DrawTextScreenSpace(FontString text, Vector3 pos, float scale, Vector3 dir)
     {
-        Vector3 dist = CameraState.Position - pos;
-        
-        Vector3 dirA = -Vector3.UnitZ;
-        Vector3 dirB = dist.Normalized();
+        BakedTextRender textRender = BakeText(text, pos, scale, dir, Color4.White);
 
-        float angle = (float)Math.Acos(Vector3.Dot(dirA, dirB));
-        Vector3 axis = Vector3.Cross(dirA, dirB).Normalized();
+        RenderLayerDefinitions.ScreenFontLayer.Upload(textRender);
+    }
 
-        Quaternion rotation = Quaternion.FromAxisAngle(axis, angle);
-
-        return rotation;
+    public static void DrawTextScreenSpace(FontString text, Vector2 pos, float scale)
+    {
+        DrawTextScreenSpace(text, new Vector3(pos.X, pos.Y, -1), scale, Vector3.UnitZ);
     }
 
     public static void DrawTextBillBoard(FontString text, Vector3 pos, float scale, Vector3 dir, Color4 color)
@@ -92,44 +95,26 @@ public static class FontRenderer
             transforms.Add(transform);
         }
         
-        RenderLayerDefinitions.DefaultFontLayer.Upload(new BakedTextRender(characters.ToArray(), transforms.ToArray(), color));
+        RenderLayerDefinitions.WorldFontLayer.Upload(new BakedTextRender(characters.ToArray(), transforms.ToArray(), color));
     }
 
     public static void DrawTextBillBoard(FontString text, Vector3 pos, float scale, Vector3 dir)
     {
         DrawTextBillBoard(text, pos, scale, dir, Color4.White);
     }
-
-    private static Matrix4 Billboard(Matrix4 modelView)
+    
+    private static Quaternion Face(Vector3 pos)
     {
-        modelView[0, 0] = 1;
-        modelView[0, 1] = 0;
-        modelView[0, 2] = 0;
-
-        modelView[1, 0] = 0;
-        modelView[1, 1] = 1;
-        modelView[1, 2] = 0;
+        Vector3 dist = CameraState.Position - pos;
         
-        modelView[2, 0] = 0;
-        modelView[2, 1] = 0;
-        modelView[2, 2] = 1;
+        Vector3 dirA = -Vector3.UnitZ;
+        Vector3 dirB = dist.Normalized();
 
-        return modelView;
-    }
+        float angle = (float)Math.Acos(Vector3.Dot(dirA, dirB));
+        Vector3 axis = Vector3.Cross(dirA, dirB).Normalized();
 
-    private static Matrix4 SetIdentity(Matrix4 mv)
-    {
-        float d = MathF.Sqrt(mv[0,0] * mv[0,0] + mv[1,1] * mv[1,1] + mv[2,2] * mv[2,2]);
-        mv[0,0] = d;
-        mv[0,1] = 0;
-        mv[0,2] = 0;
-        mv[1,0] = 0;
-        mv[1,1] = d;
-        mv[1,2] = 0;
-        mv[2,0] = 0;
-        mv[2,1] = 0;
-        mv[2,2] = d;
+        Quaternion rotation = Quaternion.FromAxisAngle(axis, angle);
 
-        return mv;
+        return rotation;
     }
 }

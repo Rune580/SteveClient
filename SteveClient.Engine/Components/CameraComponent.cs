@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using SteveClient.Engine.Rendering;
 using Svelto.ECS;
 
 namespace SteveClient.Engine.Components;
@@ -11,9 +12,6 @@ public struct CameraComponent : IEntityComponent
     public Vector3 Front;
     public Vector3 Up;
     public Vector3 Right;
-
-    public Vector2i ScreenSize;
-    public float AspectRatio;
     
     // Look
     private float _pitch;
@@ -21,7 +19,7 @@ public struct CameraComponent : IEntityComponent
     
     private float _fov;
 
-    public CameraComponent(Vector2i screenSize)
+    public CameraComponent()
     {
         IsActive = true;
         
@@ -32,12 +30,7 @@ public struct CameraComponent : IEntityComponent
         _pitch = 0;
         _yaw = -MathHelper.PiOver2;
         _fov = MathHelper.PiOver2;
-
-        ScreenSize = screenSize;
-        AspectRatio = ScreenSize.X / (float)ScreenSize.Y;
     }
-    
-    public CameraComponent() : this(new Vector2i(1280, 720)) { }
 
     public float Pitch
     {
@@ -70,11 +63,13 @@ public struct CameraComponent : IEntityComponent
         }
     }
 
+    public float AspectRatio => WindowState.ScreenSize.X / (float)WindowState.ScreenSize.Y;
+
     public Matrix4 GetViewMatrix(Vector3 position) => Matrix4.LookAt(position, position + Front, Up);
 
     public Matrix4 GetProjectionMatrix() => Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 100f);
     
-    public Matrix4 GetScreenSpaceMatrix() => Matrix4.CreateOrthographic(AspectRatio * 10, 10, -100, 100f);
+    public Matrix4 GetScreenSpaceMatrix() => Matrix4.CreateOrthographic(WindowState.ScreenSize.X, WindowState.ScreenSize.Y, 0.01f, 1000f);
 
     private void UpdateVectors()
     {

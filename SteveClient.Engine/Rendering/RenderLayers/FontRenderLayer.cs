@@ -17,14 +17,17 @@ public class FontRenderLayer : BaseRenderLayer
     private readonly List<BakedTextRender> _textRenders = new();
     private readonly float[] _vertices;
     private readonly uint[] _indices;
+    private readonly RenderTarget _renderTarget;
 
-    public FontRenderLayer()
+    public FontRenderLayer(RenderTarget renderTarget)
     {
+        _renderTarget = renderTarget;
+        
         _vertices = new VertexDataArray(PositionTexture.Size * 4)
-            .WithVector3(0f, 0f, 0).WithVector2(1, 1)
-            .WithVector3(0f, -1f, 0).WithVector2(1, 0)
-            .WithVector3(-1f, -1f, 0).WithVector2(0, 0)
-            .WithVector3(-1f, 0f, 0).WithVector2(0, 1);
+            .WithVector3(1f, 1f, 0).WithVector2(1, 0)
+            .WithVector3(1f, 0f, 0).WithVector2(1, 1)
+            .WithVector3(0f, 0f, 0).WithVector2(0, 1)
+            .WithVector3(0f, 1f, 0).WithVector2(0, 0);
 
         _indices = new uint[]
         {
@@ -67,7 +70,7 @@ public class FontRenderLayer : BaseRenderLayer
     {
         GL.Enable(EnableCap.DepthTest);
         GL.CullFace(CullFaceMode.Back);
-        GL.Disable(EnableCap.Blend);
+        GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
 
@@ -84,8 +87,8 @@ public class FontRenderLayer : BaseRenderLayer
                 character.Bind();
                 
                 Shader.SetMatrix4("model", transform);
-                Shader.SetMatrix4("view", CameraState.ViewMatrix);
-                Shader.SetMatrix4("projection", CameraState.ProjectionMatrix);
+                Shader.SetMatrix4("view", _renderTarget.ViewMatrix);
+                Shader.SetMatrix4("projection", _renderTarget.ProjectionMatrix);
                 Shader.SetColor("color", color);
                 
                 GL.DrawElements(_definition.PrimitiveType, _indices.Length, DrawElementsType.UnsignedInt, 0);

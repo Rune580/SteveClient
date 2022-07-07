@@ -33,9 +33,9 @@ public class RenderBlockStateEntityEngine : RenderingEngine
                     continue;
 
                 _renderHelper.WithBlockModel(ModelRegistry.BlockModels[resourceName])
-                    .Translate(BlockPosMenu.Position)
+                    .WithTransform(ref transform)
                     .WithColor(Color4.White)
-                    .Upload(RenderLayerDefinitions.ScreenSpacePositionTextureLayer);
+                    .Upload(RenderLayerDefinitions.PositionTextureColorLayer);
             }
         }
     }

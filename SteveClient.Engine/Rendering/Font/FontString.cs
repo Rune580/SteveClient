@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using OpenTK.Mathematics;
 
 namespace SteveClient.Engine.Rendering.Font;
 
@@ -20,16 +19,7 @@ public struct FontString : IEquatable<FontString>, IEnumerable<Character>
 
     public int Length => RawString.Length;
 
-    // public Vector2i GetSize()
-    // {
-    //     int width = 0;
-    //     int height = 0;
-    //
-    //     for (int i = 0; i < Length; i++)
-    //     {
-    //         this[i].
-    //     }
-    // }
+    public static implicit operator FontString(string text) => new(text);
 
     #region Equality Members
 
@@ -59,6 +49,8 @@ public struct FontString : IEquatable<FontString>, IEnumerable<Character>
     }
 
     #endregion
+    
+    #region Enumeration
 
     public CharacterEnumerator GetEnumerator()
     {
@@ -74,4 +66,6 @@ public struct FontString : IEquatable<FontString>, IEnumerable<Character>
     {
         return GetEnumerator();
     }
+
+    #endregion
 }

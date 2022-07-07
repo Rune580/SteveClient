@@ -24,7 +24,7 @@ public class CompositionRoot
     public EngineScheduler Scheduler { get; }
     public EngineScheduler GraphicsScheduler { get; }
 
-    public CompositionRoot(Vector2i clientSize)
+    public CompositionRoot()
     {
         LoadMinecraftData();
         
@@ -91,7 +91,7 @@ public class CompositionRoot
         GraphicsScheduler.RegisterScheduledEngine(renderModelFiltersEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderBlockEntitiesEngine);
         
-        BuildCamera(entityFactory, clientSize);
+        BuildCamera(entityFactory);
     }
 
     private void LoadMinecraftData()
@@ -101,7 +101,7 @@ public class CompositionRoot
         BlockModelLoader.LoadBlockModels();
     }
 
-    private void BuildCamera(IEntityFactory entityFactory, Vector2i clientSize)
+    private void BuildCamera(IEntityFactory entityFactory)
     {
         EntityInitializer initializer =
             entityFactory.BuildEntity<ControllableCameraDescriptor>(Egid.Camera,
@@ -109,7 +109,7 @@ public class CompositionRoot
         
         initializer.Init(new TransformComponent());
         initializer.Init(new SimpleRigidBodyComponent());
-        initializer.Init(new CameraComponent(clientSize));
+        initializer.Init(new CameraComponent());
         initializer.Init(new CameraControllerComponent(1.5f));
     }
 }
