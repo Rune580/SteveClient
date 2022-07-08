@@ -10,11 +10,12 @@ uniform sampler2D textureSampler;
 void main() {
     float dist = 0.5 - texture(textureSampler, texCoord).r;
     
-    vec2 dDist = vec2(dFdx(dist), dFdy(dist));
+    ivec2 size = textureSize(textureSampler, 0);
+    float dx = dFdx(texCoord.x) * size.x;
+    float dy = dFdy(texCoord.y) * size.y;
+    float toPixels = 24.0 * inversesqrt(dx * dx + dy * dy);
     
-    float pixelDist = dist / length(dDist);
-    
-    float alpha = clamp(0.5 - pixelDist, 0, 1);
+    float alpha = 1 - clamp(dist * toPixels + 0.5, 0.0, 1.0);
     if (alpha == 0)
         discard;
     

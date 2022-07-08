@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using SteveClient.Engine.Rendering.Shaders;
 
 namespace SteveClient.Engine.Rendering.Baked;
 

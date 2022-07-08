@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 using SteveClient.Engine.Rendering.Baked;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Models;
+using SteveClient.Engine.Rendering.Shaders;
 using SteveClient.Engine.Rendering.VertexData;
 using static SteveClient.Engine.Rendering.VertexData.VertexFactories;
 

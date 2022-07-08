@@ -1,7 +1,8 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using SteveClient.Engine.Rendering.Shaders.Processor;
 
-namespace SteveClient.Engine.Rendering;
+namespace SteveClient.Engine.Rendering.Shaders;
 
 public class Shader
 {
@@ -14,13 +15,11 @@ public class Shader
     {
         var shaderSource = Assets.ReadEmbeddedShader(vertPath);
         var vertexShader = GL.CreateShader(ShaderType.VertexShader);
-        GL.ShaderSource(vertexShader, shaderSource);
-        CompileShader(vertexShader);
+        CompileShader(vertexShader, shaderSource);
 
         shaderSource = Assets.ReadEmbeddedShader(fragPath);
         var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-        GL.ShaderSource(fragmentShader, shaderSource);
-        CompileShader(fragmentShader);
+        CompileShader(fragmentShader, shaderSource);
 
         Handle = GL.CreateProgram();
         
@@ -154,6 +153,16 @@ public class Shader
         GL.Uniform4(loc, data);
     }
 
+    public void SetVector2(string name, Vector2 data)
+    {
+        GL.UseProgram(Handle);
+        
+        if (!_uniformLocations.TryGetValue(name, out int loc))
+            return;
+        
+        GL.Uniform2(loc, data);
+    }
+
     /// <summary>
     /// Set a uniform Color4 on this shader
     /// </summary>
@@ -169,7 +178,7 @@ public class Shader
         GL.Uniform4(loc, color);
     }
 
-    public void SetUniform1(string name, int data)
+    public void SetInt(string name, int data)
     {
         GL.UseProgram(Handle);
         
@@ -179,8 +188,20 @@ public class Shader
         GL.Uniform1(loc, data);
     }
 
-    private static void CompileShader(int shader)
+    public void SetFloat(string name, float data)
     {
+        GL.UseProgram(Handle);
+
+        if (!_uniformLocations.TryGetValue(name, out int loc))
+            return;
+        
+        GL.Uniform1(loc, data);
+    }
+
+    private static void CompileShader(int shader, string shaderSource)
+    {
+        GL.ShaderSource(shader, ShaderProcessor.Process(shaderSource));
+
         GL.CompileShader(shader);
         
         GL.GetShader(shader, ShaderParameter.CompileStatus, out var code);
@@ -191,45 +212,9 @@ public class Shader
     private static void LinkProgram(int program)
     {
         GL.LinkProgram(program);
-        
+
         GL.GetProgram(program, GetProgramParameterName.LinkStatus, out var code);
         if (code != (int) All.True)
             throw new Exception($"Error occurred whilst linking Program({program})");
-    }
-    
-    public readonly struct ShaderAttribute
-    {
-        public readonly string Name;
-        public readonly int Size;
-        public readonly VertexAttribPointerType VertexAttribPointerType;
-        public readonly bool Normalized;
-
-        public ShaderAttribute(string name, int size, VertexAttribPointerType vertexAttribPointerType, bool normalized)
-        {
-            Name = name;
-            Size = size;
-            VertexAttribPointerType = vertexAttribPointerType;
-            Normalized = normalized;
-        }
-    }
-    
-    public readonly struct BakedShaderAttribute
-    {
-        public readonly int Location;
-        public readonly int Size;
-        public readonly VertexAttribPointerType VertexAttribPointerType;
-        public readonly bool Normalized;
-        public readonly int Stride;
-        public readonly int Offset;
-
-        public BakedShaderAttribute(int location, int size, VertexAttribPointerType vertexAttribPointerType, bool normalized, int stride, int offset)
-        {
-            Location = location;
-            Size = size;
-            VertexAttribPointerType = vertexAttribPointerType;
-            Normalized = normalized;
-            Stride = stride;
-            Offset = offset;
-        }
     }
 }

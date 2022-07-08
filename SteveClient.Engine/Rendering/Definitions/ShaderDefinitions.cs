@@ -1,5 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using static SteveClient.Engine.Rendering.Shader;
+using SteveClient.Engine.Rendering.Shaders;
 
 namespace SteveClient.Engine.Rendering.Definitions;
 

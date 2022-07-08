@@ -37,7 +37,7 @@ public class SteveGameLoop
             Vector2 screenSize = new Vector2(WindowState.ScreenSize.X / 2f, WindowState.ScreenSize.Y / 2f);
             Vector2 screenPos = new Vector2(pos.X - screenSize.X, screenSize.Y - pos.Y);
             
-            FontRenderer.DrawTextScreenSpace($"x: {pos.X}, y: {pos.Y}", screenPos, 0.25f);
+            FontRenderer.DrawTextScreenSpace($"x: {pos.X}, y: {pos.Y}", screenPos, (1.5f / 4f));
 
             graphicsScheduler.Execute(GetLastGraphicsDelta());
             RenderLayerDefinitions.RebuildAll();

@@ -22,9 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\Shaders\**">
-            <LogicalName>%(Filename)%(Extension)</LogicalName>
-        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\Shaders\**" />
         <Content Include="Resources\Fonts\**">
             <Link>fonts\%(Filename)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -33,6 +31,7 @@
 
     <ItemGroup>
       <Folder Include="Resources" />
+      <Folder Include="Resources\Shaders\Common" />
       <Folder Include="SimpleData" />
     </ItemGroup>
 

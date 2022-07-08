@@ -7,7 +7,7 @@ public unsafe class Face
 {
     private FreeTypeLibrary _library;
     private IntPtr _face;
-    private FT_FaceRec* _faceRec;
+    public FT_FaceRec* Native { get; }
 
     public Face(FreeTypeLibrary library, string fontPath)
     {
@@ -16,7 +16,7 @@ public unsafe class Face
         if (FT.FT_New_Face(_library.Native, fontPath, 0, out _face) != 0)
             throw new Exception("Failed to load font!");
 
-        _faceRec = (FT_FaceRec*)_face;
+        Native = (FT_FaceRec*)_face;
     }
 
     public void SetPixelSizes(uint width, uint height)
@@ -29,6 +29,9 @@ public unsafe class Face
         if (FT.FT_Load_Char(_face, charCode, FT.FT_LOAD_RENDER) != 0)
             throw new Exception("Failed to load Glyph!");
     }
+    
+    public GlyphSlot Glyph => new(Native);
 
-    public GlyphSlot Glyph => new(_faceRec);
+    public int FontHeight => Native->ascender - Native->descender;
+    public short Height => Native->height;
 }

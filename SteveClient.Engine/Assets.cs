@@ -4,19 +4,22 @@ namespace SteveClient.Engine;
 
 public static class Assets
 {
-    private static Stream GetEmbeddedAssetStream(string name)
+    private static Stream GetEmbeddedAssetStream(string path)
     {
-        Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(name);
+        path = "SteveClient.Engine." + path.Replace("/", ".");
+        
+        Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
 
         if (stream is null)
-            throw new Exception($"Could not load embedded asset {name}!");
+            throw new Exception($"Could not load embedded asset {path}!");
 
         return stream;
     }
         
     public static string ReadEmbeddedShader(string name)
     {
-        using StreamReader reader = new StreamReader(GetEmbeddedAssetStream(name));
+        string path = $"Resources/Shaders/{name}";
+        using StreamReader reader = new StreamReader(GetEmbeddedAssetStream(path));
             
         var data = reader.ReadToEnd();
             

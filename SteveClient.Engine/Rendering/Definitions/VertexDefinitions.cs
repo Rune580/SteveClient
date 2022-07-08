@@ -1,4 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL4;
+using SteveClient.Engine.Rendering.Shaders;
 using SteveClient.Engine.Rendering.VertexData;
 using static SteveClient.Engine.Rendering.Definitions.ShaderDefinitions;
 

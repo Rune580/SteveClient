@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Models;
+using SteveClient.Engine.Rendering.Shaders;
 using static SteveClient.Engine.Rendering.VertexData.VertexFactories;
 
 namespace SteveClient.Engine.Rendering.RenderLayers;
