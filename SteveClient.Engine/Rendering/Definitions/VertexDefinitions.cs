@@ -11,6 +11,7 @@ public static class VertexDefinitions
     public static VertexDefinition<PositionTextureColor> PositionTextureColorTriangles;
     public static VertexDefinition<PositionTexture> PositionTextureTriangles;
     public static VertexDefinition<PositionTexture> DefaultFont;
+    public static VertexDefinition<Position> PositionTriangles;
     public static VertexDefinition<Position> Lines;
 
     public static void Init()
@@ -19,6 +20,7 @@ public static class VertexDefinitions
         PositionTextureColorTriangles = new VertexDefinition<PositionTextureColor>(PositionTextureColorShader, PrimitiveType.Triangles);
         PositionTextureTriangles = new VertexDefinition<PositionTexture>(PositionTextureShader, PrimitiveType.Triangles);
         DefaultFont = new VertexDefinition<PositionTexture>(DefaultFontShader, PrimitiveType.Triangles);
+        PositionTriangles = new VertexDefinition<Position>(UiColorShader, PrimitiveType.Triangles);
         Lines = new VertexDefinition<Position>(PositionColorShader, PrimitiveType.Lines);
     }
     

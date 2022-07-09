@@ -1,5 +1,5 @@
 ﻿using OpenTK.Mathematics;
-using SteveClient.Engine.AssetManagement;
+using SteveClient.Engine.Rendering.Shaders;
 
 namespace SteveClient.Engine.Rendering.Baked;
 
@@ -9,19 +9,21 @@ public class BakedQuad : BaseBakedRenderData
     public override uint[] Indices { get; }
     public override Matrix4 Transform { get; }
 
-    private readonly string _textureResourceName;
-
-    public BakedQuad(float[] vertices, uint[] indices, string textureResourceName, Matrix4 transform)
+    private Color4 _color;
+    
+    public BakedQuad(float[] vertices, uint[] indices, Matrix4 transform, Color4 color)
     {
         Vertices = vertices;
         Indices = indices;
-        _textureResourceName = textureResourceName.Replace("minecraft:", "");
         Transform = transform;
+
+        _color = color;
     }
 
-    public override bool HasTexture => true;
-    public override void UseTexture()
+    public override bool HasShaderProperties => true;
+
+    public override void ApplyShaderProperties(Shader shader)
     {
-        TextureRegistry.GetTexture(_textureResourceName).Use();
+        shader.SetColor("color", _color);
     }
 }

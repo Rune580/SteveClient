@@ -18,11 +18,11 @@ public class FontRenderLayer : BaseRenderLayer
     private readonly List<BakedTextRender> _textRenders = new();
     private readonly float[] _vertices;
     private readonly uint[] _indices;
-    private readonly RenderTarget _renderTarget;
+    private readonly TargetSpace _targetSpace;
 
-    public FontRenderLayer(RenderTarget renderTarget)
+    public FontRenderLayer(TargetSpace targetSpace)
     {
-        _renderTarget = renderTarget;
+        _targetSpace = targetSpace;
         
         _vertices = new VertexDataArray(PositionTexture.Size * 4)
             .WithVector3(1f, 1f, 0).WithVector2(1, 0)
@@ -88,8 +88,8 @@ public class FontRenderLayer : BaseRenderLayer
                 character.Bind();
                 
                 Shader.SetMatrix4("model", transform);
-                Shader.SetMatrix4("view", _renderTarget.ViewMatrix);
-                Shader.SetMatrix4("projection", _renderTarget.ProjectionMatrix);
+                Shader.SetMatrix4("view", _targetSpace.ViewMatrix);
+                Shader.SetMatrix4("projection", _targetSpace.ProjectionMatrix);
                 Shader.SetColor("color", color);
                 
                 GL.DrawElements(_definition.PrimitiveType, _indices.Length, DrawElementsType.UnsignedInt, 0);

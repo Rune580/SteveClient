@@ -36,9 +36,9 @@ public class BlockRenderHelper
         {
             IVertex[] vertices = factory.Consume(_quads[i].Vertices, Array.Empty<Vector3>(), colors, _quads[i].Uvs);
             
-            BakedQuad bakedQuad = new BakedQuad(vertices.VertexData(), _quads[i].Triangles, _quads[i].TextureResourceName, _transform);
+            BakedModelQuad bakedModelQuad = new BakedModelQuad(vertices.VertexData(), _quads[i].Triangles, _quads[i].TextureResourceName, _transform);
 
-            renderLayer.UploadRenderData(bakedQuad);
+            renderLayer.UploadRenderData(bakedModelQuad);
         }
         
         _quads.Clear();

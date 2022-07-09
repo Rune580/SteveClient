@@ -7,7 +7,7 @@ namespace SteveClient.Engine.Rendering.RenderLayers;
 
 public class ScreenSpaceRenderLayer<TVertex> : DefaultRenderLayer<TVertex> where TVertex : IVertex
 {
-    public ScreenSpaceRenderLayer(VertexDefinitions.VertexDefinition<TVertex> vertexDefinition) : base(vertexDefinition) { }
+    public ScreenSpaceRenderLayer(VertexDefinitions.VertexDefinition<TVertex> vertexDefinition) : base(vertexDefinition, TargetSpace.ScreenSpace) { }
 
     public override void Render()
     {
@@ -22,8 +22,8 @@ public class ScreenSpaceRenderLayer<TVertex> : DefaultRenderLayer<TVertex> where
                 bakedModel.ApplyShaderProperties(Shader);
             
             Shader.SetMatrix4("model", bakedModel.Transform);
-            Shader.SetMatrix4("view", CameraState.ScreenSpaceViewMatrix);
-            Shader.SetMatrix4("projection", CameraState.ScreenSpaceProjectionMatrix);
+            Shader.SetMatrix4("view", Space.ViewMatrix);
+            Shader.SetMatrix4("projection", Space.ProjectionMatrix);
             
             Shader.SetColor("color", Color4.White);
             

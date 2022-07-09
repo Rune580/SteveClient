@@ -1,19 +1,21 @@
 ﻿using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.ImGui;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using SteveClient.Engine.InputManagement;
 using SteveClient.Engine.Menus;
 using SteveClient.Engine.Rendering.Definitions;
+using SteveClient.Engine.Rendering.Ui;
+using SteveClient.Engine.Rendering.Ui.Elements;
 
 namespace SteveClient.Engine;
 
 public class SteveClientWindow : GameWindow
 {
     private SteveGameLoop _gameLoop;
-    private readonly List<IMenu> _menus = new();
 
     public ImGuiController ImGuiController = null!;
 
@@ -39,19 +41,9 @@ public class SteveClientWindow : GameWindow
 
         GL.ClearColor(0, 0, 0.1f, 1);
         
-        RegisterMenus();
+        UiRenderer.UiElements.Add(new Button(new Box2(200, 200, 400, 400)));
     }
-
-    private void RegisterMenus()
-    {
-        //_menus.Add(new ServerTesting());
-        //_menus.Add(new DebugWidget());
-        _menus.Add(new BlockStateMenu());
-        _menus.Add(new WireframeWidget());
-        //_menus.Add(new DirectionMenu());
-        _menus.Add(new BlockPosMenu());
-    }
-
+    
     protected override void OnResize(ResizeEventArgs e)
     {
         base.OnResize(e);
@@ -80,9 +72,6 @@ public class SteveClientWindow : GameWindow
 
         ImGuiController.Update(this, (float)e.Time);
 
-        foreach (var menu in _menus)
-            menu.Draw();
-        
         ImGuiController.Render();
 
         SwapBuffers();
@@ -95,6 +84,8 @@ public class SteveClientWindow : GameWindow
         CursorState = InputManager.CursorState;
         InputManager.UpdateState(KeyboardState, MouseState, MousePosition);
         Rendering.WindowState.Update(IsFocused, ClientSize);
+        
+        UiRenderer.UpdateControls(MouseState, KeyboardState);
 
         _gameLoop.Tick(e.Time);
     }

@@ -1,7 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.AssetManagement;
 using SteveClient.Engine.Components;
-using SteveClient.Engine.Menus;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Utils;
 using SteveClient.Minecraft.Data;

@@ -15,6 +15,7 @@ public static class ShaderDefinitions
     public static Shader DefaultFontShader { get; private set; }
     public static Shader PosTexWireframeShader { get; private set; }
     public static Shader LineShader { get; private set; }
+    public static Shader UiColorShader { get; private set; }
     
     public static void LoadShaders()
     {
@@ -25,5 +26,7 @@ public static class ShaderDefinitions
         
         PosTexWireframeShader = new Shader("Wireframe", PositionAttribute, UvAttribute);
         LineShader = new Shader("Line", PositionAttribute);
+
+        UiColorShader = new Shader("DefaultUi", PositionAttribute);
     }
 }

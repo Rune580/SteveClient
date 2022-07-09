@@ -13,6 +13,7 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
     where TVertex : IVertex
 {
     protected readonly VertexDefinitions.VertexDefinition<TVertex> Definition;
+    protected readonly TargetSpace Space;
     private readonly int _elementBufferObject;
     private readonly int _vertexBufferObject;
     private readonly int _vertexArrayObject;
@@ -21,9 +22,10 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
 
     private uint _elements;
 
-    public DefaultRenderLayer(VertexDefinitions.VertexDefinition<TVertex> vertexDefinition)
+    public DefaultRenderLayer(VertexDefinitions.VertexDefinition<TVertex> vertexDefinition, TargetSpace targetSpace)
     {
         Definition = vertexDefinition;
+        Space = targetSpace;
         
         _vertexArrayObject = GL.GenVertexArray();
         _vertexBufferObject = GL.GenBuffer();
@@ -106,8 +108,8 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
                 bakedModel.ApplyShaderProperties(Shader);
             
             Definition.Shader.SetMatrix4("model", bakedModel.Transform);
-            Definition.Shader.SetMatrix4("view", CameraState.ViewMatrix);
-            Definition.Shader.SetMatrix4("projection", CameraState.ProjectionMatrix);
+            Definition.Shader.SetMatrix4("view", Space.ViewMatrix);
+            Definition.Shader.SetMatrix4("projection", Space.ProjectionMatrix);
             
             GL.DrawElements(Definition.PrimitiveType, bakedModel.Indices.Length, DrawElementsType.UnsignedInt, offset);
 

@@ -5,6 +5,7 @@ using SteveClient.Engine.Menus;
 using SteveClient.Engine.Rendering;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Font;
+using SteveClient.Engine.Rendering.Ui;
 
 namespace SteveClient.Engine;
 
@@ -30,14 +31,18 @@ public class SteveGameLoop
         {
             RenderLayerDefinitions.FlushAll();
             
+            UiRenderer.Render();
+            
+            FontRenderer.DrawTextScreenSpace($"{GetLastGraphicsDelta()}", new Vector2(0, 0), (1.5f / 4f));
+            
             FontRenderer.DrawText(new FontString("Ligma Balls"), new Vector3(0, 1, 4), (1f / 32f) / 4f, DirectionMenu.Direction);
             FontRenderer.DrawText(new FontString("Bigma Lalls"), new Vector3(0, 1, 5), (1f / 32f) / 4f, DirectionMenu.Direction, Color4.Red);
 
-            var pos = InputManager.MousePosition;
-            Vector2 screenSize = new Vector2(WindowState.ScreenSize.X / 2f, WindowState.ScreenSize.Y / 2f);
-            Vector2 screenPos = new Vector2(pos.X - screenSize.X, screenSize.Y - pos.Y);
-            
-            FontRenderer.DrawTextScreenSpace($"x: {pos.X}, y: {pos.Y}", screenPos, (1.5f / 4f));
+            // var pos = InputManager.MousePosition;
+            // Vector2 screenSize = new Vector2(WindowState.ScreenSize.X / 2f, WindowState.ScreenSize.Y / 2f);
+            // Vector2 screenPos = new Vector2(pos.X - screenSize.X, screenSize.Y - pos.Y);
+            //
+            // FontRenderer.DrawTextScreenSpace($"x: {pos.X}, y: {pos.Y}", screenPos, (1.5f / 4f));
 
             graphicsScheduler.Execute(GetLastGraphicsDelta());
             RenderLayerDefinitions.RebuildAll();

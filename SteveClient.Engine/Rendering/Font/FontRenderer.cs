@@ -57,7 +57,10 @@ public static class FontRenderer
 
     public static void DrawTextScreenSpace(FontString text, Vector2 pos, float scale)
     {
-        DrawTextScreenSpace(text, new Vector3(pos.X, pos.Y, -1), scale, Vector3.UnitZ);
+        Vector2 screenSize = WindowState.ScreenSize / 2;
+        Vector3 screenPos = new Vector3(pos.X - screenSize.X, screenSize.Y - (pos.Y + 20), -1);
+        
+        DrawTextScreenSpace(text, screenPos, scale, Vector3.UnitZ);
     }
 
     public static void DrawTextBillBoard(FontString text, Vector3 pos, float scale, Vector3 dir, Color4 color)

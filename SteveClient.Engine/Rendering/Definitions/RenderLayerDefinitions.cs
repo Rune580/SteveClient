@@ -7,12 +7,13 @@ public static class RenderLayerDefinitions
 {
     public static readonly List<BaseRenderLayer> Instances = new();
 
-    public static readonly DefaultRenderLayer<PositionColor> PositionColorRenderLayer = new(VertexDefinitions.PositionColorTriangles);
-    public static readonly DefaultRenderLayer<PositionTextureColor> PositionTextureColorLayer = new(VertexDefinitions.PositionTextureColorTriangles);
-    public static readonly FontRenderLayer WorldFontLayer = new(RenderTarget.WorldSpace);
+    public static readonly DefaultRenderLayer<PositionColor> PositionColorRenderLayer = new(VertexDefinitions.PositionColorTriangles, TargetSpace.WorldSpace);
+    public static readonly DefaultRenderLayer<PositionTextureColor> PositionTextureColorLayer = new(VertexDefinitions.PositionTextureColorTriangles, TargetSpace.WorldSpace);
+    public static readonly FontRenderLayer WorldFontLayer = new(TargetSpace.WorldSpace);
     public static readonly LineRenderLayer DebugLinesLayer = new();
 
-    public static readonly FontRenderLayer ScreenFontLayer = new(RenderTarget.ScreenSpace);
+    public static readonly DefaultRenderLayer<Position> UiColorRenderLayer = new(VertexDefinitions.PositionTriangles, TargetSpace.ScreenSpace);
+    public static readonly FontRenderLayer ScreenFontLayer = new(TargetSpace.ScreenSpace);
     
     public static void RebuildAll()
     {
