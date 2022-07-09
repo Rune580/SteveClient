@@ -5,7 +5,7 @@ namespace SteveClient.Engine.Rendering.Font;
 
 public static class FontRenderer
 {
-    private static BakedTextRender BakeText(FontString text, Vector3 pos, float scale, Vector3 dir, Color4 color)
+    private static BakedTextRender BakeText(FontString text, Vector3 pos, float scale, Vector3 dir, Color4 color, bool centered = false)
     {
         List<Character> characters = new List<Character>();
         List<Matrix4> transforms = new List<Matrix4>();
@@ -13,8 +13,16 @@ public static class FontRenderer
         float rad = (float)Math.Atan2(dir.X, dir.Y); //TODO z
         Matrix4 rotM = Matrix4.CreateRotationZ(rad);
         Matrix4 origin = Matrix4.CreateTranslation(pos);
-
+        
         float offset = 0f;
+
+        if (centered)
+        {
+            offset += text.Sum(c => (c.Advance >> 6) * scale);
+
+            offset = -(offset / 2f);
+        }
+        
         foreach (var c in text)
         {
             float w = c.Size.X * scale;
@@ -48,19 +56,19 @@ public static class FontRenderer
         DrawText(text, pos, scale, dir, Color4.White);
     }
 
-    public static void DrawTextScreenSpace(FontString text, Vector3 pos, float scale, Vector3 dir)
+    public static void DrawTextScreenSpace(FontString text, Vector3 pos, float scale, Vector3 dir, bool centered = false)
     {
-        BakedTextRender textRender = BakeText(text, pos, scale, dir, Color4.White);
+        BakedTextRender textRender = BakeText(text, pos, scale, dir, Color4.White, centered);
 
         RenderLayerDefinitions.ScreenFontLayer.Upload(textRender);
     }
 
-    public static void DrawTextScreenSpace(FontString text, Vector2 pos, float scale)
+    public static void DrawTextScreenSpace(FontString text, Vector2 pos, float scale, bool centered = false)
     {
         Vector2 screenSize = WindowState.ScreenSize / 2;
         Vector3 screenPos = new Vector3(pos.X - screenSize.X, screenSize.Y - (pos.Y + 20), -1);
         
-        DrawTextScreenSpace(text, screenPos, scale, Vector3.UnitZ);
+        DrawTextScreenSpace(text, screenPos, scale, Vector3.UnitZ, centered);
     }
 
     public static void DrawTextBillBoard(FontString text, Vector3 pos, float scale, Vector3 dir, Color4 color)

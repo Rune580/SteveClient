@@ -41,7 +41,7 @@ public class SteveClientWindow : GameWindow
 
         GL.ClearColor(0, 0, 0.1f, 1);
         
-        UiRenderer.UiElements.Add(new Button(new Box2(200, 200, 400, 400)));
+        UiRenderer.UiElements.Add(new Button(new Box2(200, 200, 360, 260), "test button"));
     }
     
     protected override void OnResize(ResizeEventArgs e)
