@@ -33,6 +33,9 @@ public class FacesJson
         [JsonPropertyName("texture")]
         public string Texture { get; set; }
         
+        [JsonPropertyName("rotation")]
+        public int? Rotation { get; set; }
+        
         [JsonPropertyName("cullface"), JsonConverter(typeof(DirectionsJsonConverter))]
         public Directions? CullFace { get; set; }
     }

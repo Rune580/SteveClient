@@ -47,6 +47,11 @@ public class BlockModelsParser : IMinecraftAssetParser
 
         foreach (var (key, modelJson) in modelJsons)
         {
+            // if (key.Contains("cauldron"))
+            // {
+            //     Console.WriteLine("s");
+            // }
+            
             var textureMap = GetTextureMap(modelJson, modelJsons);
             var elements = GetElements(modelJson, modelJsons);
 
@@ -113,17 +118,6 @@ public class BlockModelsParser : IMinecraftAssetParser
             CullFace = cull
         };
 
-        if (faceJson.Uv.HasValue)
-        {
-            face.UvMin = faceJson.Uv.Value.Xy / 16f;
-            face.UvMax = faceJson.Uv.Value.Zw / 16f;
-        }
-        else
-        {
-            face.UvMin = Vector2.Zero;
-            face.UvMax = Vector2.One;
-        }
-
         Vector3 min = from / 16;
         Vector3 max = to / 16;
         
@@ -134,39 +128,122 @@ public class BlockModelsParser : IMinecraftAssetParser
                 face.TopRight = new Vector3(max.X, min.Y, min.Z);
                 face.BottomLeft = new Vector3(min.X, min.Y, max.Z);
                 face.BottomRight = new Vector3(max.X, min.Y, max.Z);
+                
+                if (faceJson.Uv.HasValue)
+                {
+                    face.UvMin = faceJson.Uv.Value.Xy / 16f;
+                    face.UvMax = faceJson.Uv.Value.Zw / 16f;
+                }
+                else
+                {
+                    face.UvMin = new Vector2(min.X, min.Z);
+                    face.UvMax = new Vector2(max.X, max.Z);
+                }
                 break;
             case Directions.Up:
                 face.TopLeft = new Vector3(min.X, max.Y, max.Z);
                 face.TopRight = max;
                 face.BottomLeft = new Vector3(min.X, max.Y, min.Z);
                 face.BottomRight = new Vector3(max.X, max.Y, min.Z);
+
+                if (faceJson.Uv.HasValue)
+                {
+                    face.UvMin = faceJson.Uv.Value.Xy / 16f;
+                    face.UvMax = faceJson.Uv.Value.Zw / 16f;
+                }
+                else
+                {
+                    face.UvMin = new Vector2(min.X, min.Z);
+                    face.UvMax = new Vector2(max.X, max.Z);
+                }
                 break;
             case Directions.North:
                 face.TopLeft = new Vector3(min.X, max.Y, min.Z);
                 face.TopRight = new Vector3(max.X, max.Y, min.Z);
                 face.BottomLeft = min;
                 face.BottomRight = new Vector3(max.X, min.Y, min.Z);
+                
+                if (faceJson.Uv.HasValue)
+                {
+                    face.UvMin = faceJson.Uv.Value.Zy / 16f;
+                    face.UvMax = faceJson.Uv.Value.Xw / 16f;
+                }
+                else
+                {
+                    face.UvMin = new Vector2(max.X, min.Y);
+                    face.UvMax = new Vector2(min.X, max.Y);
+                }
                 break;
             case Directions.South:
                 face.TopLeft = max;
                 face.TopRight = new Vector3(min.X, max.Y, max.Z);
                 face.BottomLeft = new Vector3(max.X, min.Y, max.Z);
                 face.BottomRight = new Vector3(min.X, min.Y, max.Z);
+                
+                if (faceJson.Uv.HasValue)
+                {
+                    face.UvMin = faceJson.Uv.Value.Zy / 16f;
+                    face.UvMax = faceJson.Uv.Value.Xw / 16f;
+                }
+                else
+                {
+                    face.UvMin = new Vector2(max.X, min.Y);
+                    face.UvMax = new Vector2(min.X, max.Y);
+                }
                 break;
             case Directions.West:
                 face.TopLeft = new Vector3(min.X, max.Y, min.Z);
                 face.TopRight = new Vector3(min.X, max.Y, max.Z);
                 face.BottomLeft = min;
                 face.BottomRight = new Vector3(min.X, min.Y, max.Z);
+                
+                if (faceJson.Uv.HasValue)
+                {
+                    face.UvMin = faceJson.Uv.Value.Xy / 16f;
+                    face.UvMax = faceJson.Uv.Value.Zw / 16f;
+                }
+                else
+                {
+                    face.UvMin = new Vector2(max.Z, min.Y);
+                    face.UvMax = new Vector2(min.Z, max.Y);
+                }
                 break;
             case Directions.East:
                 face.TopLeft = new Vector3(max.X, max.Y, min.Z);
                 face.TopRight = max;
                 face.BottomLeft = new Vector3(max.X, min.Y, min.Z);
                 face.BottomRight = new Vector3(max.X, min.Y, max.Z);
+                
+                if (faceJson.Uv.HasValue)
+                {
+                    face.UvMin = faceJson.Uv.Value.Zy / 16f;
+                    face.UvMax = faceJson.Uv.Value.Xw / 16f;
+                }
+                else
+                {
+                    face.UvMin = new Vector2(max.Z, min.Y);
+                    face.UvMax = new Vector2(min.Z, max.Y);
+                }
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
+        }
+        
+        
+
+        if (faceJson.Rotation.HasValue)
+        {
+            int rotation = faceJson.Rotation.Value / 90;
+
+            for (int i = 0; i < rotation; i++)
+            {
+                float x = face.UvMin.X;
+
+                face.UvMin.X = face.UvMax.Y;
+                face.UvMax.Y = face.UvMax.X;
+                face.UvMax.X = face.UvMin.Y;
+                face.UvMin.Y = x;
+            }
         }
 
         return face;

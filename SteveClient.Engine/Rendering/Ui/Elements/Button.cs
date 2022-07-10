@@ -14,6 +14,8 @@ public class Button : BaseUiElement
     
     private States _currentState;
     private string _label;
+
+    public Action? ButtonPressed;
     
     public Button(Box2 rect, string label) : base(rect)
     {
@@ -33,7 +35,8 @@ public class Button : BaseUiElement
         
         UiRenderHelper.Quad(Rect, color);
 
-        Vector2 labelPos = Rect.Min + (Rect.Max - Rect.Min) / 2f;
+        Vector2 size = (Rect.Max - Rect.Min);
+        Vector2 labelPos = Rect.Min + new Vector2(size.X / 2f, 0);
         
         FontRenderer.DrawTextScreenSpace(_label, labelPos, (1.5f / 4f), true);
     }
@@ -76,10 +79,8 @@ public class Button : BaseUiElement
         if (!MouseInside(mousePos) && _currentState == States.Normal)
             return;
         
-        Console.WriteLine("Button Pressed!");
-        
-        MinecraftNetworkingClient.Instance!.Connect("127.0.0.1", 25565);
-        
+        ButtonPressed?.Invoke();
+
         _currentState = States.Selected;
     }
 

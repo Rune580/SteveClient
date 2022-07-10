@@ -4,15 +4,18 @@ using SteveClient.Engine.Rendering.Font.Library;
 
 namespace SteveClient.Engine.Rendering.Font;
 
-public class Character
+public readonly struct Character
 {
+    public readonly char CharCode;
     public readonly int Handle;
     public readonly Vector2 Size;
     public readonly Vector2 Bearing;
     public readonly int Advance;
 
-    public Character(GlyphSlot glyph, FtBitmap bitmap)
+    public Character(char charCode, GlyphSlot glyph, FtBitmap bitmap)
     {
+        CharCode = charCode;
+        
         Handle = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, Handle);
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, bitmap.Width, bitmap.Rows, 0, PixelFormat.Red, PixelType.UnsignedByte, bitmap.Buffer);
@@ -32,4 +35,6 @@ public class Character
         GL.ActiveTexture(TextureUnit.Texture0);
         GL.BindTexture(TextureTarget.Texture2D, Handle);
     }
+
+    public new string ToString() => $"{CharCode}";
 }

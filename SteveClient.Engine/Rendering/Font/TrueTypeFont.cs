@@ -30,7 +30,7 @@ public class TrueTypeFont
                 GlyphSlot glyph = face.Glyph;
                 FtBitmap bitmap = glyph.Bitmap;
 
-                Character character = new Character(glyph, bitmap);
+                Character character = new Character((char)c, glyph, bitmap);
 
                 _characters[(char)c] = character;
             }

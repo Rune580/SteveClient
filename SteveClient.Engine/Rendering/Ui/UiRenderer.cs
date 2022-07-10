@@ -5,7 +5,7 @@ namespace SteveClient.Engine.Rendering.Ui;
 
 public static class UiRenderer
 {
-    public static readonly List<BaseUiElement> UiElements = new();
+    public static readonly List<BaseElementContainer> UiElements = new();
 
     public static void UpdateControls(MouseState mouseState, KeyboardState keyboardState)
     {
@@ -13,9 +13,21 @@ public static class UiRenderer
             uiElement.UpdateControls(mouseState, keyboardState);
     }
 
+    public static void Update(double elapsedTime)
+    {
+        foreach (var uiElement in UiElements)
+            uiElement.Update(elapsedTime);
+    }
+
+    public static void CharTyped(char charCode)
+    {
+        foreach (var uiElement in UiElements)
+            uiElement.CharTyped(charCode);
+    }
+
     public static void Render()
     {
         foreach (var uiElement in UiElements)
-            uiElement.Draw();
+            uiElement.Render();
     }
 }

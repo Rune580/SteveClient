@@ -1,5 +1,7 @@
 ﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using SteveClient.Engine.InputManagement;
 
 namespace SteveClient.Engine.Rendering.Ui.Elements;
 
@@ -22,10 +24,22 @@ public abstract class BaseUiElement
     public void UpdateControls(MouseState mouseState, KeyboardState keyboardState)
     {
         MouseFunctions(mouseState);
+        
+        OnUpdateKeyboard(keyboardState);
     }
+
+    public void Update(double elapsedTime)
+    {
+        OnUpdate(elapsedTime);
+    }
+    
+    protected virtual void OnUpdate(double elapsedTime) { }
 
     private void MouseFunctions(MouseState mouseState)
     {
+        if (InputManager.CursorState != CursorState.Normal)
+            return;
+        
         Vector2 mousePos = mouseState.Position;
         Vector2 lastMousePos = mouseState.PreviousPosition;
 
@@ -53,6 +67,8 @@ public abstract class BaseUiElement
         }
     }
 
+    protected virtual void OnUpdateKeyboard(KeyboardState state) { }
+
     protected virtual void OnEnter(Vector2 mousePos) { }
     
     protected virtual void OnExit(Vector2 mousePos) { }
@@ -68,6 +84,13 @@ public abstract class BaseUiElement
                && Rect.Max.X > mousePos.X
                && Rect.Max.Y > mousePos.Y;
     }
+
+    public void CharTyped(char charCode)
+    {
+        OnChar(charCode);
+    }
+    
+    protected virtual void OnChar(char charCode) { }
 
     private Vector2 MouseToScreenPos(Vector2 mousePos)
     {

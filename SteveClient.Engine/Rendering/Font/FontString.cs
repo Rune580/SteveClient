@@ -21,6 +21,8 @@ public struct FontString : IEquatable<FontString>, IEnumerable<Character>
 
     public static implicit operator FontString(string text) => new(text);
 
+    public new string ToString() => RawString;
+
     #region Equality Members
 
     public bool Equals(FontString other)

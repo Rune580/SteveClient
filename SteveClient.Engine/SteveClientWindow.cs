@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.ImGui;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using SteveClient.Engine.InputManagement;
@@ -10,6 +11,7 @@ using SteveClient.Engine.Menus;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Ui;
 using SteveClient.Engine.Rendering.Ui.Elements;
+using SteveClient.Engine.Rendering.Ui.Widgets;
 
 namespace SteveClient.Engine;
 
@@ -41,7 +43,7 @@ public class SteveClientWindow : GameWindow
 
         GL.ClearColor(0, 0, 0.1f, 1);
         
-        UiRenderer.UiElements.Add(new Button(new Box2(200, 200, 360, 260), "test button"));
+        UiRenderer.UiElements.Add(new BlockStateLoaderWidget());
     }
     
     protected override void OnResize(ResizeEventArgs e)
@@ -58,6 +60,8 @@ public class SteveClientWindow : GameWindow
         base.OnRenderFrame(e);
         
         _gameLoop.TickGraphics(e.Time);
+        
+        UiRenderer.Update(e.Time);
         
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
@@ -82,9 +86,11 @@ public class SteveClientWindow : GameWindow
         base.OnUpdateFrame(e);
         
         CursorState = InputManager.CursorState;
+        Cursor = InputManager.Cursor;
+        
         InputManager.UpdateState(KeyboardState, MouseState, MousePosition);
         Rendering.WindowState.Update(IsFocused, ClientSize);
-        
+
         UiRenderer.UpdateControls(MouseState, KeyboardState);
 
         _gameLoop.Tick(e.Time);
@@ -93,7 +99,9 @@ public class SteveClientWindow : GameWindow
     protected override void OnTextInput(TextInputEventArgs e)
     {
         base.OnTextInput(e);
-
+        
+        UiRenderer.CharTyped((char)e.Unicode);
+        
         ImGuiController.PressChar((char)e.Unicode);
     }
 

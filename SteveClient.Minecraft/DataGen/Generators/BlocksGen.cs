@@ -42,7 +42,9 @@ public static class BlocksGen
                 BlockState blockState = new BlockState(
                     blockId,
                     blockStateId,
-                    currentState.GetProperty("collisionShape").GetString()!
+                    currentState.GetProperty("collisionShape").GetString()!,
+                    currentState.GetProperty("opacity").GetInt32(),
+                    currentState.GetProperty("occludes").GetBoolean()
                 );
 
                 blockStates[blockStateId] = blockState;

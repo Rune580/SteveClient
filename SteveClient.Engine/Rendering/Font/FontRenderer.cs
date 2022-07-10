@@ -28,12 +28,12 @@ public static class FontRenderer
             float w = c.Size.X * scale;
             float h = c.Size.Y * scale;
             float xRel = offset + c.Bearing.X * scale;
-            float yRel = (c.Size.Y - c.Bearing.Y) * scale;
+            float yRel = -((c.Size.Y - c.Bearing.Y) * scale);
 
             offset += (c.Advance >> 6) * scale;
 
             Matrix4 scaleM = Matrix4.CreateScale(new Vector3(w, h, 1.0f));
-            Matrix4 translation = Matrix4.CreateTranslation(new Vector3(xRel, -yRel, 0));
+            Matrix4 translation = Matrix4.CreateTranslation(new Vector3(xRel, yRel, 0));
 
             Matrix4 transform = scaleM * translation * rotM * origin;
             

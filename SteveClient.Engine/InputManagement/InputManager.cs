@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace SteveClient.Engine.InputManagement;
@@ -10,6 +11,7 @@ public static class InputManager
     public static MouseState MouseState { get; private set; }
     public static Vector2 MousePosition { get; private set; }
     public static CursorState CursorState = CursorState.Normal;
+    public static MouseCursor Cursor = MouseCursor.Default;
     
     internal static void UpdateState(KeyboardState keyboardState, MouseState mouseState, Vector2 mousePosition)
     {
