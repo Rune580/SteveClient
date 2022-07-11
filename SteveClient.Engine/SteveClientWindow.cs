@@ -44,6 +44,7 @@ public class SteveClientWindow : GameWindow
         GL.ClearColor(0, 0, 0.1f, 1);
         
         UiRenderer.UiElements.Add(new BlockStateLoaderWidget());
+        UiRenderer.UiElements.Add(new SeverConnectWidget());
     }
     
     protected override void OnResize(ResizeEventArgs e)

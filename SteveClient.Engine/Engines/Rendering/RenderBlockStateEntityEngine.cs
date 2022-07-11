@@ -34,7 +34,7 @@ public class RenderBlockStateEntityEngine : RenderingEngine
                 _renderHelper.WithBlockModel(ModelRegistry.BlockModels[resourceName])
                     .WithTransform(ref transform)
                     .WithColor(Color4.White)
-                    .Upload(RenderLayerDefinitions.PositionTextureColorLayer);
+                    .Upload(RenderLayerDefinitions.SolidBlockLayer);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.Rendering.Shaders;
+using SteveClient.Engine.Rendering.Shaders.Properties;
 
 namespace SteveClient.Engine.Rendering.Baked;
 
@@ -8,8 +9,7 @@ public class BakedQuad : BaseBakedRenderData
     public override float[] Vertices { get; }
     public override uint[] Indices { get; }
     public override Matrix4 Transform { get; }
-
-    private Color4 _color;
+    public override IShaderProperty[] ShaderProperties { get; }
     
     public BakedQuad(float[] vertices, uint[] indices, Matrix4 transform, Color4 color)
     {
@@ -17,13 +17,9 @@ public class BakedQuad : BaseBakedRenderData
         Indices = indices;
         Transform = transform;
 
-        _color = color;
-    }
-
-    public override bool HasShaderProperties => true;
-
-    public override void ApplyShaderProperties(Shader shader)
-    {
-        shader.SetColor("color", _color);
+        ShaderProperties = new IShaderProperty[]
+        {
+            new ColorShaderProperty("color", color)
+        };
     }
 }

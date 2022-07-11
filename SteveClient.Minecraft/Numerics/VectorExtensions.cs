@@ -22,7 +22,6 @@ public static class VectorExtensions
         return new Vector3i(x, y, z);
     }
 
-    
     public static Vector3d Add(this Vector3d vector, double num)
     {
         return new Vector3d(vector.X + num, vector.Y + num, vector.Z + num);

@@ -1,10 +1,10 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using SteveClient.Engine.Rendering.Baked;
-using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Models;
 using SteveClient.Engine.Rendering.Shaders;
 using SteveClient.Engine.Rendering.VertexData;
+using static SteveClient.Engine.Rendering.Definitions.VertexDefinitions;
 using static SteveClient.Engine.Rendering.VertexData.VertexFactories;
 
 namespace SteveClient.Engine.Rendering.RenderLayers;
@@ -12,19 +12,21 @@ namespace SteveClient.Engine.Rendering.RenderLayers;
 public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHandler
     where TVertex : IVertex
 {
-    protected readonly VertexDefinitions.VertexDefinition<TVertex> Definition;
-    protected readonly TargetSpace Space;
     private readonly int _elementBufferObject;
     private readonly int _vertexBufferObject;
     private readonly int _vertexArrayObject;
-
+    private readonly Shader _shader;
+    
+    protected readonly VertexDefinition<TVertex> Definition;
+    protected readonly TargetSpace Space;
     protected readonly List<IBakedRenderData> RenderData = new();
 
     private uint _elements;
 
-    public DefaultRenderLayer(VertexDefinitions.VertexDefinition<TVertex> vertexDefinition, TargetSpace targetSpace)
+    public DefaultRenderLayer(VertexDefinition<TVertex> vertexDefinition, Shader shader, TargetSpace targetSpace)
     {
         Definition = vertexDefinition;
+        _shader = shader;
         Space = targetSpace;
         
         _vertexArrayObject = GL.GenVertexArray();
@@ -35,10 +37,10 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         
-        Definition.Shader.Use();
+        _shader.Use();
     }
 
-    public override Shader Shader => Definition.Shader;
+    public override Shader Shader => _shader;
 
     public VertexFactory GetVertexFactory() => GetFactory(Definition.VertexType);
 
@@ -86,7 +88,7 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         
-        Definition.Shader.Use();
+        Shader.Use();
     }
 
     public override void BeforeRender()
@@ -107,9 +109,9 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
             if (bakedModel.HasShaderProperties)
                 bakedModel.ApplyShaderProperties(Shader);
             
-            Definition.Shader.SetMatrix4("model", bakedModel.Transform);
-            Definition.Shader.SetMatrix4("view", Space.ViewMatrix);
-            Definition.Shader.SetMatrix4("projection", Space.ProjectionMatrix);
+            Shader.SetMatrix4("model", bakedModel.Transform);
+            Shader.SetMatrix4("view", Space.ViewMatrix);
+            Shader.SetMatrix4("projection", Space.ProjectionMatrix);
             
             GL.DrawElements(Definition.PrimitiveType, bakedModel.Indices.Length, DrawElementsType.UnsignedInt, offset);
 

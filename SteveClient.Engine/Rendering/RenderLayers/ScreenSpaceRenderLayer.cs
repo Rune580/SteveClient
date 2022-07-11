@@ -1,13 +1,14 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using SteveClient.Engine.Rendering.Definitions;
+using SteveClient.Engine.Rendering.Shaders;
 using SteveClient.Engine.Rendering.VertexData;
 
 namespace SteveClient.Engine.Rendering.RenderLayers;
 
 public class ScreenSpaceRenderLayer<TVertex> : DefaultRenderLayer<TVertex> where TVertex : IVertex
 {
-    public ScreenSpaceRenderLayer(VertexDefinitions.VertexDefinition<TVertex> vertexDefinition) : base(vertexDefinition, TargetSpace.ScreenSpace) { }
+    public ScreenSpaceRenderLayer(VertexDefinitions.VertexDefinition<TVertex> vertexDefinition, Shader shader) : base(vertexDefinition, shader, TargetSpace.ScreenSpace) { }
 
     public override void Render()
     {

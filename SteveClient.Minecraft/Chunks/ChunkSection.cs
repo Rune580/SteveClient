@@ -1,8 +1,4 @@
-﻿using OpenTK.Mathematics;
-using SteveClient.Minecraft.Blocks;
-using SteveClient.Minecraft.Chunks.Palettes;
-
-namespace SteveClient.Minecraft.Chunks;
+﻿namespace SteveClient.Minecraft.Chunks;
 
 public class ChunkSection
 {
@@ -10,7 +6,7 @@ public class ChunkSection
     private const int Width = 16;
     
     private readonly List<int> _palette = new();
-    private readonly byte[][][] _blockStates;
+    private readonly short[][][] _blockStates;
 
     private short _blockCount;
     
@@ -20,13 +16,13 @@ public class ChunkSection
         
         _palette.Add(singleValue);
 
-        byte[] x = new byte[16];
-        Array.Fill(x, (byte)0);
+        short[] x = new short[16];
+        Array.Fill(x, (short)0);
 
-        byte[][] z = new byte[16][];
+        short[][] z = new short[16][];
         Array.Fill(z, x);
         
-        _blockStates = new byte[16][][];
+        _blockStates = new short[16][][];
         Array.Fill(_blockStates, z);
     }
     
@@ -36,9 +32,9 @@ public class ChunkSection
         
         _palette.AddRange(palette);
 
-        byte[] x = new byte[16];
-        byte[][] z = new byte[16][];
-        _blockStates = new byte[16][][];
+        short[] x = new short[16];
+        short[][] z = new short[16][];
+        _blockStates = new short[16][][];
         
         Array.Fill(z, x);
         Array.Fill(_blockStates, z);
@@ -77,9 +73,65 @@ public class ChunkSection
                     if (data >= _palette.Count)
                         throw new IndexOutOfRangeException();
 
-                    _blockStates[y][z][x] = (byte)data;
+                    _blockStates[y][z][x] = (short)data;
                 }
             }
         }
+    }
+
+    public long GetContentHash()
+    {
+        long hash;
+        
+        unchecked
+        {
+            long paletteHash = _palette.Aggregate(31, (total, next) => total * next);
+
+            hash = _blockStates.Aggregate(paletteHash, (yTotal, yNext) =>
+            {
+                var y = yNext.Aggregate(yTotal, (zTotal, zNext) =>
+                {
+                    var z = zNext.Aggregate(zTotal, (xTotal, xNext) => xTotal * xNext);
+
+                    return zTotal ^ z;
+                });
+
+                return yTotal * y;
+            });
+        }
+
+        return hash;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj))
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj is not ChunkSection chunkSection)
+            return false;
+
+        return this == chunkSection;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_palette, _blockStates, _blockCount);
+    }
+
+    public static bool operator ==(ChunkSection? left, ChunkSection? right)
+    {
+        if (left is null || right is null)
+            return false;
+
+        return left._blockCount == right._blockCount 
+               && left._palette.SequenceEqual(right._palette)
+               && left._blockStates.SequenceEqual(right._blockStates);
+    }
+
+    public static bool operator !=(ChunkSection? left, ChunkSection? right)
+    {
+        return !(left == right);
     }
 }

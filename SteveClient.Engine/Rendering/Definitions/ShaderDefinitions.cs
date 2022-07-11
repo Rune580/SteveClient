@@ -17,6 +17,8 @@ public static class ShaderDefinitions
     public static Shader LineShader { get; private set; }
     public static Shader UiColorShader { get; private set; }
     
+    public static Shader SolidBlockShader { get; private set; }
+    
     public static void LoadShaders()
     {
         PositionColorShader = new Shader("PositionColor.vert", "PositionColor.frag", PositionAttribute, ColorAttribute);
@@ -28,5 +30,7 @@ public static class ShaderDefinitions
         LineShader = new Shader("Line", PositionAttribute);
 
         UiColorShader = new Shader("DefaultUi", PositionAttribute);
+
+        SolidBlockShader = new Shader("Game/SolidBlock", PositionAttribute, UvAttribute);
     }
 }

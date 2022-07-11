@@ -11,6 +11,7 @@ namespace SteveClient.Engine.Rendering.RenderLayers;
 public class FontRenderLayer : BaseRenderLayer
 {
     private readonly VertexDefinition<PositionTexture> _definition = DefaultFont;
+    private readonly Shader _shader;
     private readonly int _elementBufferObject;
     private readonly int _vertexBufferObject;
     private readonly int _vertexArrayObject;
@@ -20,8 +21,9 @@ public class FontRenderLayer : BaseRenderLayer
     private readonly uint[] _indices;
     private readonly TargetSpace _targetSpace;
 
-    public FontRenderLayer(TargetSpace targetSpace)
+    public FontRenderLayer(Shader shader, TargetSpace targetSpace)
     {
+        _shader = shader;
         _targetSpace = targetSpace;
         
         _vertices = new VertexDataArray(PositionTexture.Size * 4)
@@ -48,10 +50,12 @@ public class FontRenderLayer : BaseRenderLayer
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         GL.BufferData(BufferTarget.ElementArrayBuffer, sizeof(uint) * 6, _indices, BufferUsageHint.StaticDraw);
         
-        _definition.Shader.Use();
+        Shader.Use();
     }
+    
+    public FontRenderLayer(TargetSpace targetSpace) : this(ShaderDefinitions.DefaultFontShader, targetSpace) { }
 
-    public override Shader Shader => Wireframe ? ShaderDefinitions.PosTexWireframeShader : _definition.Shader;
+    public override Shader Shader => Wireframe ? ShaderDefinitions.PosTexWireframeShader : _shader;
 
     public void Upload(BakedTextRender textRender)
     {

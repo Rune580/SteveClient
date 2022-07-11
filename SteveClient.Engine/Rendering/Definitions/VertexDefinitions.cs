@@ -16,23 +16,21 @@ public static class VertexDefinitions
 
     public static void Init()
     {
-        PositionColorTriangles = new VertexDefinition<PositionColor>(PositionColorShader, PrimitiveType.Triangles);
-        PositionTextureColorTriangles = new VertexDefinition<PositionTextureColor>(PositionTextureColorShader, PrimitiveType.Triangles);
-        PositionTextureTriangles = new VertexDefinition<PositionTexture>(PositionTextureShader, PrimitiveType.Triangles);
-        DefaultFont = new VertexDefinition<PositionTexture>(DefaultFontShader, PrimitiveType.Triangles);
-        PositionTriangles = new VertexDefinition<Position>(UiColorShader, PrimitiveType.Triangles);
-        Lines = new VertexDefinition<Position>(PositionColorShader, PrimitiveType.Lines);
+        PositionColorTriangles = new VertexDefinition<PositionColor>(PrimitiveType.Triangles);
+        PositionTextureColorTriangles = new VertexDefinition<PositionTextureColor>(PrimitiveType.Triangles);
+        PositionTextureTriangles = new VertexDefinition<PositionTexture>(PrimitiveType.Triangles);
+        DefaultFont = new VertexDefinition<PositionTexture>(PrimitiveType.Triangles);
+        PositionTriangles = new VertexDefinition<Position>(PrimitiveType.Triangles);
+        Lines = new VertexDefinition<Position>(PrimitiveType.Lines);
     }
     
     public readonly struct VertexDefinition<TVertex> where TVertex : IVertex
     {
-        public readonly Shader Shader;
         public readonly PrimitiveType PrimitiveType;
         public readonly int VertexSize;
 
-        public VertexDefinition(Shader shader, PrimitiveType primitiveType) : this()
+        public VertexDefinition(PrimitiveType primitiveType) : this()
         {
-            Shader = shader;
             PrimitiveType = primitiveType;
 
             TVertex vertex = (TVertex)Activator.CreateInstance(VertexType)!;
