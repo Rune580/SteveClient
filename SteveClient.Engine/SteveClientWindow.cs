@@ -69,7 +69,6 @@ public class SteveClientWindow : GameWindow
         foreach (var renderLayer in RenderLayerDefinitions.Instances)
         {
             renderLayer.Bind();
-            renderLayer.RebuildBuffers();
             renderLayer.PreRender();
             renderLayer.Render();
             renderLayer.PostRender();

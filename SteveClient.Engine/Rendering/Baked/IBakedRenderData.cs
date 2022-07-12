@@ -16,6 +16,8 @@ public interface IBakedRenderData
     
     public bool HasShaderProperties { get; }
     public void ApplyShaderProperties(Shader shader);
+
+    public IBakedRenderData Clone();
     
     public int SizeOfVertices { get; }
     public int SizeOfIndices { get; }

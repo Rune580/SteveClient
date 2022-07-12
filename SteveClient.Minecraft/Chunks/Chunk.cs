@@ -23,16 +23,20 @@ public class Chunk
         int sectionIndex = GetSectionIndex(pos.Y);
         int blockStateId = _chunkSections[sectionIndex].GetBlockState(pos.X, HeightLocalToSection(pos.Y, sectionIndex), pos.Z);
 
-        return ref Data.Blocks.GetBlockStateFromBlockStateId(blockStateId);
+        return ref Data.Blocks.GetBlockState(blockStateId);
     }
 
     public int GetBlockStateId(Vector3i pos)
     {
         int sectionIndex = GetSectionIndex(pos.Y);
+
+        if (sectionIndex is < 0 or >= 20)
+            return -1;
+        
         return _chunkSections[sectionIndex].GetBlockState(pos.X, HeightLocalToSection(pos.Y, sectionIndex), pos.Z);
     }
 
-    public void SetBlockState(Vector3i pos, int blockStateId)
+    public void SetBlockState(Vector3i pos, short blockStateId)
     {
         int sectionIndex = GetSectionIndex(pos.Y);
         _chunkSections[sectionIndex].SetBlockState(pos.X, HeightLocalToSection(pos.Y, sectionIndex), pos.Z, blockStateId);
@@ -45,11 +49,11 @@ public class Chunk
 
     private int GetSectionIndex(int height)
     {
-        return (int)MathF.Floor((float)(MaxBlockHeight - (height + NegativeHeight)) / ChunkSectionCount);
+        return (int)MathF.Floor((height + NegativeHeight) / 16f);
     }
 
     private int HeightLocalToSection(int height, int section)
     {
-        return (height + NegativeHeight) - (section * 16);
+        return height - (section * 16 - NegativeHeight);
     }
 }

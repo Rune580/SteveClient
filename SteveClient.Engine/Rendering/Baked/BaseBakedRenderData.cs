@@ -26,4 +26,9 @@ public abstract class BaseBakedRenderData : IBakedRenderData
         foreach (var shaderProperty in ShaderProperties)
             shaderProperty.Apply(shader);
     }
+
+    public virtual IBakedRenderData Clone()
+    {
+        return this;
+    }
 }

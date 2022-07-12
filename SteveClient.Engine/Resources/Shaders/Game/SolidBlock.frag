@@ -4,7 +4,7 @@ out vec4 FragColor;
 
 in vec2 texCoord;
 
-uniform vec3 tint;
+uniform vec4 tint;
 uniform sampler2D textureSampler;
 
 void main() {

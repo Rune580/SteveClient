@@ -46,7 +46,7 @@ public class SteveGameLoop
 
             graphicsScheduler.Execute(GetLastGraphicsDelta());
             RenderLayerDefinitions.RebuildAll();
-        }, _graphicsFrameRate, true);
+        }, _graphicsFrameRate, false);
     }
 
     public void Tick(double elapsedTime)

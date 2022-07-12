@@ -61,7 +61,7 @@ public class BlockModelBuilder
 
             int[] quadVerts = { i0, i1, i2, i3 };
 
-            BlockModel.Quad bakedQuad = new BlockModel.Quad(quadVerts, quad.Uvs, quad.TextureResourceName);
+            BlockModel.Quad bakedQuad = new BlockModel.Quad(quadVerts, quad.Uvs, quad.TextureResourceName, quad.CullFace);
             quads.Add(bakedQuad);
         }
 
@@ -86,7 +86,7 @@ public class BlockModelBuilder
             blockFace.UvMax,
             blockFace.UvMin,
             new Vector2(blockFace.UvMax.X, blockFace.UvMin.Y)
-        }, blockFace.Texture);
+        }, blockFace.Texture, blockFace.CullFace);
         
         _quads.Add(quad);
         

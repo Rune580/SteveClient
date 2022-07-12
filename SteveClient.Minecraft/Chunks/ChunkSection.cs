@@ -6,7 +6,7 @@ public class ChunkSection
     private const int Width = 16;
     
     private readonly List<int> _palette = new();
-    private readonly short[][][] _blockStates;
+    private readonly short[] _blockStates;
 
     private short _blockCount;
     
@@ -15,15 +15,9 @@ public class ChunkSection
         _blockCount = blockCount;
         
         _palette.Add(singleValue);
-
-        short[] x = new short[16];
-        Array.Fill(x, (short)0);
-
-        short[][] z = new short[16][];
-        Array.Fill(z, x);
         
-        _blockStates = new short[16][][];
-        Array.Fill(_blockStates, z);
+        _blockStates = new short[16 * 16 * 16];
+        Array.Fill(_blockStates, (short)singleValue);
     }
     
     public ChunkSection(short blockCount, int bitsPerEntry, int[] palette, ulong[] data)
@@ -32,24 +26,21 @@ public class ChunkSection
         
         _palette.AddRange(palette);
 
-        short[] x = new short[16];
-        short[][] z = new short[16][];
-        _blockStates = new short[16][][];
-        
-        Array.Fill(z, x);
-        Array.Fill(_blockStates, z);
-        
+        _blockStates = new short[16 * 16 * 16];
+
         PopulateBlockStates(bitsPerEntry, data);
     }
 
     public int GetBlockState(int x, int y, int z)
     {
-        return _palette[_blockStates[y][z][x]];
+        int blockNumber = (((y * Height) + z) * Width) + x;
+        return _blockStates[blockNumber];
     }
 
-    public void SetBlockState(int x, int y, int z, int blockStateId)
+    public void SetBlockState(int x, int y, int z, short blockStateId)
     {
-        throw new NotImplementedException();
+        int blockNumber = (((y * Height) + z) * Width) + x;
+        _blockStates[blockNumber] = blockStateId;
     }
     
     private void PopulateBlockStates(int bitsPerEntry, ulong[] dataArray)
@@ -73,7 +64,7 @@ public class ChunkSection
                     if (data >= _palette.Count)
                         throw new IndexOutOfRangeException();
 
-                    _blockStates[y][z][x] = (short)data;
+                    SetBlockState(x, y, z, (short)_palette[(int)data]);
                 }
             }
         }
@@ -81,26 +72,28 @@ public class ChunkSection
 
     public long GetContentHash()
     {
-        long hash;
-        
-        unchecked
-        {
-            long paletteHash = _palette.Aggregate(31, (total, next) => total * next);
+        // long hash;
+        //
+        // unchecked
+        // {
+        //     long paletteHash = _palette.Aggregate(_blockCount * (_palette.Count ^ 31), (total, next) => total ^ next);
+        //
+        //     hash = _blockStates.Aggregate(paletteHash, (yTotal, yNext) =>
+        //     {
+        //         var y = yNext.Aggregate(yTotal, (zTotal, zNext) =>
+        //         {
+        //             var z = zNext.Aggregate(zTotal, (xTotal, xNext) => xTotal * xNext);
+        //
+        //             return zTotal ^ z;
+        //         });
+        //
+        //         return yTotal * y;
+        //     });
+        // }
+        //
+        // return hash;
 
-            hash = _blockStates.Aggregate(paletteHash, (yTotal, yNext) =>
-            {
-                var y = yNext.Aggregate(yTotal, (zTotal, zNext) =>
-                {
-                    var z = zNext.Aggregate(zTotal, (xTotal, xNext) => xTotal * xNext);
-
-                    return zTotal ^ z;
-                });
-
-                return yTotal * y;
-            });
-        }
-
-        return hash;
+        return 0;
     }
 
     public override bool Equals(object? obj)

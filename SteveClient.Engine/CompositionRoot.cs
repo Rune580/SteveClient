@@ -57,6 +57,7 @@ public class CompositionRoot
         // Create render engines
         var renderModelFiltersEngine = new RenderModelFiltersEngine();
         var renderBlockEntitiesEngine = new RenderBlockStateEntityEngine();
+        var renderChunkSectionsEngine = new RenderChunkSectionsEngine(world);
         
         // Add engines
         enginesRoot.AddEngine(applyVelocityToSimpleRigidBodiesEngine);
@@ -74,6 +75,7 @@ public class CompositionRoot
         enginesRoot.AddEngine(updateCameraStateFromCamerasEngine);
         enginesRoot.AddEngine(renderModelFiltersEngine);
         enginesRoot.AddEngine(renderBlockEntitiesEngine);
+        enginesRoot.AddEngine(renderChunkSectionsEngine);
         
         // Register scheduled engines
         Scheduler.RegisterScheduledEngine(applyVelocityToSimpleRigidBodiesEngine);
@@ -90,6 +92,7 @@ public class CompositionRoot
         GraphicsScheduler.RegisterScheduledEngine(updateCameraStateFromCamerasEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderModelFiltersEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderBlockEntitiesEngine);
+        GraphicsScheduler.RegisterScheduledEngine(renderChunkSectionsEngine);
         
         BuildCamera(entityFactory);
     }

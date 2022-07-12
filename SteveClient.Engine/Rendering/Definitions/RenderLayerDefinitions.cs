@@ -10,7 +10,7 @@ public static class RenderLayerDefinitions
     public static readonly List<BaseRenderLayer> Instances = new();
 
     public static readonly DefaultRenderLayer<PositionColor> PositionColorRenderLayer = new(PositionColorTriangles, PositionColorShader, TargetSpace.WorldSpace);
-    public static readonly DefaultRenderLayer<PositionTextureColor> SolidBlockLayer = new(PositionTextureColorTriangles, SolidBlockShader, TargetSpace.WorldSpace);
+    public static readonly DefaultRenderLayer<PositionTexture> SolidBlockLayer = new(PositionTextureTriangles, SolidBlockShader, TargetSpace.WorldSpace);
     public static readonly FontRenderLayer WorldFontLayer = new(TargetSpace.WorldSpace);
     public static readonly LineRenderLayer DebugLinesLayer = new();
 

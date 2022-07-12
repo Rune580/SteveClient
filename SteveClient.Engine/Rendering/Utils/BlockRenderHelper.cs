@@ -29,14 +29,12 @@ public class BlockRenderHelper
         where TRenderLayer : BaseRenderLayer, IBakedRenderDataHandler
     {
         var factory = renderLayer.GetVertexFactory();
-        
-        Color4[] colors = { _currentColor, _currentColor, _currentColor, _currentColor };
 
         for (int i = 0; i < _quads.Count; i++)
         {
-            IVertex[] vertices = factory.Consume(_quads[i].Vertices, Array.Empty<Vector3>(), colors, _quads[i].Uvs);
+            IVertex[] vertices = factory.Consume(_quads[i].Vertices, null, null, _quads[i].Uvs);
             
-            BakedModelQuad bakedModelQuad = new BakedModelQuad(vertices.VertexData(), _quads[i].Triangles, _quads[i].TextureResourceName, _transform);
+            BakedModelQuad bakedModelQuad = new BakedModelQuad(vertices.VertexData(), _quads[i].Triangles, _quads[i].TextureResourceName, _transform, _currentColor);
 
             renderLayer.UploadRenderData(bakedModelQuad);
         }
@@ -92,10 +90,7 @@ public class BlockRenderHelper
                 blockModel.Vertices[quad.Vertices[2]],
                 blockModel.Vertices[quad.Vertices[3]]
             };
-
-            int offset = i * 6;
-            //uint[] triangles = blockModel.Indices[offset..(offset + 6)];
-
+            
             TexturedQuad texturedQuad = new TexturedQuad(vertices, quad.Uvs, quad.TextureResourceName);
 
             _quads.Add(texturedQuad);

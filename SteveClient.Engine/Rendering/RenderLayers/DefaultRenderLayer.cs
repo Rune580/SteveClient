@@ -46,11 +46,14 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
 
     public void UploadRenderData(IBakedRenderData renderData)
     {
+        renderData = renderData.Clone();
+        
         for (int i = 0; i < renderData.Indices.Length; i++)
-            renderData.Indices[i] =_elements + renderData.Indices[i];
+            renderData.Indices[i] = _elements + renderData.Indices[i];
+
+        _elements += (uint)(renderData.Vertices.Length / Definition.VertexSize);
         
         RenderData.Add(renderData);
-        _elements += (uint)(renderData.Vertices.Length / Definition.VertexSize);
     }
 
     public override void RebuildBuffers()
@@ -58,24 +61,24 @@ public class DefaultRenderLayer<TVertex> : BaseRenderLayer, IBakedRenderDataHand
         GL.BindVertexArray(_vertexArrayObject);
         
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-        GL.BufferData(BufferTarget.ArrayBuffer, BufferSize * sizeof(float), IntPtr.Zero, BufferUsageHint.DynamicDraw);
+        GL.BufferData(BufferTarget.ArrayBuffer, 10000000 * sizeof(float), IntPtr.Zero, BufferUsageHint.DynamicDraw);
         
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, BufferSize * sizeof(uint), IntPtr.Zero, BufferUsageHint.DynamicDraw);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, 10000000 * sizeof(uint), IntPtr.Zero, BufferUsageHint.DynamicDraw);
 
-        int vertexOffset = 0;
-        int indexOffset = 0;
+        uint vertexOffset = 0;
+        uint indexOffset = 0;
 
         foreach (var renderData in RenderData)
         {
-            var vertexSize = renderData.SizeOfVertices;
-            var indexSize = renderData.SizeOfIndices;
+            uint vertexSize = (uint)renderData.SizeOfVertices;
+            uint indexSize = (uint)renderData.SizeOfIndices;
             
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr)vertexOffset, vertexSize, renderData.Vertices);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr)vertexOffset, (IntPtr)vertexSize, renderData.Vertices);
             
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
-            GL.BufferSubData(BufferTarget.ElementArrayBuffer, (IntPtr)indexOffset, indexSize, renderData.Indices);
+            GL.BufferSubData(BufferTarget.ElementArrayBuffer, (IntPtr)indexOffset, (IntPtr)indexSize, renderData.Indices);
 
             vertexOffset += vertexSize;
             indexOffset += indexSize;

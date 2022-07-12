@@ -38,7 +38,7 @@ public class SpawnChunkSectionEntityEngine : PacketProcessingEngine<ChunkDataAnd
 
 
             initializer.Init(new TransformComponent(new Vector3(chunkPos.X, 16 * i, chunkPos.Y)));
-            initializer.Init(new ChunkSectionComponent(chunkPos, i));
+            initializer.Init(new ChunkSectionComponent(chunkPos, i, true));
         }
 
         _world.LoadChunk(packet.Chunk);

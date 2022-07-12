@@ -28,7 +28,7 @@ public class Blocks
         return ref CollectionsMarshal.GetValueRefOrNullRef(Instance._blocks, id); // This might be a terrible idea
     }
 
-    public static ref readonly BlockState GetBlockStateFromBlockStateId(int blockStateId)
+    public static ref readonly BlockState GetBlockState(int blockStateId)
     {
         return ref CollectionsMarshal.GetValueRefOrNullRef(Instance._blockStates, blockStateId);
     }

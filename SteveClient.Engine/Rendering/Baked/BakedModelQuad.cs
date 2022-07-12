@@ -34,4 +34,17 @@ public class BakedModelQuad : BaseBakedRenderData
     {
         TextureRegistry.GetTexture(_textureResourceName).Use();
     }
+
+    public override IBakedRenderData Clone()
+    {
+        float[] vertices = new float[Vertices.Length];
+        uint[] indices = new uint[Indices.Length];
+        IShaderProperty[] shaderProperties = new IShaderProperty[ShaderProperties.Length];
+        
+        Array.Copy(Vertices, vertices, vertices.Length);
+        Array.Copy(Indices, indices, indices.Length);
+        Array.Copy(ShaderProperties, shaderProperties, shaderProperties.Length);
+
+        return new BakedModelQuad(vertices, indices, _textureResourceName, Transform, shaderProperties);
+    }
 }

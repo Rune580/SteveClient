@@ -28,6 +28,6 @@ public static class BlockExtensions
 {
     public static ref readonly BlockState GetDefaultBlockState(this in Block block)
     {
-        return ref Data.Blocks.GetBlockStateFromBlockStateId(block.DefaultStateId);
+        return ref Data.Blocks.GetBlockState(block.DefaultStateId);
     }
 }
