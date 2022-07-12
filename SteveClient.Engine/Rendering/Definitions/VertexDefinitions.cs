@@ -13,6 +13,7 @@ public static class VertexDefinitions
     public static VertexDefinition<PositionTexture> DefaultFont;
     public static VertexDefinition<Position> PositionTriangles;
     public static VertexDefinition<Position> Lines;
+    public static VertexDefinition<PositionTextureAtlas> PositionTextureAtlasTriangles;
 
     public static void Init()
     {
@@ -22,6 +23,7 @@ public static class VertexDefinitions
         DefaultFont = new VertexDefinition<PositionTexture>(PrimitiveType.Triangles);
         PositionTriangles = new VertexDefinition<Position>(PrimitiveType.Triangles);
         Lines = new VertexDefinition<Position>(PrimitiveType.Lines);
+        PositionTextureAtlasTriangles = new VertexDefinition<PositionTextureAtlas>(PrimitiveType.Triangles);
     }
     
     public readonly struct VertexDefinition<TVertex> where TVertex : IVertex

@@ -1,16 +1,12 @@
-﻿using ImGuiNET;
+﻿using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.ImGui;
-using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+using Serilog;
 using SteveClient.Engine.InputManagement;
-using SteveClient.Engine.Menus;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Ui;
-using SteveClient.Engine.Rendering.Ui.Elements;
 using SteveClient.Engine.Rendering.Ui.Widgets;
 
 namespace SteveClient.Engine;
@@ -23,12 +19,20 @@ public class SteveClientWindow : GameWindow
 
     public SteveClientWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
     {
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.Console()
+            .CreateLogger();
         
+        Log.Debug("Instantiating main window");
     }
 
     protected override void OnLoad()
     {
         base.OnLoad();
+        
+        //GL.Enable(EnableCap.DebugOutput);
+        //GL.DebugMessageCallback(GlErrorCallback, IntPtr.Zero);
 
         Title += $": OpenGL Version: {GL.GetString(StringName.Version)}";
 
@@ -45,6 +49,16 @@ public class SteveClientWindow : GameWindow
         
         UiRenderer.UiElements.Add(new BlockStateLoaderWidget());
         UiRenderer.UiElements.Add(new SeverConnectWidget());
+    }
+
+    private void GlErrorCallback(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr messagePtr, IntPtr userParam)
+    {
+        // string? message = Marshal.PtrToStringUTF8(messagePtr, length);
+        //
+        // if (string.IsNullOrEmpty(message))
+        //     return;
+        
+        //Log.Debug("Type: {Type}, Severity: {Severity}, Message: {Message}", type.ToString(), severity.ToString(), "message");
     }
     
     protected override void OnResize(ResizeEventArgs e)
@@ -66,13 +80,7 @@ public class SteveClientWindow : GameWindow
         
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-        foreach (var renderLayer in RenderLayerDefinitions.Instances)
-        {
-            renderLayer.Bind();
-            renderLayer.PreRender();
-            renderLayer.Render();
-            renderLayer.PostRender();
-        }
+        RenderLayerDefinitions.Render();
 
         ImGuiController.Update(this, (float)e.Time);
 

@@ -26,8 +26,8 @@ public readonly struct Block
 
 public static class BlockExtensions
 {
-    public static ref readonly BlockState GetDefaultBlockState(this in Block block)
+    public static BlockState GetDefaultBlockState(this in Block block)
     {
-        return ref Data.Blocks.GetBlockState(block.DefaultStateId);
+        return Data.Blocks.GetBlockState(block.DefaultStateId);
     }
 }

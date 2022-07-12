@@ -61,16 +61,16 @@ public class World
         return GetBlockStateId(worldPos.X, worldPos.Y, worldPos.Z);
     }
 
-    public ref readonly BlockState GetBlockState(int x, int y, int z)
+    public BlockState GetBlockState(int x, int y, int z)
     {
         int id = GetBlockStateId(x, y, z);
 
-        return ref Blocks.GetBlockState(id);
+        return Blocks.GetBlockState(id);
     }
 
-    public ref readonly BlockState GetBlockState(Vector3i worldPos)
+    public BlockState GetBlockState(Vector3i worldPos)
     {
-        return ref GetBlockState(worldPos.X, worldPos.Y, worldPos.Z);
+        return GetBlockState(worldPos.X, worldPos.Y, worldPos.Z);
     }
 
     private static Vector2i ChunkPosFromBlockPos(int x, int z)

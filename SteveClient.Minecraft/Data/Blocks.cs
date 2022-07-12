@@ -23,14 +23,14 @@ public class Blocks
         new Blocks(blocks);
     }
 
-    public static ref readonly Block GetBlockFromId(int id)
+    public static Block GetBlockFromId(int id)
     {
-        return ref CollectionsMarshal.GetValueRefOrNullRef(Instance._blocks, id); // This might be a terrible idea
+        return Instance._blocks[id];
     }
 
-    public static ref readonly BlockState GetBlockState(int blockStateId)
+    public static BlockState GetBlockState(int blockStateId)
     {
-        return ref CollectionsMarshal.GetValueRefOrNullRef(Instance._blockStates, blockStateId);
+        return Instance._blockStates[blockStateId];
     }
 
     public static ref readonly BlockState GetDefaultBlockState(string blockResourceName)

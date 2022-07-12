@@ -31,10 +31,10 @@ public class RenderBlockStateEntityEngine : RenderingEngine
                 if (!ModelRegistry.BlockModels.ContainsKey(resourceName))
                     continue;
 
-                _renderHelper.WithBlockModel(ModelRegistry.BlockModels[resourceName])
-                    .WithTransform(ref transform)
-                    .WithColor(Color4.White)
-                    .Upload(RenderLayerDefinitions.SolidBlockLayer);
+                // _renderHelper.WithBlockModel(ModelRegistry.BlockModels[resourceName])
+                //     .WithTransform(ref transform)
+                //     .WithColor(Color4.White)
+                //     .Upload(RenderLayerDefinitions.SolidBlockLayer);
             }
         }
     }

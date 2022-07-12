@@ -8,6 +8,7 @@ public static class ShaderDefinitions
     private static readonly ShaderAttribute PositionAttribute = new("aPosition", 3, VertexAttribPointerType.Float, false);
     private static readonly ShaderAttribute ColorAttribute = new("aColor", 4, VertexAttribPointerType.Float, false);
     private static readonly ShaderAttribute UvAttribute = new("aTexCoord", 2, VertexAttribPointerType.Float, false);
+    private static readonly ShaderAttribute AtlasAttribute = new("aAtlas", 1,  VertexAttribPointerType.Float, false);
 
     public static Shader PositionColorShader { get; private set; }
     public static Shader PositionTextureColorShader { get; private set; }
@@ -31,6 +32,6 @@ public static class ShaderDefinitions
 
         UiColorShader = new Shader("DefaultUi", PositionAttribute);
 
-        SolidBlockShader = new Shader("Game/SolidBlock", PositionAttribute, UvAttribute);
+        SolidBlockShader = new Shader("Game/SolidBlock", PositionAttribute, UvAttribute, AtlasAttribute);
     }
 }

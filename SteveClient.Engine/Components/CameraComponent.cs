@@ -67,7 +67,7 @@ public struct CameraComponent : IEntityComponent
 
     public Matrix4 GetViewMatrix(Vector3 position) => Matrix4.LookAt(position, position + Front, Up);
 
-    public Matrix4 GetProjectionMatrix() => Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 100f);
+    public Matrix4 GetProjectionMatrix() => Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 1000f);
     
     public Matrix4 GetScreenSpaceMatrix() => Matrix4.CreateOrthographic(WindowState.ScreenSize.X, WindowState.ScreenSize.Y, 0.01f, 1000f);
 

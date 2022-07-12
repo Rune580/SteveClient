@@ -2,7 +2,6 @@
 using SteveClient.Engine.Components;
 using SteveClient.Engine.ECS;
 using SteveClient.Engine.Rendering.Utils.ChunkSections;
-using SteveClient.Minecraft.Numerics;
 using Svelto.ECS;
 
 namespace SteveClient.Engine.Engines.Rendering;
@@ -43,13 +42,11 @@ public class RenderChunkSectionsEngine : RenderingEngine
                 Vector3i sectionPos = new Vector3i(sectionComponent.ChunkPos.X, sectionComponent.SectionIndex, sectionComponent.ChunkPos.Y);
                 float distance = Vector3.Distance(sectionPos, _chunkSectionRenderer.PlayerPos);
 
-                if (distance > 2)
+                if (distance > 16)
                     continue;
                 
                 _chunkSectionRenderer.EnqueueChunkSection(sectionPos);
             }
         }
-        
-        _chunkSectionRenderer.Upload();
     }
 }

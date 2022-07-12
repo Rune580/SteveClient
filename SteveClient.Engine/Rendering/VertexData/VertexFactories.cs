@@ -12,7 +12,7 @@ public static class VertexFactories
     #region Factories
 
     public static readonly VertexFactory PositionFactory = new(typeof(Position),
-        (positions, _, _, _) =>
+        (positions, _, _, _, _) =>
         {
             if (positions is null)
                 throw new NullReferenceException();
@@ -26,7 +26,7 @@ public static class VertexFactories
         });
 
     public static readonly VertexFactory PositionTextureFactory = new(typeof(PositionTexture),
-        (positions, _, _, uvs) =>
+        (positions, _, _, uvs, _) =>
         {
             if (positions is null)
                 throw new NullReferenceException();
@@ -43,7 +43,7 @@ public static class VertexFactories
         });
 
     public static readonly VertexFactory PositionColorFactory = new(typeof(PositionColor),
-        (positions, _, colors, _) =>
+        (positions, _, colors, _, _) =>
         {
             if (positions is null)
                 throw new NullReferenceException();
@@ -60,7 +60,7 @@ public static class VertexFactories
         });
 
     public static readonly VertexFactory PositionTextureColorFactory = new(typeof(PositionTextureColor),
-        (positions, _, colors, uvs) =>
+        (positions, _, colors, uvs, _) =>
         {
             if (positions is null)
                 throw new NullReferenceException();
@@ -85,9 +85,9 @@ public static class VertexFactories
     {
         public readonly Type HandledType;
 
-        private readonly Func<Vector3[]?, Vector3[]?, Color4[]?, Vector2[]?, IVertex[]> _factoryFunc; // Position, Normals, Colors, Uvs
+        private readonly Func<Vector3[]?, Vector3[]?, Color4[]?, Vector2[]?, int[]?, IVertex[]> _factoryFunc; // Position, Normals, Colors, Uvs
 
-        public VertexFactory(Type handledType, Func<Vector3[]?, Vector3[]?, Color4[]?, Vector2[]?, IVertex[]> factoryFunc)
+        public VertexFactory(Type handledType, Func<Vector3[]?, Vector3[]?, Color4[]?, Vector2[]?, int[]?, IVertex[]> factoryFunc)
         {
             HandledType = handledType;
             _factoryFunc = factoryFunc;
@@ -95,9 +95,9 @@ public static class VertexFactories
             VertexFactoryMap[handledType] = this;
         }
 
-        public IVertex[] Consume(Vector3[]? vertices, Vector3[]? normals, Color4[]? colors, Vector2[]? uvs)
+        public IVertex[] Consume(Vector3[]? vertices, Vector3[]? normals, Color4[]? colors, Vector2[]? uvs, int[]? atlases = null)
         {
-            return _factoryFunc.Invoke(vertices, normals, colors, uvs);
+            return _factoryFunc.Invoke(vertices, normals, colors, uvs, atlases);
         }
     }
 }

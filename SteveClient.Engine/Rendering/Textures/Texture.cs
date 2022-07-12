@@ -1,11 +1,10 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using SkiaSharp;
 
-namespace SteveClient.Engine.Rendering;
+namespace SteveClient.Engine.Rendering.Textures;
 
-public class Texture : IDisposable
+public class Texture : AbstractTexture
 {
-    public readonly int Handle;
     private SKSurface? _surface;
 
     private Texture(int handle)
@@ -53,7 +52,7 @@ public class Texture : IDisposable
         return _surface.PeekPixels().WithColorType(SKColorType.Bgra8888);
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
         _surface?.Dispose();
     }

@@ -18,12 +18,12 @@ public class Chunk
         _chunkSections = chunkSections;
     }
 
-    public ref readonly BlockState GetBlockState(Vector3i pos)
+    public BlockState GetBlockState(Vector3i pos)
     {
         int sectionIndex = GetSectionIndex(pos.Y);
         int blockStateId = _chunkSections[sectionIndex].GetBlockState(pos.X, HeightLocalToSection(pos.Y, sectionIndex), pos.Z);
 
-        return ref Data.Blocks.GetBlockState(blockStateId);
+        return Data.Blocks.GetBlockState(blockStateId);
     }
 
     public int GetBlockStateId(Vector3i pos)
