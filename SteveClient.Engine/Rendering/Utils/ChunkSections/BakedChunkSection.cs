@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.AssetManagement;
+using SteveClient.Engine.Game;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Models;
 using SteveClient.Engine.Rendering.RenderLayers;

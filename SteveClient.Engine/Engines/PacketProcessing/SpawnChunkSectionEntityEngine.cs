@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.Components;
 using SteveClient.Engine.Descriptors;
+using SteveClient.Engine.Game;
 using SteveClient.Engine.Networking.Packets.ClientBound.Play;
 using SteveClient.Minecraft.Chunks;
 using Svelto.ECS;

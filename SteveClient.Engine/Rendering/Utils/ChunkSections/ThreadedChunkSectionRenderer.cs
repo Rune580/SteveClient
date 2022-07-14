@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using OpenTK.Mathematics;
+using SteveClient.Engine.Game;
 using SteveClient.Engine.Rendering.Baked;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Minecraft.Chunks;
@@ -27,7 +28,8 @@ public class ThreadedChunkSectionRenderer
         _world = world;
 
         _cts = new CancellationTokenSource();
-        ThreadPool.QueueUserWorkItem(ProcessChunksMain, _cts);
+        Task.Run(ProcessChunksMain);
+        //ThreadPool.QueueUserWorkItem(ProcessChunksMain, _cts);
     }
 
     ~ThreadedChunkSectionRenderer()
@@ -50,17 +52,16 @@ public class ThreadedChunkSectionRenderer
         _playerPos = chunkPos;
     }
 
-    private async void ProcessChunksMain(object? state)
+    private async void ProcessChunksMain()
     {
-        if (state is not CancellationTokenSource token)
-            throw new Exception();
-
+        var token = _cts.Token;
+        
         while (!token.IsCancellationRequested)
         {
             while (_queueJobs < MathF.Min(MaxJobs, _chunkSections.Count))
                 ThreadPool.QueueUserWorkItem(ProcessQueue);
 
-            await Task.Delay(20);
+            await Task.Delay(20, token);
         }
     }
 

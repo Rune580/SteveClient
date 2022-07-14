@@ -4,7 +4,7 @@ using SteveClient.Minecraft.Blocks;
 using SteveClient.Minecraft.Chunks;
 using SteveClient.Minecraft.Data;
 
-namespace SteveClient.Engine;
+namespace SteveClient.Engine.Game;
 
 public class World
 {

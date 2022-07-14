@@ -8,6 +8,7 @@ using SteveClient.Engine.Engines.PacketProcessing;
 using SteveClient.Engine.Engines.Rendering;
 using SteveClient.Engine.Engines.ServerWorld;
 using SteveClient.Engine.Engines.Tools;
+using SteveClient.Engine.Game;
 using SteveClient.Engine.Networking;
 using SteveClient.Engine.Rendering.Models;
 using SteveClient.Minecraft.Data;

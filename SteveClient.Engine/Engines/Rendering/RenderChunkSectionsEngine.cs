@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.Components;
 using SteveClient.Engine.ECS;
+using SteveClient.Engine.Game;
 using SteveClient.Engine.InputManagement;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Utils.ChunkSections;
