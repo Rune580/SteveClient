@@ -23,6 +23,7 @@ public class ChunkRenderLayer : BaseRenderLayer
     private readonly TargetSpace _space;
 
     private readonly ConcurrentQueue<BakedChunkSection> _chunkQueue = new();
+    private readonly Dictionary<Vector3i, int> _posToChunkMap = new();
     private readonly List<BakedChunkPointer> _chunks = new();
 
     private int _verticesOffset;
@@ -58,44 +59,79 @@ public class ChunkRenderLayer : BaseRenderLayer
         _chunkQueue.Enqueue(bakedSection);
     }
 
+    public void ClearChunks()
+    {
+        _chunks.Clear();
+        _posToChunkMap.Clear();
+        _chunkQueue.Clear();
+        _verticesOffset = 0;
+        _indicesOffset = 0;
+    }
+
+    public void RemoveChunk()
+    {
+        
+    }
+
     public override void RebuildBuffers()
     {
+        bool fullRebuild = false;
+        
         while (!_chunkQueue.IsEmpty)
         {
             if (!_chunkQueue.TryDequeue(out var bakedSection))
                 return;
-            
-            int vertexOffset = _verticesOffset;
-            int vertexLength = bakedSection.Vertices.Length * sizeof(float);
 
-            int indexOffset = _indicesOffset;
-            int indexLength = bakedSection.Indices.Length * sizeof(uint);
-        
-            BakedChunkPointer chunkPointer = new BakedChunkPointer(bakedSection.Vertices,
-                vertexOffset,
-                vertexLength,
-                bakedSection.Indices,
-                bakedSection.Indices.Length,
-                indexOffset,
-                indexLength,
-                bakedSection.Hash,
-                bakedSection.Transform);
-        
-            Bind();
-        
-            GL.BindVertexArray(_vertexArrayObject);
-        
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr)_verticesOffset, vertexLength, chunkPointer.Vertices);
-        
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
-            GL.BufferSubData(BufferTarget.ElementArrayBuffer, (IntPtr)_indicesOffset, indexLength, chunkPointer.Indices);
+            if (_posToChunkMap.TryGetValue(bakedSection.ChunkPos, out int i))
+            {
+                fullRebuild = true;
+                _chunks.RemoveAt(i);
+                _posToChunkMap.Remove(bakedSection.ChunkPos);
+            }
 
-            _chunks.Add(chunkPointer);
-
-            _verticesOffset += vertexLength;
-            _indicesOffset += indexLength;
+            AddChunk(bakedSection);
         }
+
+        if (!fullRebuild)
+            return;
+
+        _verticesOffset = 0;
+        _indicesOffset = 0;
+
+        var bakedSections = _chunks.Select(chunkPointer => chunkPointer.BakedSection).ToArray();
+        _chunks.Clear();
+
+        foreach (var bakedChunkSection in bakedSections)
+            AddChunk(bakedChunkSection);
+    }
+
+    private void AddChunk(BakedChunkSection bakedSection)
+    {
+        int vertexOffset = _verticesOffset;
+        int vertexLength = bakedSection.Vertices.Length * sizeof(float);
+
+        int indexOffset = _indicesOffset;
+        int indexLength = bakedSection.Indices.Length * sizeof(uint);
+        
+        BakedChunkPointer chunkPointer = new BakedChunkPointer(bakedSection,
+            vertexOffset,
+            vertexLength,
+            indexOffset,
+            indexLength);
+            
+        GL.BindVertexArray(_vertexArrayObject);
+        
+        GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
+        GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr)_verticesOffset, vertexLength, chunkPointer.Vertices);
+        
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
+        GL.BufferSubData(BufferTarget.ElementArrayBuffer, (IntPtr)_indicesOffset, indexLength, chunkPointer.Indices);
+
+        _posToChunkMap[bakedSection.ChunkPos] = _chunks.Count;
+        _chunks.Add(chunkPointer);
+
+        _verticesOffset += vertexLength;
+        _indicesOffset += indexLength;
     }
 
     public override void Bind()
@@ -111,13 +147,13 @@ public class ChunkRenderLayer : BaseRenderLayer
     public override void BeforeRender()
     {
         GL.Enable(EnableCap.DepthTest);
-        GL.CullFace(CullFaceMode.Back);
+        
+        GL.Enable(EnableCap.CullFace);
+        GL.CullFace(CullFaceMode.Front);
     }
     
     public override void Render()
     {
-        Bind();
-        
         Shader.SetColor("tint", Color4.White);
         Shader.SetMatrix4("view", _space.ViewMatrix);
         Shader.SetMatrix4("projection", _space.ProjectionMatrix);
@@ -137,36 +173,34 @@ public class ChunkRenderLayer : BaseRenderLayer
     public override void AfterRender()
     {
         GL.Disable(EnableCap.DepthTest);
+        GL.Disable(EnableCap.CullFace);
     }
     
     private readonly struct BakedChunkPointer : IEquatable<BakedChunkPointer>
     {
-        public readonly float[] Vertices;
+        public readonly BakedChunkSection BakedSection;
         public readonly int VerticesOffset;
         public readonly int VerticesLength;
-        public readonly uint[] Indices;
-        public readonly int IndicesCount;
         public readonly int IndicesOffset;
         public readonly int IndicesLength;
-        public readonly long Hash;
-        public readonly Matrix4 Model;
 
-        public BakedChunkPointer(float[] vertices, int verticesOffset, int verticesLength, uint[] indices, int indicesCount, int indicesOffset, int indicesLength, long hash, Matrix4 model)
+        public BakedChunkPointer(BakedChunkSection bakedSection, int verticesOffset, int verticesLength, int indicesOffset, int indicesLength)
         {
-            Vertices = vertices;
+            BakedSection = bakedSection;
             VerticesOffset = verticesOffset;
             VerticesLength = verticesLength;
-            Indices = indices;
-            IndicesCount = indicesCount;
             IndicesOffset = indicesOffset;
             IndicesLength = indicesLength;
-            Hash = hash;
-            Model = model;
         }
+
+        public float[] Vertices => BakedSection.Vertices;
+        public uint[] Indices => BakedSection.Indices;
+        public int IndicesCount => BakedSection.Indices.Length;
+        public Matrix4 Model => BakedSection.Transform;
 
         public bool Equals(BakedChunkPointer other)
         {
-            return Hash == other.Hash;
+            return BakedSection.ChunkPos == other.BakedSection.ChunkPos;
         }
         
         public override bool Equals(object? obj)
@@ -176,7 +210,7 @@ public class ChunkRenderLayer : BaseRenderLayer
 
         public override int GetHashCode()
         {
-            return Hash.GetHashCode();
+            return BakedSection.ChunkPos.GetHashCode();
         }
 
         public static bool operator ==(BakedChunkPointer left, BakedChunkPointer right)

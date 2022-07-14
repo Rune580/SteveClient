@@ -4,6 +4,8 @@ namespace SteveClient.Engine.InputManagement;
 
 public static class KeyBinds
 {
+    public static readonly KeyBind Sprint = new("Sprint", Keys.LeftShift);
+    public static readonly KeyBind Sneak = new("Sneak", Keys.LeftControl);
     public static readonly KeyBind CameraForward = new("Camera Forward", Keys.W);
     public static readonly KeyBind CameraLeft = new("Camera Left", Keys.A);
     public static readonly KeyBind CameraBackwards = new("Camera Backwards", Keys.S);
@@ -13,6 +15,7 @@ public static class KeyBinds
     public static readonly KeyBind ControlCamera = new("Control Camera", MouseButton.Right);
     public static readonly KeyBind Pause = new("Pause", Keys.Escape);
     public static readonly KeyBind TeleportToPlayer = new("Teleport to Player", Keys.T);
+    public static readonly KeyBind ReloadChunks = new("Reload Chunks", Keys.F5);
     
     public struct KeyBind
     {

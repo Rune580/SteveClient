@@ -26,6 +26,7 @@
         <Content Include="Resources\Fonts\**">
             <Link>fonts\%(Filename)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
         </Content>
     </ItemGroup>
 

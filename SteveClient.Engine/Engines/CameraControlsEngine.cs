@@ -12,7 +12,9 @@ namespace SteveClient.Engine.Engines;
 public class CameraControlsEngine : BaseEngine
 {
     public const float MouseSensitivity = 0.2f;
-    public const float CameraSpeed = 1.5f;
+    public const float CameraSpeed = 1000f;
+    public const float SprintModifier = 2f;
+    public const float SneakModifier = 0.5f;
     
     private bool _firstMove = true;
     private Vector2 _lastPos;
@@ -26,7 +28,7 @@ public class CameraControlsEngine : BaseEngine
             entitiesDB.QueryUniqueEntityOptional<SimpleRigidBodyComponent, CameraComponent>(GameGroups.MainCamera.BuildGroup);
 
         if (rigidBodyCameraOptional.HasValue)
-            HandleCameraMovementAndRotation(ref rigidBodyCameraOptional.Get1(), ref rigidBodyCameraOptional.Get2());
+            HandleCameraMovementAndRotation(ref rigidBodyCameraOptional.Get1(), ref rigidBodyCameraOptional.Get2(), delta);
 
         var cameraTransformOptional =
             entitiesDB.QueryUniqueEntityOptional<TransformComponent>(GameGroups.MainCamera.BuildGroup);
@@ -37,7 +39,7 @@ public class CameraControlsEngine : BaseEngine
             TeleportCameraToPlayer(ref cameraTransformOptional.Get1(), ref playerTransformOptional.Get1());
     }
 
-    private void HandleCameraMovementAndRotation(ref SimpleRigidBodyComponent rigidBody, ref CameraComponent camera)
+    private void HandleCameraMovementAndRotation(ref SimpleRigidBodyComponent rigidBody, ref CameraComponent camera, float delta)
     {
         if (KeyBinds.ControlCamera.IsReleased && InputManager.CursorState == CursorState.Grabbed)
         {
@@ -50,20 +52,22 @@ public class CameraControlsEngine : BaseEngine
 
         InputManager.CursorState = CursorState.Grabbed;
 
+        float modifier = GetSpeedModifier();
+
         Vector3 velocity = Vector3.Zero;
         
         if (KeyBinds.CameraForward.IsDown)
-            velocity += camera.Front * CameraSpeed;
+            velocity += camera.Front * (CameraSpeed * modifier * delta);
         if (KeyBinds.CameraBackwards.IsDown)
-            velocity -= camera.Front * CameraSpeed;
+            velocity -= camera.Front * (CameraSpeed * modifier * delta);
         if (KeyBinds.CameraLeft.IsDown)
-            velocity -= camera.Right * CameraSpeed;
+            velocity -= camera.Right * (CameraSpeed * modifier * delta);
         if (KeyBinds.CameraRight.IsDown)
-            velocity += camera.Right * CameraSpeed;
+            velocity += camera.Right * (CameraSpeed * modifier * delta);
         if (KeyBinds.CameraUp.IsDown)
-            velocity += camera.Up * CameraSpeed;
+            velocity += camera.Up * (CameraSpeed * modifier * delta);
         if (KeyBinds.CameraDown.IsDown)
-            velocity -= camera.Up * CameraSpeed;
+            velocity -= camera.Up * (CameraSpeed * modifier * delta);
 
         rigidBody.Velocity = velocity;
 
@@ -83,6 +87,11 @@ public class CameraControlsEngine : BaseEngine
             camera.Yaw += deltaX * MouseSensitivity;
             camera.Pitch -= deltaY * MouseSensitivity;
         }
+    }
+
+    private float GetSpeedModifier()
+    {
+        return KeyBinds.Sneak.IsDown ? SneakModifier : KeyBinds.Sprint.IsDown ? SprintModifier : 1f;
     }
 
     private void TeleportCameraToPlayer(ref TransformComponent cameraTransform, ref TransformComponent playerTransform)

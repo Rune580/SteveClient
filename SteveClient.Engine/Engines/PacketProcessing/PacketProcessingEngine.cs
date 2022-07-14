@@ -21,13 +21,15 @@ public abstract class PacketProcessingEngine<TPacket> : BaseEngine
         if (_packetQueue.IsEmpty)
             return;
 
-        if (!_packetQueue.TryPeek(out var consumablePacket))
-            return;
-        
-        Execute(delta, consumablePacket);
+        while (_packetQueue.TryPeek(out var consumablePacket))
+        {
+            Execute(delta, consumablePacket);
 
-        if (consumablePacket.Consumed)
+            if (!consumablePacket.Consumed)
+                break;
+            
             _packetQueue.TryDequeue(out _);
+        }
     }
 
     protected abstract void Execute(float delta, ConsumablePacket<TPacket> consumablePacket);

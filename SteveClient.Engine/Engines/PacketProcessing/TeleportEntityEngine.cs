@@ -5,19 +5,19 @@ using Svelto.ECS;
 
 namespace SteveClient.Engine.Engines.PacketProcessing;
 
-public class MoveEntityEngine : PacketProcessingEngine<EntityPositionPacket>
+public class TeleportEntityEngine : PacketProcessingEngine<TeleportEntityPacket>
 {
     private readonly World _world;
-
-    public MoveEntityEngine(World world)
+    
+    public TeleportEntityEngine(World world)
     {
         _world = world;
     }
-    
-    protected override void Execute(float delta, ConsumablePacket<EntityPositionPacket> consumablePacket)
+
+    protected override void Execute(float delta, ConsumablePacket<TeleportEntityPacket> consumablePacket)
     {
-        EntityPositionPacket packet = consumablePacket.Get();
-        
+        TeleportEntityPacket packet = consumablePacket.Get();
+
         if (!_world.MinecraftEntityIdMap.ContainsKey(packet.EntityId))
         {
             consumablePacket.MarkConsumed();
@@ -33,9 +33,8 @@ public class MoveEntityEngine : PacketProcessingEngine<EntityPositionPacket>
 
                 if (entity.EntityId != packet.EntityId)
                     continue;
-
-                Vector3 targetPos = (Vector3)(transform.Position + packet.Delta);
-                transform.Position = targetPos;
+                
+                transform.Position = (Vector3)packet.Position;
                 
                 consumablePacket.MarkConsumed();
                 break;

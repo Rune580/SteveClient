@@ -47,13 +47,13 @@ public class Chunk
         return _chunkSections[sectionIndex];
     }
 
-    private int GetSectionIndex(int height)
-    {
-        return (int)MathF.Floor((height + NegativeHeight) / 16f);
-    }
-
     private int HeightLocalToSection(int height, int section)
     {
         return height - (section * 16 - NegativeHeight);
+    }
+    
+    public static int GetSectionIndex(int height)
+    {
+        return (int)MathF.Floor((height + NegativeHeight) / 16f);
     }
 }

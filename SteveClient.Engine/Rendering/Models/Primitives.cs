@@ -6,7 +6,7 @@ namespace SteveClient.Engine.Rendering.Models;
 public static class Primitives
 {
     public static readonly SimpleModel Cube = new SimpleModelBuilder()
-        .AddCube(new Vector3(-0.5f, -0.5f, -0.5f), new Vector3(0.5f, 0.5f, 0.5f)).Build();
+        .AddCube(new Vector3(-0.3f, 0f, -0.3f), new Vector3(0.3f, 2f, 0.3f)).Build();
     
     
 }

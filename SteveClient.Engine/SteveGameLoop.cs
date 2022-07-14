@@ -16,37 +16,54 @@ public class SteveGameLoop
     private readonly ScheduledAction _main;
     private readonly ScheduledAction _graphics;
 
+    private readonly EngineScheduler _graphicsScheduler; 
+
     private uint _graphicsFrameRate;
     private double _lastDelta;
     private double _lastGraphicsDelta;
+    private float _graphicsTimer;
+    private uint _framesRendered;
+    private float _avgMsPerFrameASecond;
 
     public SteveGameLoop(EngineScheduler scheduler, EngineScheduler graphicsScheduler)
     {
+        _graphicsScheduler = graphicsScheduler;
+        
         _lastDelta = 0UL;
         _graphicsFrameRate = 1;
+        _graphicsTimer = 0;
+        _framesRendered = 1;
+        _avgMsPerFrameASecond = 0;
 
         _main = new ScheduledAction(() => scheduler.Execute(GetLastDelta()), 1, false);
-        
-        _graphics = new ScheduledAction(() =>
+        _graphics = new ScheduledAction(Render, _graphicsFrameRate, false);
+    }
+    
+    private void Render()
+    {
+        float milliseconds = GetLastGraphicsDelta() * 1000;
+        _graphicsTimer += milliseconds;
+
+        if (_graphicsTimer >= 1)
         {
-            RenderLayerDefinitions.FlushAll();
-            
-            UiRenderer.Render();
-            
-            FontRenderer.DrawTextScreenSpace($"{GetLastGraphicsDelta()}", new Vector2(0, 0), (1.5f / 4f));
-            
-            FontRenderer.DrawText(new FontString("Ligma Balls"), new Vector3(0, 1, 4), (1f / 32f) / 4f, DirectionMenu.Direction);
-            FontRenderer.DrawText(new FontString("Bigma Lalls"), new Vector3(0, 1, 5), (1f / 32f) / 4f, DirectionMenu.Direction, Color4.Red);
+            _avgMsPerFrameASecond = _graphicsTimer / _framesRendered;
+            _framesRendered = 0;
+            _graphicsTimer -= _graphicsTimer;
+        }
+        
+        RenderLayerDefinitions.FlushAll();
 
-            // var pos = InputManager.MousePosition;
-            // Vector2 screenSize = new Vector2(WindowState.ScreenSize.X / 2f, WindowState.ScreenSize.Y / 2f);
-            // Vector2 screenPos = new Vector2(pos.X - screenSize.X, screenSize.Y - pos.Y);
-            //
-            // FontRenderer.DrawTextScreenSpace($"x: {pos.X}, y: {pos.Y}", screenPos, (1.5f / 4f));
+        UiRenderer.Render();
 
-            graphicsScheduler.Execute(GetLastGraphicsDelta());
-            RenderLayerDefinitions.RebuildAll();
-        }, _graphicsFrameRate, false);
+        FontRenderer.DrawTextScreenSpace($"{1000 / milliseconds:F0}Fps, avg {_avgMsPerFrameASecond:F0}ms per frame", new Vector2(0, 0), (1.5f / 4f));
+
+        // FontRenderer.DrawText(new FontString("Ligma Balls"), new Vector3(0, 1, 4), (1f / 32f) / 4f, DirectionMenu.Direction);
+        // FontRenderer.DrawText(new FontString("Bigma Lalls"), new Vector3(0, 1, 5), (1f / 32f) / 4f, DirectionMenu.Direction, Color4.Red);
+
+        _graphicsScheduler.Execute(GetLastGraphicsDelta());
+        RenderLayerDefinitions.RebuildAll();
+
+        _framesRendered++;
     }
 
     public void Tick(double elapsedTime)

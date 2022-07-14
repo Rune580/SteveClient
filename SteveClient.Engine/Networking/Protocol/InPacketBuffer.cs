@@ -69,10 +69,30 @@ public class InPacketBuffer : Stream
         short x = ReadShort();
         short y = ReadShort();
         short z = ReadShort();
+        
+        
+        
+        return new Vector3d((x / 128D) / 38D, (y / 128D) / 38D, (z / 128D) / 38D);
+    }
 
-        const int val = 128 * 32;
+    public Vector3i ReadPosition()
+    {
+        ulong posEncodedLong = ReadUnsignedLong();
 
-        return new Vector3d((double)x / val, (double)y / val, (double)z / val);
+        int x = (int)(posEncodedLong >> 38);
+        int y = (int)(posEncodedLong & 0xFFF);
+        int z = (int)((posEncodedLong >> 12) & 0x3FFFFFF);
+
+        if (x >= 1 << 25)
+            x -= 1 << 26;
+
+        if (y >= 1 << 11)
+            y -= 1 << 12;
+
+        if (z >= 1 << 25)
+            z -= 1 << 26;
+
+        return new Vector3i(x, y, z);
     }
 
     public bool ReadBool()

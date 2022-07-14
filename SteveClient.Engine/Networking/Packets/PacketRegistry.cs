@@ -61,6 +61,7 @@ public static class PacketRegistry
         var play = new Dictionary<int, ClientBoundPacketRegistryEntry>();
         
         play.Register<SpawnPlayerPacket>(0x02);
+        play.Register<BlockUpdatePacket>(0x09);
         play.Register<DisconnectPacket>(0x17);
         play.Register<KeepAlivePacket>(0x1E);
         play.Register<ChunkDataAndUpdateLightPacket>(0x1F);
@@ -68,6 +69,7 @@ public static class PacketRegistry
         play.Register<EntityPositionPacket>(0x26);
         play.Register<EntityPositionAndRotationPacket>(0x27);
         play.Register<PlayerPositionAndLookPacket>(0x36);
+        play.Register<TeleportEntityPacket>(0x63);
 
         ClientBoundPacketMap[ConnectionState.Play] = play;
     }

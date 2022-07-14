@@ -49,9 +49,10 @@ public class CompositionRoot
         var teleportPlayerEntityEngine = new TeleportPlayerEntityEngine();
         var spawnOnlineEntityEngine = new SpawnOnlinePlayerEntityEngine(entityFactory, world);
         var spawnChunkSectionEntityEngine = new SpawnChunkSectionEntityEngine(entityFactory, world);
-        var spawnBlockStateEntityEngine = new SpawnBlockStateEntityEngine(entityFactory, world);
+        var blockUpdateChunkSectionEngine = new BlockUpdateChunkSectionEngine(world);
         var moveEntityEngine = new MoveEntityEngine(world);
         var moveAndRotateEntityEngine = new MoveAndRotateEntityEngine(world);
+        var teleportEntityEngine = new TeleportEntityEngine(world);
         var spawnBlockEntityEngine = new SpawnBlockModelEntityEngine(entityFactory);
         
         // Create render engines
@@ -66,9 +67,10 @@ public class CompositionRoot
         enginesRoot.AddEngine(teleportPlayerEntityEngine);
         enginesRoot.AddEngine(spawnOnlineEntityEngine);
         enginesRoot.AddEngine(spawnChunkSectionEntityEngine);
-        enginesRoot.AddEngine(spawnBlockStateEntityEngine);
+        enginesRoot.AddEngine(blockUpdateChunkSectionEngine);
         enginesRoot.AddEngine(moveEntityEngine);
         enginesRoot.AddEngine(moveAndRotateEntityEngine);
+        enginesRoot.AddEngine(teleportEntityEngine);
         enginesRoot.AddEngine(spawnBlockEntityEngine);
         
         // Add render engines
@@ -84,9 +86,10 @@ public class CompositionRoot
         Scheduler.RegisterScheduledEngine(teleportPlayerEntityEngine);
         Scheduler.RegisterScheduledEngine(spawnOnlineEntityEngine);
         Scheduler.RegisterScheduledEngine(spawnChunkSectionEntityEngine);
-        Scheduler.RegisterScheduledEngine(spawnBlockStateEntityEngine);
+        Scheduler.RegisterScheduledEngine(blockUpdateChunkSectionEngine);
         Scheduler.RegisterScheduledEngine(moveEntityEngine);
         Scheduler.RegisterScheduledEngine(moveAndRotateEntityEngine);
+        Scheduler.RegisterScheduledEngine(teleportEntityEngine);
         Scheduler.RegisterScheduledEngine(spawnBlockEntityEngine);
 
         GraphicsScheduler.RegisterScheduledEngine(updateCameraStateFromCamerasEngine);

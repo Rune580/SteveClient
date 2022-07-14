@@ -48,8 +48,6 @@ public class World
 
         if (localPos.X < 0)
             localPos.X = 16 + localPos.X;
-        if (localPos.Y < 0)
-            localPos.Y = 16 + localPos.Y;
         if (localPos.Z < 0)
             localPos.Z = 16 + localPos.Z;
         
@@ -59,6 +57,30 @@ public class World
     public int GetBlockStateId(Vector3i worldPos)
     {
         return GetBlockStateId(worldPos.X, worldPos.Y, worldPos.Z);
+    }
+
+    public void SetBlockStateId(int x, int y, int z, int blockStateId)
+    {
+        Vector2i chunkPos = ChunkPosFromBlockPos(x, z);
+
+        if (!_chunks.TryGetValue(chunkPos, out Chunk? chunk))
+            return;
+
+        Vector3i localPos = new Vector3i(x - chunkPos.X * 16, y, z - chunkPos.Y * 16);
+
+        if (localPos.X < 0)
+            localPos.X = 16 + localPos.X;
+        if (localPos.Y < 0)
+            localPos.Y = 16 + localPos.Y;
+        if (localPos.Z < 0)
+            localPos.Z = 16 + localPos.Z;
+        
+        chunk.SetBlockState(localPos, (short)blockStateId);
+    }
+
+    public void SetBlockStateId(Vector3i worldPos, int blockStateId)
+    {
+        SetBlockStateId(worldPos.X, worldPos.Y, worldPos.Z, blockStateId);
     }
 
     public BlockState GetBlockState(int x, int y, int z)
@@ -73,10 +95,23 @@ public class World
         return GetBlockState(worldPos.X, worldPos.Y, worldPos.Z);
     }
 
+    public bool IsChunkLoaded(Vector2i chunkPos)
+    {
+        return _chunks.ContainsKey(chunkPos);
+    }
+
+    public static Vector3i ChunkSectionPosFromBlockPos(Vector3i blockPos)
+    {
+        Vector2i chunkPos = ChunkPosFromBlockPos(blockPos.X, blockPos.Z);
+        int sectionIndex = Chunk.GetSectionIndex(blockPos.Y);
+
+        return new Vector3i(chunkPos.X, sectionIndex, chunkPos.Y);
+    }
+
     private static Vector2i ChunkPosFromBlockPos(int x, int z)
     {
-        int chunkX = (int)(x < 0 ? Math.Floor(x / 16f) : Math.Ceiling(x / 16f));
-        int chunkZ = (int)(z < 0 ? Math.Floor(z / 16f) : Math.Ceiling(z / 16f));
+        int chunkX = (int)Math.Floor(x / 16f);
+        int chunkZ = (int)Math.Floor(z / 16f);
 
         return new Vector2i(chunkX, chunkZ);
     }

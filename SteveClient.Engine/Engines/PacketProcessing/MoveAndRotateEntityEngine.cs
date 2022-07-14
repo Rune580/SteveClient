@@ -17,6 +17,12 @@ public class MoveAndRotateEntityEngine : PacketProcessingEngine<EntityPositionAn
     protected override void Execute(float delta, ConsumablePacket<EntityPositionAndRotationPacket> consumablePacket)
     {
         EntityPositionAndRotationPacket packet = consumablePacket.Get();
+
+        if (!_world.MinecraftEntityIdMap.ContainsKey(packet.EntityId))
+        {
+            consumablePacket.MarkConsumed();
+            return;
+        }
         
         foreach (var ((transforms, entities, count), _) in entitiesDB.QueryEntities<TransformComponent, MinecraftEntityComponent>(GameGroups.MinecraftEntities.Groups))
         {
@@ -38,8 +44,5 @@ public class MoveAndRotateEntityEngine : PacketProcessingEngine<EntityPositionAn
             if (consumablePacket.Consumed)
                 break;
         }
-
-        if (!_world.MinecraftEntityIdMap.ContainsKey(packet.EntityId))
-            consumablePacket.MarkConsumed();
     }
 }

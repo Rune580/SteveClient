@@ -73,7 +73,7 @@ public class SimpleRenderHelper
 
     public SimpleRenderHelper Translate(Vector3 translation)
     {
-        _model += Matrix4.CreateTranslation(translation);
+        _model *= Matrix4.CreateTranslation(translation);
 
         return this;
     }

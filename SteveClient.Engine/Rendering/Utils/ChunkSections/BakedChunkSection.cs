@@ -13,15 +13,15 @@ namespace SteveClient.Engine.Rendering.Utils.ChunkSections;
 
 public readonly struct BakedChunkSection
 {
-    public readonly long Hash;
+    public readonly Vector3i ChunkPos;
     public readonly float[] Vertices;
     public readonly uint[] Indices;
     public readonly Matrix4 Transform;
     public readonly ChunkRenderLayer TargetLayer;
 
-    private BakedChunkSection(long hash, float[] vertices, uint[] indices, Matrix4 transform, ChunkRenderLayer targetLayer)
+    private BakedChunkSection(Vector3i chunkPos, float[] vertices, uint[] indices, Matrix4 transform, ChunkRenderLayer targetLayer)
     {
-        Hash = hash;
+        ChunkPos = chunkPos;
         Vertices = vertices;
         Indices = indices;
         Transform = transform;
@@ -30,31 +30,28 @@ public readonly struct BakedChunkSection
 
     public static BakedChunkSection BakeChunkSection(World world, Vector3i sectionPos)
     {
-        ChunkSection section = world.GetChunkSection(sectionPos);
-
         List<float> vertices = new List<float>();
         List<uint> indices = new List<uint>();
 
         GenerateQuads(world, sectionPos, vertices, indices);
 
-        Vector3i worldPos = sectionPos * 16;
-        worldPos.Y -= 64;
-        
+        Vector3i worldPos = new Vector3i(sectionPos.X * 16, (sectionPos.Y - 4) * 16, sectionPos.Z * 16);
+
         Matrix4 transform = Matrix4.CreateTranslation(worldPos); 
 
-        return new BakedChunkSection(section.GetContentHash(), vertices.ToArray(), indices.ToArray(), transform, RenderLayerDefinitions.OpaqueBlockLayer);
+        return new BakedChunkSection(sectionPos, vertices.ToArray(), indices.ToArray(), transform, RenderLayerDefinitions.OpaqueBlockLayer);
     }
 
     private static void GenerateQuads(World world, Vector3i sectionPos, in List<float> vertices, in List<uint> indices)
     {
+        Vector3i worldPos = new Vector3i(sectionPos.X, (sectionPos.Y - 4), sectionPos.Z) * 16;
         for (int y = 0; y < 16; y++)
         {
             for (int z = 0; z < 16; z++)
             {
                 for (int x = 0; x < 16; x++)
                 {
-                    Vector3i blockPos =
-                        new Vector3i(x + sectionPos.X * 16, (y + sectionPos.Y * 16) - 64, z + sectionPos.Z * 16);
+                    Vector3i blockPos = new Vector3i(x, y, z) + worldPos;
 
                     GetQuadsForBlock(world, new Vector3i(x, y, z), blockPos, vertices, indices);
                 }
@@ -117,11 +114,8 @@ public readonly struct BakedChunkSection
 
     private static bool Occluded(World world, Vector3i currentPos, Vector3i neighborPos)
     {
-        int currentId = world.GetBlockStateId(currentPos);
+        //int currentId = world.GetBlockStateId(currentPos);
         int neighborId = world.GetBlockStateId(neighborPos);
-
-        if (currentId == neighborId)
-            return true;
 
         if (neighborId == -1)
             return true;

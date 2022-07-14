@@ -2,7 +2,8 @@
 
 namespace SteveClient.Engine.ECS.Data;
 
-public class OptionalRefEntityComponent<T1> where T1 : unmanaged, IEntityComponent
+public class OptionalRefEntityComponent<T1>
+    where T1 : unmanaged, IEntityComponent
 {
     private readonly GetRefT1Delegate? _getRefT1;
 

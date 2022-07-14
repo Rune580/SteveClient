@@ -10,7 +10,7 @@ namespace SteveClient.Engine.Rendering.Utils.ChunkSections;
 
 public class ThreadedChunkSectionRenderer
 {
-    private const int MaxJobs = 8;
+    private const int MaxJobs = 4;
     
     private readonly World _world;
     private readonly ConcurrentQueue<Vector3i> _chunkSections = new();
@@ -45,18 +45,12 @@ public class ThreadedChunkSectionRenderer
     {
         Vector3i blockPos = playerPos.AsBlockPos();
         
-        Vector3i chunkPos = new Vector3i(blockPos.X / 16, (int)MathF.Floor((blockPos.Y + 64) / 16f), blockPos.Z / 16);
-
-        if (chunkPos.X < 0)
-            chunkPos.X--;
-
-        if (chunkPos.Z < 0)
-            chunkPos.Z--;
+        Vector3i chunkPos = new Vector3i((int)MathF.Floor(blockPos.X / 16f), (int)MathF.Floor(blockPos.Y / 16f) + 4, (int)MathF.Floor(blockPos.Z / 16f));
 
         _playerPos = chunkPos;
     }
 
-    private void ProcessChunksMain(object? state)
+    private async void ProcessChunksMain(object? state)
     {
         if (state is not CancellationTokenSource token)
             throw new Exception();
@@ -66,7 +60,7 @@ public class ThreadedChunkSectionRenderer
             while (_queueJobs < MathF.Min(MaxJobs, _chunkSections.Count))
                 ThreadPool.QueueUserWorkItem(ProcessQueue);
 
-            Task.Delay(100).Wait();
+            await Task.Delay(20);
         }
     }
 
@@ -82,20 +76,7 @@ public class ThreadedChunkSectionRenderer
 
         // Check if we already have a chunk section baked out
         bool existingBakedSection = _bakedChunkSections.TryGetValue(sectionPos, out BakedChunkSection bakedSection);
-        if (existingBakedSection)
-        {
-            // If we already have one, check it's hash against the chunk that's being requested.
-            ChunkSection section = _world.GetChunkSection(sectionPos);
-            
-            if (section.GetContentHash() == bakedSection.Hash) // If the hashes match, then there is no need to re-bake the chunk.
-            {
-                Interlocked.Decrement(ref _queueJobs);
-                return;
-            }
-            
-            // Otherwise continue
-        }
-        
+
         // Bake out chunk section
         bakedSection = BakedChunkSection.BakeChunkSection(_world, sectionPos);
 

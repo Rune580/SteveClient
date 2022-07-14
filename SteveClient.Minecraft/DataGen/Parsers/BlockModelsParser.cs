@@ -192,10 +192,10 @@ public class BlockModelsParser : IMinecraftAssetParser
                 }
                 break;
             case Directions.West:
-                face.TopLeft = new Vector3(min.X, max.Y, min.Z);
-                face.TopRight = new Vector3(min.X, max.Y, max.Z);
-                face.BottomLeft = min;
-                face.BottomRight = new Vector3(min.X, min.Y, max.Z);
+                face.TopLeft = new Vector3(min.X, max.Y, max.Z);
+                face.TopRight = new Vector3(min.X, max.Y, min.Z);
+                face.BottomLeft = new Vector3(min.X, min.Y, max.Z);
+                face.BottomRight = min;
                 
                 if (faceJson.Uv.HasValue)
                 {

@@ -1,6 +1,8 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.Components;
 using SteveClient.Engine.ECS;
+using SteveClient.Engine.InputManagement;
+using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Utils.ChunkSections;
 using Svelto.ECS;
 
@@ -19,8 +21,9 @@ public class RenderChunkSectionsEngine : RenderingEngine
 
     public override void Execute(float delta)
     {
+        ReloadChunks();
+        
         var optional = entitiesDB.QueryUniqueEntityOptional<TransformComponent>(GameGroups.Player.BuildGroup);
-
         if (!optional.HasValue)
             return;
 
@@ -42,10 +45,27 @@ public class RenderChunkSectionsEngine : RenderingEngine
                 Vector3i sectionPos = new Vector3i(sectionComponent.ChunkPos.X, sectionComponent.SectionIndex, sectionComponent.ChunkPos.Y);
                 float distance = Vector3.Distance(sectionPos, _chunkSectionRenderer.PlayerPos);
 
-                if (distance > 16)
+                if (distance > 6)
                     continue;
                 
                 _chunkSectionRenderer.EnqueueChunkSection(sectionPos);
+            }
+        }
+    }
+
+    private void ReloadChunks()
+    {
+        if (!KeyBinds.ReloadChunks.IsPressed)
+            return;
+        
+        RenderLayerDefinitions.OpaqueBlockLayer.ClearChunks();
+        
+        foreach (var ((sectionComponents, count), _) in entitiesDB.QueryEntities<ChunkSectionComponent>(GameGroups.ChunkSections.Groups))
+        {
+            for (int i = 0; i < count; i++)
+            {
+                ref var sectionComponent = ref sectionComponents[i];
+                sectionComponent.ShouldRender = true;
             }
         }
     }
