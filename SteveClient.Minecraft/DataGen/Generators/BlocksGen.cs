@@ -44,6 +44,8 @@ public static class BlocksGen
                     blockStateId,
                     currentState.GetProperty("opacity").GetInt32(),
                     currentState.GetProperty("occludes").GetBoolean(),
+                    currentState.GetProperty("air").GetBoolean(),
+                    currentState.GetProperty("liquid").GetBoolean(),
                     currentState.GetProperty("collisionShape").GetString()!,
                     currentState.GetProperty("occlusionShape").GetString()!
                 );

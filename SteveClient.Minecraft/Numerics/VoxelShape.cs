@@ -64,6 +64,25 @@ public class VoxelShape : IEnumerable<Aabb>
             _aabbs.Remove(aabb);
     }
 
+    public Aabb Closest(Vector3d pos)
+    {
+        Aabb? closest = null;
+        double curDist = 100;
+
+        foreach (var aabb in _aabbs)
+        {
+            double dist = Vector3d.Distance(aabb.Center, pos);
+
+            if (dist >= curDist)
+                continue;
+
+            closest = aabb;
+            curDist = dist;
+        }
+
+        return closest ?? Aabb.Empty;
+    }
+    
     public static VoxelShape operator +(VoxelShape left, Vector3 right)
     {
         List<Aabb> result = left._aabbs.Select(aabb => aabb + right).ToList();

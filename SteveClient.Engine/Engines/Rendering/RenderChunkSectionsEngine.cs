@@ -46,7 +46,7 @@ public class RenderChunkSectionsEngine : RenderingEngine
                 Vector3i sectionPos = new Vector3i(sectionComponent.ChunkPos.X, sectionComponent.SectionIndex, sectionComponent.ChunkPos.Y);
                 float distance = Vector3.Distance(sectionPos, _chunkSectionRenderer.PlayerPos);
 
-                if (distance > 8)
+                if (distance > 3)
                     continue;
                 
                 _chunkSectionRenderer.EnqueueChunkSection(sectionPos);

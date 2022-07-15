@@ -57,6 +57,22 @@ public struct Aabb
                Min.Z <= pos.Z && Max.Z >= pos.Z;
     }
 
+    public Aabb Face(Vector3d dir)
+    {
+        var facing = GetAxis(dir);
+
+        return facing switch
+        {
+            Directions.Down => new Aabb(Min, new Vector3d(Max.X, Min.Y, Max.Z)),
+            Directions.Up => new Aabb(new Vector3d(Min.X, Max.Y, Min.Z), Max),
+            Directions.North => new Aabb(Min, new Vector3d(Max.X, Max.Y, Min.Z)),
+            Directions.South => new Aabb(new Vector3d(Min.X, Min.Y, Max.Z), Max),
+            Directions.West => new Aabb(Min, new Vector3d(Min.X, Max.Y, Max.Z)),
+            Directions.East => new Aabb(new Vector3d(Max.X, Min.Y, Min.Z), Max),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
     public Aabb Offset(Vector3d offset)
     {
         return new Aabb(Min + offset, Max + offset);
@@ -152,5 +168,27 @@ public struct Aabb
     public static bool operator !=(Aabb left, Aabb right)
     {
         return !(left == right);
+    }
+
+    private static Directions GetAxis(Vector3d direction)
+    {
+        var dir = direction.Normalized();
+
+        if (dir.Z < 0)
+            return Directions.North;
+        if (dir.Z > 0)
+            return Directions.South;
+
+        if (dir.X < 0)
+            return Directions.West;
+        if (dir.X > 0)
+            return Directions.East;
+
+        if (dir.Y < 0)
+            return Directions.Down;
+        if (dir.Y > 0)
+            return Directions.Up;
+
+        return Directions.None;
     }
 }

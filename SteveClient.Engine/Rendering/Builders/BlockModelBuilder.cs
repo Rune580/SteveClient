@@ -82,10 +82,10 @@ public class BlockModelBuilder
             blockFace.BottomRight
         }, new []
         {
-            new Vector2(blockFace.UvMin.X, blockFace.UvMax.Y),
-            blockFace.UvMax,
-            blockFace.UvMin,
-            new Vector2(blockFace.UvMax.X, blockFace.UvMin.Y)
+            blockFace.Xy,
+            blockFace.Uy,
+            blockFace.Xv,
+            blockFace.Uv
         }, blockFace.Texture, blockFace.CullFace);
         
         _quads.Add(quad);

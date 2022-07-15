@@ -120,7 +120,15 @@ public class BlockModelsParser : IMinecraftAssetParser
 
         Vector3 min = from / 16;
         Vector3 max = to / 16;
-        
+
+        if (faceJson.Texture.Contains("#log") && faceJson.Rotation.HasValue)
+        {
+            Console.WriteLine("s");
+        }
+
+        Vector2 uvMin;
+        Vector2 uvMax;
+
         switch (direction)
         {
             case Directions.Down:
@@ -128,16 +136,16 @@ public class BlockModelsParser : IMinecraftAssetParser
                 face.TopRight = new Vector3(max.X, min.Y, min.Z);
                 face.BottomLeft = new Vector3(min.X, min.Y, max.Z);
                 face.BottomRight = new Vector3(max.X, min.Y, max.Z);
-                
+
                 if (faceJson.Uv.HasValue)
                 {
-                    face.UvMin = faceJson.Uv.Value.Xy / 16f;
-                    face.UvMax = faceJson.Uv.Value.Zw / 16f;
+                    uvMin = faceJson.Uv.Value.Xy / 16f;
+                    uvMax = faceJson.Uv.Value.Zw / 16f;
                 }
                 else
                 {
-                    face.UvMin = new Vector2(min.X, min.Z);
-                    face.UvMax = new Vector2(max.X, max.Z);
+                    uvMin = new Vector2(min.X, min.Z);
+                    uvMax = new Vector2(max.X, max.Z);
                 }
                 break;
             case Directions.Up:
@@ -148,13 +156,13 @@ public class BlockModelsParser : IMinecraftAssetParser
 
                 if (faceJson.Uv.HasValue)
                 {
-                    face.UvMin = faceJson.Uv.Value.Xy / 16f;
-                    face.UvMax = faceJson.Uv.Value.Zw / 16f;
+                    uvMin = faceJson.Uv.Value.Xy / 16f;
+                    uvMax = faceJson.Uv.Value.Zw / 16f;
                 }
                 else
                 {
-                    face.UvMin = new Vector2(min.X, min.Z);
-                    face.UvMax = new Vector2(max.X, max.Z);
+                    uvMin = new Vector2(min.X, min.Z);
+                    uvMax = new Vector2(max.X, max.Z);
                 }
                 break;
             case Directions.North:
@@ -165,13 +173,13 @@ public class BlockModelsParser : IMinecraftAssetParser
                 
                 if (faceJson.Uv.HasValue)
                 {
-                    face.UvMin = faceJson.Uv.Value.Zy / 16f;
-                    face.UvMax = faceJson.Uv.Value.Xw / 16f;
+                    uvMin = faceJson.Uv.Value.Zy / 16f;
+                    uvMax = faceJson.Uv.Value.Xw / 16f;
                 }
                 else
                 {
-                    face.UvMin = new Vector2(max.X, min.Y);
-                    face.UvMax = new Vector2(min.X, max.Y);
+                    uvMin = new Vector2(max.X, min.Y);
+                    uvMax = new Vector2(min.X, max.Y);
                 }
                 break;
             case Directions.South:
@@ -182,13 +190,13 @@ public class BlockModelsParser : IMinecraftAssetParser
                 
                 if (faceJson.Uv.HasValue)
                 {
-                    face.UvMin = faceJson.Uv.Value.Zy / 16f;
-                    face.UvMax = faceJson.Uv.Value.Xw / 16f;
+                    uvMin = faceJson.Uv.Value.Zy / 16f;
+                    uvMax = faceJson.Uv.Value.Xw / 16f;
                 }
                 else
                 {
-                    face.UvMin = new Vector2(max.X, min.Y);
-                    face.UvMax = new Vector2(min.X, max.Y);
+                    uvMin = new Vector2(max.X, min.Y);
+                    uvMax = new Vector2(min.X, max.Y);
                 }
                 break;
             case Directions.West:
@@ -199,13 +207,13 @@ public class BlockModelsParser : IMinecraftAssetParser
                 
                 if (faceJson.Uv.HasValue)
                 {
-                    face.UvMin = faceJson.Uv.Value.Xy / 16f;
-                    face.UvMax = faceJson.Uv.Value.Zw / 16f;
+                    uvMin = faceJson.Uv.Value.Xy / 16f;
+                    uvMax = faceJson.Uv.Value.Zw / 16f;
                 }
                 else
                 {
-                    face.UvMin = new Vector2(max.Z, min.Y);
-                    face.UvMax = new Vector2(min.Z, max.Y);
+                    uvMin = new Vector2(max.Z, min.Y);
+                    uvMax = new Vector2(min.Z, max.Y);
                 }
                 break;
             case Directions.East:
@@ -216,33 +224,39 @@ public class BlockModelsParser : IMinecraftAssetParser
                 
                 if (faceJson.Uv.HasValue)
                 {
-                    face.UvMin = faceJson.Uv.Value.Zy / 16f;
-                    face.UvMax = faceJson.Uv.Value.Xw / 16f;
+                    uvMin = faceJson.Uv.Value.Zy / 16f;
+                    uvMax = faceJson.Uv.Value.Xw / 16f;
                 }
                 else
                 {
-                    face.UvMin = new Vector2(max.Z, min.Y);
-                    face.UvMax = new Vector2(min.Z, max.Y);
+                    uvMin = new Vector2(max.Z, min.Y);
+                    uvMax = new Vector2(min.Z, max.Y);
                 }
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
         }
         
+        uvMin.Y = 1 - uvMin.Y;
+        uvMax.Y = 1 - uvMax.Y;
         
+        face.Xy = uvMin;
+        face.Uy = new Vector2(uvMax.X, uvMin.Y);
+        face.Xv = new Vector2(uvMin.X, uvMax.Y);
+        face.Uv = uvMax;
 
         if (faceJson.Rotation.HasValue)
         {
-            int rotation = faceJson.Rotation.Value / 90;
+            int rotation = (360 / 90) - (faceJson.Rotation.Value / 90);
 
             for (int i = 0; i < rotation; i++)
             {
-                float x = face.UvMin.X;
+                Vector2 temp = face.Xy;
 
-                face.UvMin.X = face.UvMax.Y;
-                face.UvMax.Y = face.UvMax.X;
-                face.UvMax.X = face.UvMin.Y;
-                face.UvMin.Y = x;
+                face.Xy = face.Xv;
+                face.Xv = face.Uv;
+                face.Uv = face.Uy;
+                face.Uy = temp;
             }
         }
 

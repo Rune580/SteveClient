@@ -115,13 +115,42 @@ public readonly struct BakedChunkSection
 
     private static bool Occluded(World world, Vector3i currentPos, Vector3i neighborPos)
     {
-        //int currentId = world.GetBlockStateId(currentPos);
+        // Check to see we aren't doing this on an air block.
+        int currentId = world.GetBlockStateId(currentPos);
+        BlockState current = Blocks.GetBlockState(currentId);
+
+        if (current.Air || current.Liquid)
+            return false;
+
         int neighborId = world.GetBlockStateId(neighborPos);
 
         if (neighborId == -1)
             return true;
 
-        return Blocks.GetBlockState(neighborId).Occludes;
+        BlockState neighbor = Blocks.GetBlockState(neighborId);
+
+        if (!neighbor.Occludes)
+            return false;
+
+        // Check collision shapes
+        
+        // 1st do a simple check
+        if (currentId == neighborId)
+            return true;
+
+        // Next do a full check
+        return OcclusionShapeTest(current.OcclusionShape, neighbor.OcclusionShape, neighborPos - currentPos);
+    }
+
+    private static bool OcclusionShapeTest(VoxelShape current, VoxelShape neighbor, Vector3 dir)
+    {
+        Aabb curAabb = current.Closest(dir);
+        Aabb neighborAabb = neighbor.Closest(-dir);
+
+        Aabb curFace = curAabb.Face(dir);
+        Aabb neighborFace = neighborAabb.Offset(dir).Face(-dir);
+
+        return curFace == neighborFace;
     }
 
     private static float[] BakeVertexData(Vector3[] vertices, Vector2[] uvs, string textureResourceName)
