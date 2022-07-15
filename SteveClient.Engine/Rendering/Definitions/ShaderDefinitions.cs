@@ -20,6 +20,8 @@ public static class ShaderDefinitions
     
     public static Shader SolidBlockShader { get; private set; }
     
+    public static Shader TextureInterpolatorShader { get; private set; }
+
     public static void LoadShaders()
     {
         PositionColorShader = new Shader("PositionColor.vert", "PositionColor.frag", PositionAttribute, ColorAttribute);
@@ -33,5 +35,7 @@ public static class ShaderDefinitions
         UiColorShader = new Shader("DefaultUi", PositionAttribute);
 
         SolidBlockShader = new Shader("Game/SolidBlock", PositionAttribute, UvAttribute, AtlasAttribute);
+
+        TextureInterpolatorShader = new Shader("Compute/TextureInterpolator");
     }
 }

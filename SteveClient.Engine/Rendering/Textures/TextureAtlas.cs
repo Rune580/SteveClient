@@ -1,11 +1,13 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using SkiaSharp;
+using SteveClient.Engine.Rendering.Textures.Atlas;
+using SteveClient.Minecraft.Data.Collections;
 
 namespace SteveClient.Engine.Rendering.Textures;
 
 public class TextureAtlas : AbstractTexture
 {
-    private readonly Dictionary<string, int> _atlas;
+    private readonly Dictionary<string, IAtlasTexture> _atlas;
     private readonly SKSurface[] _surfaces;
     private readonly int _width;
     private readonly int _height;
@@ -14,7 +16,7 @@ public class TextureAtlas : AbstractTexture
     
     public TextureAtlas(int width, int height, int layers)
     {
-        _atlas = new Dictionary<string, int>();
+        _atlas = new Dictionary<string, IAtlasTexture>();
         _surfaces = new SKSurface[layers];
         
         GL.CreateTextures(TextureTarget.Texture2DArray, 1, out int handle);
@@ -32,12 +34,12 @@ public class TextureAtlas : AbstractTexture
         Handle = handle;
     }
 
-    public void AddImage(string key, string path, bool throwIfSizeDoesntMatch = false)
+    public void AddImage(string path, int frameOffset = 0, bool throwIfSizeDoesntMatch = false)
     {
         if (_layers >= _surfaces.Length)
             throw new Exception();
 
-        var surface = LoadImage(path);
+        var surface = LoadImage(path, frameOffset);
 
         var image = surface.PeekPixels();
         int width = image.Width;
@@ -65,15 +67,31 @@ public class TextureAtlas : AbstractTexture
             PixelFormat.Bgra,
             PixelType.UnsignedByte,
             image.GetPixels());
+    }
 
+    public void AddTexture(string key, TextureCollection.RawTexture rawTexture)
+    {
+        if (rawTexture.Frames > 1 && rawTexture.McMetaJson is not null)
+        {
+            SKSurface[] surfaces = new SKSurface[rawTexture.Frames];
 
-        _atlas[key] = _layers;
+            for (int i = 0; i < rawTexture.Frames; i++)
+                surfaces[i] = LoadImage(rawTexture.TexturePath, i);
+
+            _atlas[key] = new AtlasAnimatedTexture(Handle, _layers, rawTexture.McMetaJson, surfaces);
+        }
+        else
+        {
+            AddImage(rawTexture.TexturePath);
+            _atlas[key] = new AtlasTexture(_layers);
+        }
+
         _layers++;
     }
 
     public int GetAtlasLayer(string key)
     {
-        return _atlas[key.Replace("minecraft:", "")];
+        return _atlas[key.Replace("minecraft:", "")].GetAtlasLayer();
     }
     
     public override void Dispose()

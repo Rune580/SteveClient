@@ -5,6 +5,7 @@ using SteveClient.Engine.Menus;
 using SteveClient.Engine.Rendering;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Font;
+using SteveClient.Engine.Rendering.Textures.Atlas;
 using SteveClient.Engine.Rendering.Ui;
 
 namespace SteveClient.Engine;
@@ -15,6 +16,7 @@ public class SteveGameLoop
     
     private readonly ScheduledAction _main;
     private readonly ScheduledAction _graphics;
+    private readonly ScheduledAction _gameTicks;
 
     private readonly EngineScheduler _graphicsScheduler; 
 
@@ -37,6 +39,8 @@ public class SteveGameLoop
 
         _main = new ScheduledAction(() => scheduler.Execute(GetLastDelta()), 1, false);
         _graphics = new ScheduledAction(Render, _graphicsFrameRate, false);
+
+        _gameTicks = new ScheduledAction(() => AtlasAnimatedTexture.TickAnimations(), TicksPerSecond / 20, true);
     }
     
     private void Render()
@@ -71,6 +75,7 @@ public class SteveGameLoop
         ulong elapsedTicks = (ulong)(elapsedTime * TicksPerSecond);
         
         _main.Tick(elapsedTicks);
+        _gameTicks.Tick(elapsedTicks);
 
         _lastDelta = elapsedTime;
     }

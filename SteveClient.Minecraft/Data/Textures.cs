@@ -1,24 +1,24 @@
-﻿namespace SteveClient.Minecraft.Data;
+﻿using SteveClient.Minecraft.Data.Collections;
+
+namespace SteveClient.Minecraft.Data;
 
 public static class Textures
 {
-    private static readonly Dictionary<string, string> TextureMap = new();
-
-    public static void Add(string texturePath)
+    private static readonly TextureCollection TextureCollection = new();
+    
+    public static void AddTexture(string texturePath)
     {
-        TextureMap[GetResourceName(texturePath)] = texturePath;
+        TextureCollection.AddTexture(GetResourceName(texturePath), texturePath);
     }
 
-    public static string GetPath(string resourceName)
+    public static void AddAnimatedTexture(string texturePath, string mcmetaPath)
     {
-        resourceName = resourceName.Replace("minecraft:", "");
-
-        return TextureMap[resourceName];
+        TextureCollection.AddAnimatedTexture(GetResourceName(texturePath), texturePath, mcmetaPath);
     }
 
-    public static KeyValuePair<string, string>[] GetTextures()
+    public static TextureCollection GetTextureCollection()
     {
-        return TextureMap.ToArray();
+        return TextureCollection;
     }
 
     private static string GetResourceName(string path)

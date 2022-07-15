@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using OpenTK.Mathematics;
 using SteveClient.Minecraft.Data;
-using SteveClient.Minecraft.Data.JsonSchema;
+using SteveClient.Minecraft.Data.Schema.Models;
 using SteveClient.Minecraft.ModelLoading;
 using SteveClient.Minecraft.Numerics;
 

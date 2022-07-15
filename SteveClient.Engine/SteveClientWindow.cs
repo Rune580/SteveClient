@@ -8,11 +8,15 @@ using SteveClient.Engine.InputManagement;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Ui;
 using SteveClient.Engine.Rendering.Ui.Widgets;
+using SteveClient.Engine.Rendering.Utils;
 
 namespace SteveClient.Engine;
 
 public class SteveClientWindow : GameWindow
 {
+    private static DebugProc _debugProcCallback = GlDebugCallback;
+    private static GCHandle _debugProcCallbackHandle;
+    
     private SteveGameLoop _gameLoop;
 
     public ImGuiController ImGuiController = null!;
@@ -31,8 +35,11 @@ public class SteveClientWindow : GameWindow
     {
         base.OnLoad();
         
-        //GL.Enable(EnableCap.DebugOutput);
-        //GL.DebugMessageCallback(GlErrorCallback, IntPtr.Zero);
+        _debugProcCallbackHandle = GCHandle.Alloc(_debugProcCallback);
+        
+        GL.DebugMessageCallback(_debugProcCallback, IntPtr.Zero);
+        GL.Enable(EnableCap.DebugOutput);
+        GL.Enable(EnableCap.DebugOutputSynchronous);
 
         Title += $": OpenGL Version: {GL.GetString(StringName.Version)}";
 
@@ -44,6 +51,8 @@ public class SteveClientWindow : GameWindow
         
         ShaderDefinitions.LoadShaders();
         VertexDefinitions.Init();
+        
+        TextureInterpolator.Init();
 
         GL.ClearColor(0, 0, 0.1f, 1);
         
@@ -51,16 +60,6 @@ public class SteveClientWindow : GameWindow
         UiRenderer.UiElements.Add(new SeverConnectWidget());
     }
 
-    private void GlErrorCallback(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr messagePtr, IntPtr userParam)
-    {
-        // string? message = Marshal.PtrToStringUTF8(messagePtr, length);
-        //
-        // if (string.IsNullOrEmpty(message))
-        //     return;
-        
-        //Log.Debug("Type: {Type}, Severity: {Severity}, Message: {Message}", type.ToString(), severity.ToString(), "message");
-    }
-    
     protected override void OnResize(ResizeEventArgs e)
     {
         base.OnResize(e);
@@ -118,5 +117,15 @@ public class SteveClientWindow : GameWindow
         base.OnMouseWheel(e);
         
         ImGuiController.MouseScroll(e.Offset);
+    }
+    
+    private static void GlDebugCallback(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr messagePtr, IntPtr userParam)
+    {
+         string message = Marshal.PtrToStringUTF8(messagePtr, length);
+        
+         if (string.IsNullOrEmpty(message))
+             return;
+        
+         Log.Debug("Type: {Type}, Severity: {Severity}, Message: {Message}", type.ToString(), severity.ToString(), message);
     }
 }

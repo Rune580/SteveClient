@@ -22,9 +22,20 @@ public class BlockTexturesParser : IMinecraftAssetParser
 
     public void Parse()
     {
-        string[] files = Directory.GetFiles(LocalPath, "*.png", SearchOption.AllDirectories); // Todo animated texture parsing
+        string[] files = Directory.GetFiles(LocalPath, "*.png", SearchOption.AllDirectories);
 
         foreach (var file in files)
-            Textures.Add(file);
+        {
+            string mcmeta = $"{file}.mcmeta";
+
+            if (File.Exists(mcmeta))
+            {
+                Textures.AddAnimatedTexture(file, mcmeta);
+            }
+            else
+            {
+                Textures.AddTexture(file);
+            }
+        }
     }
 }

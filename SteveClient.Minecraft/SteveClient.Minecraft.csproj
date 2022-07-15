@@ -8,6 +8,11 @@
 
     <ItemGroup>
       <PackageReference Include="OpenTK.Mathematics" Version="4.7.4" />
+      <PackageReference Include="SkiaSharp" Version="2.88.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Data\Structs" />
     </ItemGroup>
 
 </Project>

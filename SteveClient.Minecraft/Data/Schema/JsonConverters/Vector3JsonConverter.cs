@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using OpenTK.Mathematics;
 
-namespace SteveClient.Minecraft.Data.JsonSchema.Converters;
+namespace SteveClient.Minecraft.Data.Schema.JsonConverters;
 
 public class Vector3JsonConverter : JsonConverter<Vector3>
 {

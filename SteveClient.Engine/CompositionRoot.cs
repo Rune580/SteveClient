@@ -104,7 +104,7 @@ public class CompositionRoot
     private void LoadMinecraftData()
     {
         DataGenerator.GenerateData();
-        TextureRegistry.InitBlockTextureAtlas(Textures.GetTextures());
+        TextureRegistry.InitBlockTextureAtlas();
         BlockModelLoader.LoadBlockModels();
     }
 

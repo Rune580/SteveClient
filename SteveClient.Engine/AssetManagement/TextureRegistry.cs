@@ -9,12 +9,14 @@ public static class TextureRegistry
     
     public static TextureAtlas BlockTextureAtlas { get; private set; }
 
-    public static void InitBlockTextureAtlas(KeyValuePair<string, string>[] textures)
+    public static void InitBlockTextureAtlas()
     {
-        BlockTextureAtlas = new TextureAtlas(16, 16, textures.Length);
+        var textureCollection = Minecraft.Data.Textures.GetTextureCollection();
+
+        BlockTextureAtlas = new TextureAtlas(16, 16, textureCollection.Length);
         
-        foreach (var (resourceName, path) in textures)
-            BlockTextureAtlas.AddImage(resourceName, path);
+        foreach (var (resourceName, rawTexture) in textureCollection)
+            BlockTextureAtlas.AddTexture(resourceName, rawTexture);
     }
 
     public static Texture GetTexture(string resourceName)

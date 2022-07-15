@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using SteveClient.Minecraft.Numerics;
 
-namespace SteveClient.Minecraft.Data.JsonSchema.Converters;
+namespace SteveClient.Minecraft.Data.Schema.JsonConverters;
 
 public class DirectionsJsonConverter : JsonConverter<Directions>
 {

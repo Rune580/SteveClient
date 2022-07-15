@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 using OpenTK.Mathematics;
-using SteveClient.Minecraft.Data.JsonSchema.Converters;
+using SteveClient.Minecraft.Data.Schema.JsonConverters;
 
-namespace SteveClient.Minecraft.Data.JsonSchema;
+namespace SteveClient.Minecraft.Data.Schema.Models;
 
 public class ElementJson
 {

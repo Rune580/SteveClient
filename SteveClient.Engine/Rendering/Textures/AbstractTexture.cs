@@ -14,13 +14,13 @@ public abstract class AbstractTexture : IDisposable
 
     public abstract void Dispose();
 
-    protected static SKSurface LoadImage(string path)
+    protected static SKSurface LoadImage(string path, int frameOffset = 0)
     {
         using var image = SKBitmap.Decode(path);
         var surface = SKSurface.Create(image.Info);
         using var canvas = surface.Canvas;
-        
-        canvas.Scale(1, -1, 0, 16 / 2.0f);
+
+        canvas.Scale(1, -1, 0, (16 + (16 * frameOffset)) / 2.0f);
         canvas.DrawBitmap(image, 0, 0);
         canvas.Flush();
 

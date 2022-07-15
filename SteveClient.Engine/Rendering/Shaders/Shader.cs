@@ -66,6 +66,35 @@ public class Shader
     public Shader(string shaderName, params ShaderAttribute[] shaderAttributes) :
         this($"{shaderName}.vert", $"{shaderName}.frag", shaderAttributes) { }
 
+    public Shader(string computeShaderName)
+    {
+        string shaderSource = Assets.ReadEmbeddedShader($"{computeShaderName}.glsl");
+        int computeShader = GL.CreateShader(ShaderType.ComputeShader);
+        CompileShader(computeShader, shaderSource);
+        
+        Handle = GL.CreateProgram();
+        GL.AttachShader(Handle, computeShader);
+        LinkProgram(Handle);
+        
+        GL.DetachShader(Handle, computeShader);
+        GL.DeleteShader(computeShader);
+        
+        GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numOfUniforms);
+
+        _uniformLocations = new Dictionary<string, int>();
+
+        for (int i = 0; i < numOfUniforms; i++)
+        {
+            var key = GL.GetActiveUniform(Handle, i, out _, out _);
+
+            var location = GL.GetUniformLocation(Handle, key);
+            
+            _uniformLocations.Add(key, location);
+        }
+
+        _shaderAttributes = Array.Empty<BakedShaderAttribute>();
+    }
+
     private int GetStride(ShaderAttribute[] shaderAttributes)
     {
         int stride = shaderAttributes.Sum(GetAttributeByteSize);

@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization;
-using OpenTK.Mathematics;
 
-namespace SteveClient.Minecraft.Data.JsonSchema;
+namespace SteveClient.Minecraft.Data.Schema.Models;
 
 public class ModelJson
 {
