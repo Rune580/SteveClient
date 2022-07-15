@@ -1,6 +1,37 @@
-﻿namespace SteveClient.Minecraft.DataGen.Parsers;
+﻿using System.Text.Json;
+using SteveClient.Minecraft.Data.Schema.BlockStates;
 
-public class BlockStatesParser
+namespace SteveClient.Minecraft.DataGen.Parsers;
+
+public class BlockStatesParser : IMinecraftAssetParser
 {
-    
+    public string JarPath => "assets/minecraft/blockstates";
+    public string LocalPath => "blockstates/";
+
+    public bool DataExists()
+    {
+        var path = Path.GetFullPath(LocalPath);
+        
+        bool dirExists = Directory.Exists(path);
+        bool dirContainsFiles = false;
+
+        if (dirExists)
+            dirContainsFiles = Directory.EnumerateFiles(path, "*.json", SearchOption.AllDirectories).Any();
+        
+        return dirContainsFiles;
+    }
+
+    public void Parse()
+    {
+        string[] files = Directory.GetFiles(LocalPath, "*.json", SearchOption.AllDirectories);
+
+        List<BlockStateJson> blockStateJsons = new List<BlockStateJson>();
+
+        foreach (var file in files)
+        {
+            var blockState = JsonSerializer.Deserialize<BlockStateJson>(File.ReadAllText(file)) ?? throw new InvalidOperationException();
+            
+            blockStateJsons.Add(blockState);
+        }
+    }
 }

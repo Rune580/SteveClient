@@ -12,7 +12,8 @@ public static class DataGenerator
     private static readonly IMinecraftAssetParser[] AssetParsers =
     {
         new BlockTexturesParser(),
-        new BlockModelsParser()
+        new BlockModelsParser(),
+        new BlockStatesParser()
     };
     
     public static void GenerateData()
