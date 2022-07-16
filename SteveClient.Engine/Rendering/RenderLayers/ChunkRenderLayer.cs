@@ -28,6 +28,8 @@ public class ChunkRenderLayer : BaseRenderLayer
 
     private int _verticesOffset;
     private int _indicesOffset;
+
+    private readonly int[] _normalMap;
     
     public ChunkRenderLayer(Shader shader)
     {
@@ -50,6 +52,21 @@ public class ChunkRenderLayer : BaseRenderLayer
 
         _verticesOffset = 0;
         _indicesOffset = 0;
+
+        _normalMap = new int[900];
+        Array.Fill(_normalMap, -1);
+        
+        foreach (var key in TextureRegistry.BlockTextureAtlas.GetKeys())
+        {
+            int textureLayer = TextureRegistry.BlockTextureAtlas.GetAtlasLayer(key);
+
+            string normalKey = key.Replace("block", "block-extra") + "_n";
+            if (!TextureRegistry.BlockNormalAtlas.ContainsKey(normalKey))
+                continue;
+            
+            int normalLayer = TextureRegistry.BlockNormalAtlas.GetAtlasLayer(normalKey);
+            _normalMap[textureLayer] = normalLayer;
+        }
     }
 
     public override Shader Shader => _shader;
@@ -141,7 +158,12 @@ public class ChunkRenderLayer : BaseRenderLayer
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         
         Shader.Use();
+        
+        Shader.SetInt("textureSampler", 0);
+        Shader.SetInt("normalSampler", 1);
+        
         TextureRegistry.BlockTextureAtlas.Use();
+        TextureRegistry.BlockNormalAtlas.Use(1);
     }
     
     public override void BeforeRender()
@@ -157,6 +179,7 @@ public class ChunkRenderLayer : BaseRenderLayer
         Shader.SetColor("tint", Color4.White);
         Shader.SetMatrix4("view", _space.ViewMatrix);
         Shader.SetMatrix4("projection", _space.ProjectionMatrix);
+        Shader.SetUniformArray("normalMap", _normalMap);
 
         int baseVertex = 0;
 

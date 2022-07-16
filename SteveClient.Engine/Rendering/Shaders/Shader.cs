@@ -127,8 +127,24 @@ public class Shader
         foreach (var attribute in _shaderAttributes)
         {
             GL.EnableVertexAttribArray(attribute.Location);
-            GL.VertexAttribPointer(attribute.Location, attribute.Size, attribute.VertexAttribPointerType,
-                attribute.Normalized, attribute.Stride, attribute.Offset);
+
+            if (attribute.IsIPointer)
+            {
+                GL.VertexAttribIPointer(attribute.Location,
+                    attribute.Size,
+                    attribute.VertexAttribIntegerType,
+                    attribute.Stride,
+                    (IntPtr)attribute.Offset);
+            }
+            else
+            {
+                GL.VertexAttribPointer(attribute.Location,
+                    attribute.Size,
+                    attribute.VertexAttribPointerType,
+                    attribute.Normalized,
+                    attribute.Stride,
+                    attribute.Offset);
+            }
         }
     }
     
@@ -225,6 +241,19 @@ public class Shader
             return;
         
         GL.Uniform1(loc, data);
+    }
+
+    public void SetUniformArray(string name, int[] data)
+    {
+        if (!name.EndsWith("[0]"))
+            name += "[0]";
+        
+        GL.UseProgram(Handle);
+
+        if (!_uniformLocations.TryGetValue(name, out int loc))
+            return;
+        
+        GL.Uniform1(loc, data.Length, data);
     }
 
     private static void CompileShader(int shader, string shaderSource)

@@ -5,7 +5,7 @@ layout(location = 1) in vec2 aTexCoord;
 layout(location = 2) in float aAtlas;
 
 layout(location = 0) out vec2 texCoord;
-layout(location = 1) flat out float atlas;
+layout(location = 1) flat out int atlas;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -13,7 +13,7 @@ uniform mat4 projection;
 
 void main() {
     texCoord = aTexCoord;
-    atlas = aAtlas;
+    atlas = int(aAtlas);
 
     gl_Position = vec4(aPosition, 1.0) * model * view * projection;
 }

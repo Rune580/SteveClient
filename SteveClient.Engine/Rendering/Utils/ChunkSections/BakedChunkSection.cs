@@ -155,13 +155,32 @@ public readonly struct BakedChunkSection
 
     private static float[] BakeVertexData(Vector3[] vertices, Vector2[] uvs, string textureResourceName)
     {
+        //Vector3 tangent = CalculateTangent(vertices, uvs);
         int atlasLayer = TextureRegistry.BlockTextureAtlas.GetAtlasLayer(textureResourceName);
-
+        
         IVertex[] vertexData = new IVertex[vertices.Length];
 
         for (int i = 0; i < vertexData.Length; i++)
             vertexData[i] = new PositionTextureAtlas(vertices[i], uvs[i], atlasLayer);
 
         return vertexData.VertexData();
+    }
+
+    private static Vector3 CalculateTangent(Vector3[] vertices, Vector2[] uvs)
+    {
+        Vector3 tangent = new Vector3();
+
+        Vector3 edge1 = vertices[1] - vertices[0];
+        Vector3 edge2 = vertices[2] - vertices[0];
+        Vector2 deltaUv1 = uvs[1] - uvs[0];
+        Vector2 deltaUv2 = uvs[2] - uvs[0];
+
+        float f = 1f / (deltaUv1.X * deltaUv2.Y - deltaUv2.X * deltaUv1.Y);
+        
+        tangent.X = f * (deltaUv2.Y * edge1.X - deltaUv1.Y * edge2.X);
+        tangent.Y = f * (deltaUv2.Y * edge1.Y - deltaUv1.Y * edge2.Y);
+        tangent.Z = f * (deltaUv2.Y * edge1.Z - deltaUv1.Y * edge2.Z);
+
+        return tangent;
     }
 }

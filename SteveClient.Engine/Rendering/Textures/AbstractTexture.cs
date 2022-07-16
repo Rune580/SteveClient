@@ -5,6 +5,8 @@ namespace SteveClient.Engine.Rendering.Textures;
 
 public abstract class AbstractTexture : IDisposable
 {
+    public int Width { get; protected init; }
+    public int Height { get; protected init; }
     public int Handle { get; protected init; }
 
     public void Use(int unit = 0)
@@ -14,13 +16,13 @@ public abstract class AbstractTexture : IDisposable
 
     public abstract void Dispose();
 
-    protected static SKSurface LoadImage(string path, int frameOffset = 0)
+    protected SKSurface LoadImage(string path, int frameOffset = 0)
     {
         using var image = SKBitmap.Decode(path);
         var surface = SKSurface.Create(image.Info);
         using var canvas = surface.Canvas;
 
-        canvas.Scale(1, -1, 0, (16 + (16 * frameOffset)) / 2.0f);
+        canvas.Scale(1, -1, 0, (Height + (Height * frameOffset)) / 2.0f);
         canvas.DrawBitmap(image, 0, 0);
         canvas.Flush();
 

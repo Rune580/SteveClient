@@ -9,6 +9,7 @@ public static class ShaderDefinitions
     private static readonly ShaderAttribute ColorAttribute = new("aColor", 4, VertexAttribPointerType.Float, false);
     private static readonly ShaderAttribute UvAttribute = new("aTexCoord", 2, VertexAttribPointerType.Float, false);
     private static readonly ShaderAttribute AtlasAttribute = new("aAtlas", 1,  VertexAttribPointerType.Float, false);
+    private static readonly ShaderAttribute TangentAttribute = new("aTangent", 3, VertexAttribPointerType.Float, false);
 
     public static Shader PositionColorShader { get; private set; }
     public static Shader PositionTextureColorShader { get; private set; }

@@ -19,8 +19,10 @@ public class TextureCollection
         set => RawTextures[resourceName] = value;
     }
 
-    public void AddTexture(string resourceName, string texturePath)
+    public void AddTexture(string texturePath)
     {
+        string resourceName = GetResourceName(texturePath);
+        
         this[resourceName] = new RawTexture
         {
             TexturePath = texturePath,
@@ -30,8 +32,10 @@ public class TextureCollection
         Frames += this[resourceName].Frames;
     }
 
-    public void AddAnimatedTexture(string resourceName, string texturePath, string mcmetaPath)
+    public void AddAnimatedTexture(string texturePath, string mcmetaPath)
     {
+        string resourceName = GetResourceName(texturePath);
+        
         using var image = SKBitmap.Decode(texturePath);
         int frames = image.Height / 16;
         
@@ -55,5 +59,17 @@ public class TextureCollection
         public string TexturePath = "";
         public int Frames;
         public TextureMcMetaJson? McMetaJson;
+    }
+    
+    private static string GetResourceName(string path)
+    {
+        string textureName = Path.GetFileNameWithoutExtension(path);
+        string localPath = Path.GetRelativePath(Directory.GetCurrentDirectory(), path);
+        
+        string[] paths = localPath.Replace("\\", "/").Split('/');
+
+        string resourcePath = String.Join('/', paths[1..^1]);
+
+        return $"{resourcePath}/{textureName}";
     }
 }

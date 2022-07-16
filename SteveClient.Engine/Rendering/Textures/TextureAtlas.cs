@@ -9,8 +9,6 @@ public class TextureAtlas : AbstractTexture
 {
     private readonly Dictionary<string, IAtlasTexture> _atlas;
     private readonly SKSurface[] _surfaces;
-    private readonly int _width;
-    private readonly int _height;
 
     private int _layers;
     
@@ -28,8 +26,8 @@ public class TextureAtlas : AbstractTexture
         
         GL.TextureStorage3D(handle, 1, SizedInternalFormat.Rgba8, width, height, layers);
 
-        _width = width;
-        _height = height;
+        Width = width;
+        Height = height;
         _layers = 0;
         Handle = handle;
     }
@@ -46,7 +44,7 @@ public class TextureAtlas : AbstractTexture
         int height = image.Height;
         image.Dispose();
         
-        if (width != _width || height != _height)
+        if (width != Width || height != Height)
         {
             if (throwIfSizeDoesntMatch)
                 throw new Exception();
@@ -61,8 +59,8 @@ public class TextureAtlas : AbstractTexture
             0,
             0,
             _layers,
-            _width,
-            _height,
+            Width,
+            Height,
             1,
             PixelFormat.Bgra,
             PixelType.UnsignedByte,
@@ -92,6 +90,16 @@ public class TextureAtlas : AbstractTexture
     public int GetAtlasLayer(string key)
     {
         return _atlas[key.Replace("minecraft:", "")].GetAtlasLayer();
+    }
+
+    public bool ContainsKey(string key)
+    {
+        return _atlas.ContainsKey(key);
+    }
+
+    public string[] GetKeys()
+    {
+        return _atlas.Keys.ToArray();
     }
     
     public override void Dispose()

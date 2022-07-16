@@ -4,32 +4,26 @@ namespace SteveClient.Minecraft.Data;
 
 public static class Textures
 {
-    private static readonly TextureCollection TextureCollection = new();
+    internal static readonly TextureCollection BlockTextureCollection = new();
+    internal static readonly TextureCollection BlockNormalCollection = new();
     
     public static void AddTexture(string texturePath)
     {
-        TextureCollection.AddTexture(GetResourceName(texturePath), texturePath);
+        BlockTextureCollection.AddTexture(texturePath);
     }
 
     public static void AddAnimatedTexture(string texturePath, string mcmetaPath)
     {
-        TextureCollection.AddAnimatedTexture(GetResourceName(texturePath), texturePath, mcmetaPath);
+        BlockTextureCollection.AddAnimatedTexture(texturePath, mcmetaPath);
     }
 
-    public static TextureCollection GetTextureCollection()
+    public static TextureCollection GetBlockTextures()
     {
-        return TextureCollection;
+        return BlockTextureCollection;
     }
 
-    private static string GetResourceName(string path)
+    public static TextureCollection GetBlockNormals()
     {
-        string textureName = Path.GetFileNameWithoutExtension(path);
-        string localPath = Path.GetRelativePath(Directory.GetCurrentDirectory(), path);
-
-        string[] paths = localPath.Replace("\\", "/").Split('/');
-
-        string resourcePath = String.Join('/', paths[1..^1]);
-
-        return $"{resourcePath}/{textureName}";
+        return BlockNormalCollection;
     }
 }
