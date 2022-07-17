@@ -207,6 +207,16 @@ public class Shader
         
         GL.Uniform2(loc, data);
     }
+    
+    public void SetVector3(string name, Vector3 data)
+    {
+        GL.UseProgram(Handle);
+        
+        if (!_uniformLocations.TryGetValue(name, out int loc))
+            return;
+        
+        GL.Uniform3(loc, data);
+    }
 
     /// <summary>
     /// Set a uniform Color4 on this shader

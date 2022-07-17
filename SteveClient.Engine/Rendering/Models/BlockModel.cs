@@ -7,12 +7,14 @@ public readonly struct BlockModel
 {
     public readonly Vector3[] Vertices;
     public readonly uint[] Indices;
+    public readonly Vector3[] Normals;
     public readonly Quad[] Quads;
 
-    public BlockModel(Vector3[] vertices, uint[] indices, Quad[] quads)
+    public BlockModel(Vector3[] vertices, uint[] indices, Vector3[] normals, Quad[] quads)
     {
         Vertices = vertices;
         Indices = indices;
+        Normals = normals;
         Quads = quads;
     }
 
@@ -41,12 +43,14 @@ public readonly struct BlockModel
     {
         public readonly int[] Vertices;
         public readonly Vector2[] Uvs;
+        public readonly int Normal;
         public readonly string TextureResourceName;
         public readonly Directions CullFace;
 
-        public Quad(int[] vertices, Vector2[] uvs, string textureResourceName, Directions cullFace = Directions.None)
+        public Quad(int[] vertices, Vector2[] uvs, int normal, string textureResourceName, Directions cullFace = Directions.None)
         {
             Vertices = vertices;
+            Normal = normal;
             Uvs = uvs;
             TextureResourceName = textureResourceName;
             CullFace = cullFace;

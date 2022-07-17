@@ -4,27 +4,40 @@
 
 out vec4 FragColor;
 
-layout(location = 0) in vec2 texCoord;
-layout(location = 1) flat in int atlas;
+layout(location = 0) flat in int atlas;
+layout(location = 1) in vec2 texCoords;
+layout(location = 2) in vec3 tangentLightDir;
+layout(location = 3) in vec3 tangentViewPos;
+layout(location = 4) in vec3 tangentFragPos;
 
 uniform vec4 tint;
 uniform sampler2DArray textureSampler;
 uniform sampler2DArray normalSampler;
+uniform float displacementScale;
 
 uniform int[900] normalMap;
 
 vec3 getLightDir() {
-    vec3 light = vec3(10, -10, 10);
-    
-    return normalize(light);
+    return normalize(tangentLightDir);
 }
 
-vec3 getNormal() {
-    vec3 sampledNormal = vec3(1, 1, 1);
+vec2 parallaxMapping(vec2 uv, vec3 viewDir) {
+    float height = 0;
     
     int normalLayer = normalMap[atlas];
     if (normalLayer > -1)
-        sampledNormal = texture(normalSampler, vec3(texCoord, normalLayer)).rgb;
+        height = texture(normalSampler, vec3(uv, normalLayer)).a;
+    
+    vec2 p = viewDir.xy / viewDir.z * (height * displacementScale);
+    return uv - p;
+}
+
+vec3 getNormal(vec2 uv) {
+    vec3 sampledNormal = vec3(1);
+    
+    int normalLayer = normalMap[atlas];
+    if (normalLayer > -1)
+        sampledNormal = texture(normalSampler, vec3(uv, normalLayer)).rgb;
     
     return normalize(sampledNormal * 2.0 - 1.0);
 }
@@ -39,21 +52,30 @@ vec3 getAmbient() {
     return lightCol * AMBIENT_LIGHT;
 }
 
-vec3 getDiffuse() {
+vec3 getDiffuse(vec2 uv) {
     vec3 lightDir = getLightDir();
-    vec3 normal = getNormal();
-    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 normal = getNormal(uv);
+    
+    float diff = max(dot(lightDir, normal), 0.0);
 
     return diff * getLightColor();
 }
 
 void main() {
-    vec4 color = texture(textureSampler, vec3(texCoord, atlas)) * vec4(tint.rgb, 1);
+    //vec3 viewDir = normalize(tangentViewPos - tangentFragPos);
+    //vec2 uv = parallaxMapping(texCoords, viewDir);
+
+    vec2 uv = texCoords;
+    
+    if(uv.x > 1.0 || uv.y > 1.0 || uv.x < 0.0 || uv.y < 0.0)
+        discard;
+    
+    vec4 color = texture(textureSampler, vec3(uv, atlas)) * vec4(tint.rgb, 1);
     if (color.a == 0)
         discard;
 
     vec3 ambient = getAmbient();
-    vec3 diffuse = getDiffuse();
+    vec3 diffuse = getDiffuse(uv);
     
     color.rgb = (ambient + diffuse) * color.rgb;
     

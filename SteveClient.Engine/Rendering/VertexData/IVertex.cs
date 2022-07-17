@@ -2,12 +2,12 @@
 
 public interface IVertex
 {
+    int GetSize();
+    
     // I wish there was a way to force an inheriting class to implement a constant, while also being able to call that from an interface.
     int GetStride();
 
-    int GetSize();
-    
-    float[] VertexData { get; set; }
+    float[] VertexData { get; }
 }
 
 public static class VertexExtensions

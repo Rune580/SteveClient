@@ -103,9 +103,9 @@ public readonly struct BakedChunkSection
                 blockModel.Vertices[modelQuad.Vertices[3]] + localPos
             };
 
-            uint offset = (uint)(vertexList.Count / PositionTextureAtlas.Size);
+            uint offset = (uint)(vertexList.Count / PosNormTanTexAtlas.Size);
 
-            float[] vertices = BakeVertexData(quadVertices, modelQuad.Uvs, modelQuad.TextureResourceName);
+            float[] vertices = BakeVertexData(quadVertices, modelQuad.Uvs, blockModel.Normals[modelQuad.Normal], modelQuad.TextureResourceName);
             uint[] indices = { offset + 0, offset + 2, offset + 1, offset + 3, offset + 1, offset + 2 };
 
             vertexList.AddRange(vertices);
@@ -153,15 +153,15 @@ public readonly struct BakedChunkSection
         return curFace == neighborFace;
     }
 
-    private static float[] BakeVertexData(Vector3[] vertices, Vector2[] uvs, string textureResourceName)
+    private static float[] BakeVertexData(Vector3[] vertices, Vector2[] uvs, Vector3 normal, string textureResourceName)
     {
-        //Vector3 tangent = CalculateTangent(vertices, uvs);
+        Vector3 tangent = CalculateTangent(vertices, uvs);
         int atlasLayer = TextureRegistry.BlockTextureAtlas.GetAtlasLayer(textureResourceName);
         
         IVertex[] vertexData = new IVertex[vertices.Length];
 
         for (int i = 0; i < vertexData.Length; i++)
-            vertexData[i] = new PositionTextureAtlas(vertices[i], uvs[i], atlasLayer);
+            vertexData[i] = new PosNormTanTexAtlas(vertices[i], normal, tangent, uvs[i], atlasLayer);
 
         return vertexData.VertexData();
     }

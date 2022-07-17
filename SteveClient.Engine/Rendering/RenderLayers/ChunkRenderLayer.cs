@@ -18,7 +18,7 @@ public class ChunkRenderLayer : BaseRenderLayer
     private readonly int _elementBufferObject;
     private readonly int _vertexBufferObject;
     private readonly int _vertexArrayObject;
-    private readonly VertexDefinition<PositionTextureAtlas> _definition;
+    private readonly VertexDefinition<PosNormTanTexAtlas> _definition;
     private readonly Shader _shader;
     private readonly TargetSpace _space;
 
@@ -43,7 +43,7 @@ public class ChunkRenderLayer : BaseRenderLayer
         
         GL.BindVertexArray(_vertexArrayObject);
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-        GL.BufferData(BufferTarget.ArrayBuffer, 100000000 * sizeof(float), IntPtr.Zero, BufferUsageHint.DynamicDraw);
+        GL.BufferData(BufferTarget.ArrayBuffer, 10000000 * _definition.VertexSize * sizeof(float), IntPtr.Zero, BufferUsageHint.DynamicDraw);
         
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         GL.BufferData(BufferTarget.ElementArrayBuffer, 100000000 * sizeof(uint), IntPtr.Zero, BufferUsageHint.DynamicDraw);
@@ -176,6 +176,10 @@ public class ChunkRenderLayer : BaseRenderLayer
     
     public override void Render()
     {
+        Shader.SetVector3("viewPos", CameraState.Position);
+        Shader.SetVector3("lightDir", new Vector3(-1, 1, -1));
+        Shader.SetFloat("displacementScale", 0.1f);
+        
         Shader.SetColor("tint", Color4.White);
         Shader.SetMatrix4("view", _space.ViewMatrix);
         Shader.SetMatrix4("projection", _space.ProjectionMatrix);
