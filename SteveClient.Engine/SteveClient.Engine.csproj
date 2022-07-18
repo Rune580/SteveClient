@@ -31,13 +31,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources" />
-      <Folder Include="Resources\Shaders\Common" />
-      <Folder Include="SimpleData" />
+        <Folder Include="Resources" />
+        <Folder Include="Resources\Shaders\Common" />
+        <Folder Include="SimpleData" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SteveClient.Minecraft\SteveClient.Minecraft.csproj" />
+        <ProjectReference Include="..\SteveClient.Minecraft\SteveClient.Minecraft.csproj" />
+        <ProjectReference Include="..\SteveClient.Assimp\SteveClient.Assimp.csproj" />
     </ItemGroup>
 
 </Project>

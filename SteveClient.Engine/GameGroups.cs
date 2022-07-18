@@ -9,6 +9,7 @@ public static class GameGroups
     public abstract class Cameras : GroupTag<Cameras> { }
     public abstract class Controllable : GroupTag<Controllable> { }
     public abstract class ModelFilters : GroupTag<ModelFilters> { }
+    public abstract class MeshFilters : GroupTag<MeshFilters> { }
     public abstract class Entities : GroupTag<Entities> { }
     public abstract class PlayerTag : GroupTag<PlayerTag> { }
     public abstract class WorldBlocks : GroupTag<WorldBlocks> { }

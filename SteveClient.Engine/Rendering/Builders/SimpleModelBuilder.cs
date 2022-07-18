@@ -20,12 +20,12 @@ public class SimpleModelBuilder
         _currentColor = Color4.White;
     }
 
-    public SimpleModel Build()
+    public SimpleInternalModel Build()
     {
         var vertices = _vertices.ToArray();
         var indices = _indices.ToArray();
 
-        SimpleModel result = new SimpleModel(vertices, indices);
+        SimpleInternalModel result = new SimpleInternalModel(vertices, indices);
         
         _vertices.Clear();
         _indices.Clear();

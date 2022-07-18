@@ -99,13 +99,25 @@ public class SimpleRenderHelper
         return this;
     }
 
-    public SimpleRenderHelper WithMesh(SimpleModel model)
+    public SimpleRenderHelper WithSimpleModel(SimpleInternalModel internalModel)
     {
-        for (int i = 0; i < model.Vertices.Length; i++)
+        for (int i = 0; i < internalModel.Vertices.Length; i++)
             _colors.Add(_currentColor);
         
-        _vertices.AddRange(model.Vertices);
-        _indices.AddRange(model.Indices);
+        _vertices.AddRange(internalModel.Vertices);
+        _indices.AddRange(internalModel.Indices);
+
+        return this;
+    }
+
+    public SimpleRenderHelper WithMesh(InternalMesh mesh)
+    {
+        for (int i = 0; i < mesh.Vertices.Length; i++)
+            _colors.Add(_currentColor);
+        
+        _vertices.AddRange(mesh.Vertices);
+        _normals.AddRange(mesh.Normals);
+        _indices.AddRange(mesh.Indices);
 
         return this;
     }

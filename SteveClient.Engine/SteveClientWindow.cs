@@ -9,7 +9,6 @@ using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Ui;
 using SteveClient.Engine.Rendering.Ui.Widgets;
 using SteveClient.Engine.Rendering.Utils;
-
 namespace SteveClient.Engine;
 
 public class SteveClientWindow : GameWindow

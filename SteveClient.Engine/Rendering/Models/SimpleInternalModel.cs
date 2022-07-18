@@ -3,18 +3,18 @@ using SteveClient.Engine.AssetManagement;
 
 namespace SteveClient.Engine.Rendering.Models;
 
-public readonly struct SimpleModel
+public readonly struct SimpleInternalModel
 {
     public readonly Vector3[] Vertices;
     public readonly uint[] Indices;
     public readonly int Index;
 
-    public SimpleModel(Vector3[] vertices, uint[] indices)
+    public SimpleInternalModel(Vector3[] vertices, uint[] indices)
     {
         Vertices = vertices;
         Indices = indices;
-        Index = ModelRegistry.Models.Count;
+        Index = ModelRegistry.SimpleInternalModels.Count;
         
-        ModelRegistry.Models.Add(this);
+        ModelRegistry.SimpleInternalModels.Add(this);
     }
 }
