@@ -7,12 +7,12 @@ public static class TextureRegistry
     private static readonly Dictionary<string, Texture> Textures = new();
     
     public static TextureAtlas BlockTextureAtlas { get; private set; }
-    public static TextureAtlas BlockNormalAtlas { get; private set; }
+    // public static TextureAtlas BlockNormalAtlas { get; private set; }
 
     public static void Init()
     {
         InitBlockTextureAtlas();
-        InitBlockNormalAtlas();
+        // InitBlockNormalAtlas();
     }
 
     private static void InitBlockTextureAtlas()
@@ -27,12 +27,12 @@ public static class TextureRegistry
 
     private static void InitBlockNormalAtlas()
     {
-        var normalsCollection = Minecraft.Data.Textures.GetBlockNormals();
-
-        BlockNormalAtlas = new TextureAtlas(128, 128, normalsCollection.Length);
-
-        foreach (var (resourceName, rawTexture) in normalsCollection)
-            BlockNormalAtlas.AddTexture(resourceName, rawTexture);
+        // var normalsCollection = Minecraft.Data.Textures.GetBlockNormals();
+        //
+        // BlockNormalAtlas = new TextureAtlas(128, 128, normalsCollection.Length);
+        //
+        // foreach (var (resourceName, rawTexture) in normalsCollection)
+        //     BlockNormalAtlas.AddTexture(resourceName, rawTexture);
     }
 
     public static Texture GetTexture(string resourceName)

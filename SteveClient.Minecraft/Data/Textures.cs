@@ -21,9 +21,4 @@ public static class Textures
     {
         return BlockTextureCollection;
     }
-
-    public static TextureCollection GetBlockNormals()
-    {
-        return BlockNormalCollection;
-    }
 }

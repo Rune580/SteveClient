@@ -40,19 +40,19 @@ public class BlockTexturesParser : IMinecraftAssetParser
             }
         }
 
-        files = Directory.GetFiles(ExtraPath, "*_n.png", SearchOption.AllDirectories);
-        foreach (var file in files)
-        {
-            string mcmeta = $"{file}.mcmeta";
-
-            if (File.Exists(mcmeta))
-            {
-                Textures.BlockNormalCollection.AddAnimatedTexture(file, mcmeta);
-            }
-            else
-            {
-                Textures.BlockNormalCollection.AddTexture(file);
-            }
-        }
+        // files = Directory.GetFiles(ExtraPath, "*_n.png", SearchOption.AllDirectories);
+        // foreach (var file in files)
+        // {
+        //     string mcmeta = $"{file}.mcmeta";
+        //
+        //     if (File.Exists(mcmeta))
+        //     {
+        //         Textures.BlockNormalCollection.AddAnimatedTexture(file, mcmeta);
+        //     }
+        //     else
+        //     {
+        //         Textures.BlockNormalCollection.AddTexture(file);
+        //     }
+        // }
     }
 }
