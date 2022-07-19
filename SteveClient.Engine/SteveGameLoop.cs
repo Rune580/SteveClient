@@ -59,7 +59,7 @@ public class SteveGameLoop
 
         UiRenderer.Render();
 
-        FontRenderer.DrawTextScreenSpace($"{1000 / milliseconds:F0}Fps, avg {_avgMsPerFrameASecond:F0}ms per frame", new Vector2(0, 0), (1.5f / 4f));
+        FontRenderer.DrawTextScreenSpace($"{1000 / _avgMsPerFrameASecond:F0}Fps, {_avgMsPerFrameASecond:F0}ms per frame", new Vector2(0, 0), (1.5f / 4f));
 
         // FontRenderer.DrawText(new FontString("Ligma Balls"), new Vector3(0, 1, 4), (1f / 32f) / 4f, DirectionMenu.Direction);
         // FontRenderer.DrawText(new FontString("Bigma Lalls"), new Vector3(0, 1, 5), (1f / 32f) / 4f, DirectionMenu.Direction, Color4.Red);

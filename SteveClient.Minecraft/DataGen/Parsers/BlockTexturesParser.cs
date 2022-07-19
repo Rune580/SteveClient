@@ -1,5 +1,4 @@
 ﻿using SteveClient.Minecraft.Data;
-using SteveClient.Minecraft.Data.Collections;
 
 namespace SteveClient.Minecraft.DataGen.Parsers;
 

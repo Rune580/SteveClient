@@ -125,6 +125,6 @@ public class SteveClientWindow : GameWindow
          if (string.IsNullOrEmpty(message))
              return;
         
-         Log.Debug("Type: {Type}, Severity: {Severity}, Message: {Message}", type.ToString(), severity.ToString(), message);
+         //Log.Debug("Type: {Type}, Severity: {Severity}, Message: {Message}", type.ToString(), severity.ToString(), message);
     }
 }

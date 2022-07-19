@@ -32,7 +32,6 @@
 
     <ItemGroup>
         <Folder Include="Resources" />
-        <Folder Include="Resources\Shaders\Common" />
         <Folder Include="SimpleData" />
     </ItemGroup>
 

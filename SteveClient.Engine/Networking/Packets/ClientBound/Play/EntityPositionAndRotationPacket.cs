@@ -6,7 +6,7 @@ namespace SteveClient.Engine.Networking.Packets.ClientBound.Play;
 public class EntityPositionAndRotationPacket : ClientBoundPacket
 {
     public int EntityId;
-    public Vector3d Delta;
+    public Vector3i Delta;
     public byte Yaw;
     public byte Pitch;
     public bool OnGround;

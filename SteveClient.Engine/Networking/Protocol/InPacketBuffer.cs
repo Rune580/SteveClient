@@ -1,10 +1,14 @@
-﻿using System.Net.Sockets;
+﻿using System.Collections;
+using System.Net.Sockets;
 using System.Text;
 using OpenTK.Mathematics;
+using Serilog;
+using Serilog.Core;
 using SmartNbt;
 using SmartNbt.Tags;
 using SteveClient.Engine.Networking.Exceptions;
 using SteveClient.Engine.Networking.Protocol.Utils;
+using SteveClient.Minecraft.Collections;
 
 namespace SteveClient.Engine.Networking.Protocol;
 
@@ -49,9 +53,27 @@ public class InPacketBuffer : Stream
 
     public NbtCompound ReadNbtCompound()
     {
+        if (PeekNbtTag() == NbtTagType.End)
+        {
+            Offset++;
+            return new NbtCompound();
+        }
+
         NbtReader reader = new NbtReader(this);
         
         return (NbtCompound)reader.ReadAsTag();
+    }
+
+    public NbtTagType PeekNbtTag()
+    {
+        return (NbtTagType)ByteBuffer[Offset];
+    }
+
+    public NbtTag ReadNbtTag()
+    {
+        NbtReader reader = new NbtReader(this);
+
+        return reader.ReadAsTag();
     }
 
     public Vector2i ReadChunkPos()
@@ -64,15 +86,13 @@ public class InPacketBuffer : Stream
         return new Vector3d(ReadDouble(), ReadDouble(), ReadDouble());
     }
 
-    public Vector3d ReadDelta()
+    public Vector3i ReadDelta()
     {
         short x = ReadShort();
         short y = ReadShort();
         short z = ReadShort();
         
-        
-        
-        return new Vector3d((x / 128D) / 38D, (y / 128D) / 38D, (z / 128D) / 38D);
+        return new Vector3i(x, y, z);
     }
 
     public Vector3i ReadPosition()
@@ -93,6 +113,13 @@ public class InPacketBuffer : Stream
             z -= 1 << 26;
 
         return new Vector3i(x, y, z);
+    }
+
+    public BitSet ReadBitSet()
+    {
+        long[] data = ReadLongArray();
+
+        return new BitSet(data);
     }
 
     public bool ReadBool()
@@ -189,8 +216,20 @@ public class InPacketBuffer : Stream
 
     public byte[] ReadByteArray(int length)
     {
+        int max = ByteBuffer.Length - Offset;
         byte[] bytes = new byte[length];
-        Array.Copy(ByteBuffer, Offset, bytes, 0, length);
+        
+        if (length > max)
+        {
+            Log.Warning("Clamping length of byte array read from {Orig} to {New}", length, max);
+            Array.Copy(ByteBuffer, Offset, bytes, 0, max);
+            
+            Array.Fill(bytes, (byte)0, max, length - max);
+        }
+        else
+        {
+            Array.Copy(ByteBuffer, Offset, bytes, 0, length);
+        }
         Offset += length;
         return bytes;
     }

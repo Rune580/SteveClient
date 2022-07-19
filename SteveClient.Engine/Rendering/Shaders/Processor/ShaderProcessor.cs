@@ -14,7 +14,7 @@ public static class ShaderProcessor
         {
             if (line.StartsWith("#include"))
             {
-                string libPath = line.Split(' ').Last();
+                string libPath = line.Split(' ').Last().Replace("\"", "");
                 ShaderLibrary lib = GetShaderLibrary(libPath);
 
                 source.AppendLine(lib.Source);

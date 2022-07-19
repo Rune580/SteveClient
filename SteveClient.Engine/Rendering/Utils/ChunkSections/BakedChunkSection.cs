@@ -5,7 +5,7 @@ using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Models;
 using SteveClient.Engine.Rendering.RenderLayers;
 using SteveClient.Engine.Rendering.VertexData;
-using SteveClient.Minecraft.Blocks;
+using SteveClient.Minecraft.BlockStructs;
 using SteveClient.Minecraft.Chunks;
 using SteveClient.Minecraft.Data;
 using SteveClient.Minecraft.Numerics;
@@ -19,14 +19,18 @@ public readonly struct BakedChunkSection
     public readonly uint[] Indices;
     public readonly Matrix4 Transform;
     public readonly ChunkRenderLayer TargetLayer;
+    public readonly int[] SkyLights;
+    public readonly int[] BlockLights;
 
-    private BakedChunkSection(Vector3i chunkPos, float[] vertices, uint[] indices, Matrix4 transform, ChunkRenderLayer targetLayer)
+    private BakedChunkSection(Vector3i chunkPos, float[] vertices, uint[] indices, Matrix4 transform, ChunkRenderLayer targetLayer, ChunkSection section)
     {
         ChunkPos = chunkPos;
         Vertices = vertices;
         Indices = indices;
         Transform = transform;
         TargetLayer = targetLayer;
+        SkyLights = section.GetSkyLights();
+        BlockLights = section.GetBlockLights();
     }
 
     public static BakedChunkSection BakeChunkSection(World world, Vector3i sectionPos)
@@ -37,10 +41,10 @@ public readonly struct BakedChunkSection
         GenerateQuads(world, sectionPos, vertices, indices);
 
         Vector3i worldPos = new Vector3i(sectionPos.X * 16, (sectionPos.Y - 4) * 16, sectionPos.Z * 16);
+        Matrix4 transform = Matrix4.CreateTranslation(worldPos);
+        ChunkSection section = world.GetChunkSection(sectionPos);
 
-        Matrix4 transform = Matrix4.CreateTranslation(worldPos); 
-
-        return new BakedChunkSection(sectionPos, vertices.ToArray(), indices.ToArray(), transform, RenderLayerDefinitions.OpaqueBlockLayer);
+        return new BakedChunkSection(sectionPos, vertices.ToArray(), indices.ToArray(), transform, RenderLayerDefinitions.OpaqueBlockLayer, section);
     }
 
     private static void GenerateQuads(World world, Vector3i sectionPos, in List<float> vertices, in List<uint> indices)
@@ -78,6 +82,8 @@ public readonly struct BakedChunkSection
         BlockState blockState = Blocks.GetBlockState(blockStateId);
         if (!blockState.TryGetBlockModel(out BlockModel blockModel))
             return;
+        
+        int blockNum = (localPos.Y * ChunkSection.Height + localPos.Z) * ChunkSection.Width + localPos.X;
 
         foreach (var modelQuad in blockModel.Quads)
         {
@@ -103,9 +109,9 @@ public readonly struct BakedChunkSection
                 blockModel.Vertices[modelQuad.Vertices[3]] + localPos
             };
 
-            uint offset = (uint)(vertexList.Count / PosNormTanTexAtlas.Size);
+            uint offset = (uint)(vertexList.Count / BlockVertex.Size);
 
-            float[] vertices = BakeVertexData(quadVertices, modelQuad.Uvs, blockModel.Normals[modelQuad.Normal], modelQuad.TextureResourceName);
+            float[] vertices = BakeVertexData(quadVertices, modelQuad.Uvs, blockModel.Normals[modelQuad.Normal], modelQuad.TextureResourceName, blockNum);
             uint[] indices = { offset + 0, offset + 2, offset + 1, offset + 3, offset + 1, offset + 2 };
 
             vertexList.AddRange(vertices);
@@ -153,7 +159,7 @@ public readonly struct BakedChunkSection
         return curFace == neighborFace;
     }
 
-    private static float[] BakeVertexData(Vector3[] vertices, Vector2[] uvs, Vector3 normal, string textureResourceName)
+    private static float[] BakeVertexData(Vector3[] vertices, Vector2[] uvs, Vector3 normal, string textureResourceName, int blockNum)
     {
         Vector3 tangent = CalculateTangent(vertices, uvs);
         int atlasLayer = TextureRegistry.BlockTextureAtlas.GetAtlasLayer(textureResourceName);
@@ -161,7 +167,7 @@ public readonly struct BakedChunkSection
         IVertex[] vertexData = new IVertex[vertices.Length];
 
         for (int i = 0; i < vertexData.Length; i++)
-            vertexData[i] = new PosNormTanTexAtlas(vertices[i], normal, tangent, uvs[i], atlasLayer);
+            vertexData[i] = new BlockVertex(vertices[i], normal, tangent, uvs[i], atlasLayer, blockNum);
 
         return vertexData.VertexData();
     }

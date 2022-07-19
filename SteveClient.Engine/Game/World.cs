@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using OpenTK.Mathematics;
-using SteveClient.Minecraft.Blocks;
+using SteveClient.Minecraft.BlockStructs;
 using SteveClient.Minecraft.Chunks;
 using SteveClient.Minecraft.Data;
 

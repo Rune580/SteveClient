@@ -9,6 +9,7 @@ public class Shader
     public readonly int Handle;
 
     private readonly Dictionary<string, int> _uniformLocations;
+    private readonly Dictionary<string, int> _uniformBlockLocations;
     private readonly BakedShaderAttribute[] _shaderAttributes;
 
     public Shader(string vertPath, string fragPath, params ShaderAttribute[] shaderAttributes)
@@ -34,9 +35,8 @@ public class Shader
         GL.DeleteShader(fragmentShader);
 
         GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numOfUniforms);
-
         _uniformLocations = new Dictionary<string, int>();
-
+        
         for (int i = 0; i < numOfUniforms; i++)
         {
             var key = GL.GetActiveUniform(Handle, i, out _, out _);
@@ -46,6 +46,19 @@ public class Shader
             _uniformLocations.Add(key, location);
         }
         
+        GL.GetProgram(Handle, GetProgramParameterName.ActiveUniformBlocks, out var numOfUniformBlocks);
+        _uniformBlockLocations = new Dictionary<string, int>();
+
+        for (int i = 0; i < numOfUniformBlocks; i++)
+        {
+            GL.GetActiveUniformBlock(Handle, i, ActiveUniformBlockParameter.UniformBlockDataSize, out var size);
+            GL.GetActiveUniformBlockName(Handle, i, size, out _, out var key);
+            GL.GetActiveUniformBlock(Handle, i, ActiveUniformBlockParameter.UniformBlockNameLength, out var nameLength);
+            GL.GetActiveUniformBlock(Handle, i, ActiveUniformBlockParameter.UniformBlockActiveUniforms, out var uniforms);
+
+            int[] indices = new int[uniforms];
+        }
+
         _shaderAttributes = new BakedShaderAttribute[shaderAttributes.Length];
 
         int offset = 0;
@@ -165,8 +178,6 @@ public class Shader
     /// </remarks>
     public void SetMatrix4(string name, Matrix4 data)
     {
-        GL.UseProgram(Handle);
-        
         if (!_uniformLocations.TryGetValue(name, out int loc))
             return;
         
@@ -175,8 +186,6 @@ public class Shader
 
     public void SetMatrix4(string name, bool transpose, ref Matrix4 data)
     {
-        GL.UseProgram(Handle);
-        
         if (!_uniformLocations.TryGetValue(name, out int loc))
             return;
         
@@ -190,8 +199,6 @@ public class Shader
     /// <param name="data">The data to set</param>
     public void SetVector4(string name, Vector4 data)
     {
-        GL.UseProgram(Handle);
-        
         if (!_uniformLocations.TryGetValue(name, out int loc))
             return;
         
@@ -200,8 +207,6 @@ public class Shader
 
     public void SetVector2(string name, Vector2 data)
     {
-        GL.UseProgram(Handle);
-        
         if (!_uniformLocations.TryGetValue(name, out int loc))
             return;
         
@@ -210,8 +215,6 @@ public class Shader
     
     public void SetVector3(string name, Vector3 data)
     {
-        GL.UseProgram(Handle);
-        
         if (!_uniformLocations.TryGetValue(name, out int loc))
             return;
         
@@ -225,8 +228,6 @@ public class Shader
     /// <param name="color">The data to set</param>
     public void SetColor(string name, Color4 color)
     {
-        GL.UseProgram(Handle);
-        
         if (!_uniformLocations.TryGetValue(name, out int loc))
             return;
         
@@ -235,8 +236,6 @@ public class Shader
 
     public void SetInt(string name, int data)
     {
-        GL.UseProgram(Handle);
-        
         if (!_uniformLocations.TryGetValue(name, out int loc))
             return;
         
@@ -245,8 +244,6 @@ public class Shader
 
     public void SetFloat(string name, float data)
     {
-        GL.UseProgram(Handle);
-
         if (!_uniformLocations.TryGetValue(name, out int loc))
             return;
         
@@ -258,8 +255,6 @@ public class Shader
         if (!name.EndsWith("[0]"))
             name += "[0]";
         
-        GL.UseProgram(Handle);
-
         if (!_uniformLocations.TryGetValue(name, out int loc))
             return;
         

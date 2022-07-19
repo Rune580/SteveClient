@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using SteveClient.Minecraft.Blocks;
+using SteveClient.Minecraft.BlockStructs;
 
 namespace SteveClient.Minecraft.Data;
 
@@ -21,6 +21,21 @@ public class Blocks
     internal static void LoadFromArray(Block[] blocks)
     {
         new Blocks(blocks);
+    }
+
+    private static int _maxBitsPerEntry;
+
+    public static int MaxBitsPerEntry
+    {
+        get
+        {
+            if (_maxBitsPerEntry > 0)
+                return _maxBitsPerEntry;
+
+            _maxBitsPerEntry = (int)Math.Ceiling(Math.Log2(Instance._blockStates.Count));
+            
+            return _maxBitsPerEntry;
+        }
     }
 
     public static Block GetBlockFromId(int id)

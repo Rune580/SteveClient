@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using SteveClient.Minecraft.Blocks;
+using SteveClient.Minecraft.BlockStructs;
 using SteveClient.Minecraft.Utils;
 
 namespace SteveClient.Minecraft.DataGen.Generators;

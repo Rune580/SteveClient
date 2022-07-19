@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Text.Json;
+﻿using System.Text.Json;
 using SkiaSharp;
 using SteveClient.Minecraft.Data.Schema.Textures;
 
-namespace SteveClient.Minecraft.Data.Collections;
+namespace SteveClient.Minecraft.Collections;
 
 public class TextureCollection
 {

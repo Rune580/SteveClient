@@ -5,6 +5,7 @@ layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec3 aTangent;
 layout(location = 3) in vec2 aTexCoord;
 layout(location = 4) in float aAtlas;
+layout(location = 5) in float aBlockPos;
 
 layout(location = 0) flat out int atlas;
 layout(location = 1) out vec2 texCoords;
@@ -13,6 +14,7 @@ layout(location = 3) out vec3 FragPos;
 layout(location = 4) out vec3 tangentLightDir;
 layout(location = 5) out vec3 tangentViewPos;
 layout(location = 6) out vec3 tangentFragPos;
+layout(location = 7) flat out int blockPos;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -23,8 +25,9 @@ uniform vec3 lightPos;
 
 void main() {
     atlas = int(aAtlas);
+    blockPos = int(aBlockPos);
     texCoords = aTexCoord;
-    FragPos = vec3(model * vec4(aPosition, 1.0));
+    FragPos = vec3(vec4(aPosition, 1.0) * model);
 
     mat3 normalMatrix = transpose(inverse(mat3(model)));
     vec3 T = normalize(normalMatrix * aTangent);

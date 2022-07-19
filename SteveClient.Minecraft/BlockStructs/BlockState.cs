@@ -1,7 +1,7 @@
 ﻿using SteveClient.Minecraft.Data;
 using SteveClient.Minecraft.Numerics;
 
-namespace SteveClient.Minecraft.Blocks;
+namespace SteveClient.Minecraft.BlockStructs;
 
 public readonly struct BlockState
 {

@@ -65,6 +65,7 @@ public static class PacketRegistry
         play.Register<DisconnectPacket>(0x17);
         play.Register<KeepAlivePacket>(0x1E);
         play.Register<ChunkDataAndUpdateLightPacket>(0x1F);
+        play.Register<UpdateLightPacket>(0x22);
         play.Register<JoinGamePacket>(0x23);
         play.Register<EntityPositionPacket>(0x26);
         play.Register<EntityPositionAndRotationPacket>(0x27);

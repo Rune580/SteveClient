@@ -1,5 +1,5 @@
 ﻿using SteveClient.Engine.Rendering.Models;
-using SteveClient.Minecraft.Blocks;
+using SteveClient.Minecraft.BlockStructs;
 using SteveClient.Minecraft.Data;
 
 namespace SteveClient.Engine.AssetManagement;

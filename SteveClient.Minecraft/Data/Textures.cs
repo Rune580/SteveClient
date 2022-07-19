@@ -1,4 +1,4 @@
-﻿using SteveClient.Minecraft.Data.Collections;
+﻿using SteveClient.Minecraft.Collections;
 
 namespace SteveClient.Minecraft.Data;
 

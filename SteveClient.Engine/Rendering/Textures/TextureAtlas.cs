@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using SkiaSharp;
 using SteveClient.Engine.Rendering.Textures.Atlas;
-using SteveClient.Minecraft.Data.Collections;
+using SteveClient.Minecraft.Collections;
 
 namespace SteveClient.Engine.Rendering.Textures;
 

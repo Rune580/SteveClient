@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
-using SteveClient.Minecraft.Blocks;
+using SteveClient.Minecraft.BlockStructs;
+using SteveClient.Minecraft.Collections;
 
 namespace SteveClient.Minecraft.Chunks;
 

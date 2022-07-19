@@ -14,11 +14,11 @@ using static SteveClient.Engine.Rendering.VertexData.VertexFactories;
 namespace SteveClient.Engine.Rendering.RenderLayers;
 
 public class ChunkRenderLayer : BaseRenderLayer
-{
+{ 
     private readonly int _elementBufferObject;
     private readonly int _vertexBufferObject;
     private readonly int _vertexArrayObject;
-    private readonly VertexDefinition<PosNormTanTexAtlas> _definition;
+    private readonly VertexDefinition<BlockVertex> _definition;
     private readonly Shader _shader;
     private readonly TargetSpace _space;
 
@@ -26,12 +26,14 @@ public class ChunkRenderLayer : BaseRenderLayer
     private readonly Dictionary<Vector3i, int> _posToChunkMap = new();
     private readonly List<BakedChunkPointer> _chunks = new();
 
+    private readonly int _chunkLightDataBuffer;
+
     private int _verticesOffset;
     private int _indicesOffset;
     
     public ChunkRenderLayer(Shader shader)
     {
-        _definition = PositionTextureAtlasTriangles;
+        _definition = BlockTriangles;
         _shader = shader;
         _space = TargetSpace.WorldSpace;
         
@@ -50,6 +52,10 @@ public class ChunkRenderLayer : BaseRenderLayer
 
         _verticesOffset = 0;
         _indicesOffset = 0;
+
+        GL.GenBuffers(1, out _chunkLightDataBuffer);
+        GL.BindBuffer(BufferTarget.ShaderStorageBuffer, _chunkLightDataBuffer);
+        GL.NamedBufferData(_chunkLightDataBuffer, 4096 * 2 * sizeof(int), IntPtr.Zero, BufferUsageHint.DynamicRead);
     }
 
     public override Shader Shader => _shader;
@@ -140,10 +146,11 @@ public class ChunkRenderLayer : BaseRenderLayer
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         
-        Shader.Use();
+        GL.BindBuffer(BufferTarget.ShaderStorageBuffer, _chunkLightDataBuffer);
+        GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, _chunkLightDataBuffer);
         
+        Shader.Use();
         Shader.SetInt("textureSampler", 0);
-        Shader.SetInt("normalSampler", 1);
         
         TextureRegistry.BlockTextureAtlas.Use();
     }
@@ -159,11 +166,16 @@ public class ChunkRenderLayer : BaseRenderLayer
     public override void Render()
     {
         Shader.SetVector3("viewPos", CameraState.Position);
-        //Shader.SetVector3("lightDir", new Vector3(-1, 1, -1));
-        Shader.SetVector3("lightPos", new Vector3(-254, 76, 96));
-        Shader.SetFloat("ambientStrength", 0.1f);
-        Shader.SetFloat("specularStrength", 0.5f);
+        Shader.SetVector3("lightPos", new Vector3(-254, 90, 96));
         
+        Shader.SetVector3("props.ambientStrength", new Vector3(0.4f));
+        Shader.SetVector3("props.diffuseStrength", new Vector3(1f));
+        Shader.SetVector3("props.specularStrength", new Vector3(0.0f));
+        Shader.SetFloat("props.shininess", 32f);
+
+        Shader.SetVector3("directionalLight.direction", new Vector3(1, -1, 1));
+        Shader.SetVector3("directionalLight.color", Vector3.One);
+
         Shader.SetColor("tint", Color4.White);
         Shader.SetMatrix4("view", _space.ViewMatrix);
         Shader.SetMatrix4("projection", _space.ProjectionMatrix);
@@ -172,12 +184,18 @@ public class ChunkRenderLayer : BaseRenderLayer
 
         foreach (var chunkPointer in _chunks)
         {
+            const int lightDataSize = 4096 * sizeof(int);
+            GL.NamedBufferSubData(_chunkLightDataBuffer, (IntPtr)0, lightDataSize, chunkPointer.BakedSection.SkyLights);
+            GL.NamedBufferSubData(_chunkLightDataBuffer, (IntPtr)lightDataSize, lightDataSize, chunkPointer.BakedSection.BlockLights);
+
             Shader.SetMatrix4("model", chunkPointer.Model);
-            
+
             GL.DrawElementsBaseVertex(_definition.PrimitiveType, chunkPointer.IndicesCount, DrawElementsType.UnsignedInt, (IntPtr)chunkPointer.IndicesOffset, baseVertex);
 
             baseVertex += chunkPointer.Vertices.Length / _definition.VertexSize;
         }
+        
+        GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
     }
 
     public override void AfterRender()

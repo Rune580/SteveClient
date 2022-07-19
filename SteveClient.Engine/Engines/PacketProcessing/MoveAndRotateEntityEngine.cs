@@ -34,9 +34,8 @@ public class MoveAndRotateEntityEngine : PacketProcessingEngine<EntityPositionAn
 
                 if (entity.EntityId != packet.EntityId)
                     continue;
-
-                Vector3 targetPos = (Vector3)(transform.Position + packet.Delta);
-                transform.Position = targetPos;
+                
+                transform.Position = ApplyDelta(transform.Position, packet.Delta);
                 
                 consumablePacket.MarkConsumed();
                 break;
@@ -45,5 +44,14 @@ public class MoveAndRotateEntityEngine : PacketProcessingEngine<EntityPositionAn
             if (consumablePacket.Consumed)
                 break;
         }
+    }
+    
+    private static Vector3 ApplyDelta(Vector3 position, Vector3i delta)
+    {
+        Vector3i current = (Vector3i)(position * 32 * 128);
+
+        current += delta;
+
+        return new Vector3(current.X / 128f / 32f, current.Y / 128f / 32f, current.Z / 128f / 32f);
     }
 }

@@ -3,7 +3,6 @@ using OpenTK.Mathematics;
 using SteveClient.Engine.AssetManagement;
 using SteveClient.Engine.Engines.Tools;
 using SteveClient.Engine.Rendering.Ui.Elements;
-using SteveClient.Minecraft.Blocks;
 using SteveClient.Minecraft.Data;
 
 namespace SteveClient.Engine.Rendering.Ui.Widgets;

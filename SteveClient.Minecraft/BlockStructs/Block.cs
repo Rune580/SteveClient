@@ -1,4 +1,4 @@
-﻿namespace SteveClient.Minecraft.Blocks;
+﻿namespace SteveClient.Minecraft.BlockStructs;
 
 public readonly struct Block
 {
