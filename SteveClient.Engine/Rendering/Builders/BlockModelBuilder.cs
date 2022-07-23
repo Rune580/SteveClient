@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using SteveClient.Engine.Rendering.Models;
 using SteveClient.Engine.Rendering.UnBaked;
+using SteveClient.Minecraft.Data.Schema.BlockStates;
 using SteveClient.Minecraft.ModelLoading;
 
 namespace SteveClient.Engine.Rendering.Builders;
@@ -82,7 +83,7 @@ public class BlockModelBuilder
         return result;
     }
 
-    public BlockModelBuilder AddQuad(RawBlockFace blockFace)
+    public BlockModelBuilder AddQuad(RawBlockFace blockFace, VariantModelJson? modelJson = null)
     {
         TexturedQuad quad = new TexturedQuad(new[]
         {
@@ -97,18 +98,46 @@ public class BlockModelBuilder
             blockFace.Xv,
             blockFace.Uv
         }, blockFace.Texture, blockFace.CullFace);
+
+        if (modelJson is not null)
+            ApplyVariant(quad, modelJson);
         
         _quads.Add(quad);
         
         return this;
     }
 
-    public BlockModelBuilder AddRawBlockModel(RawBlockModel blockModel)
+    public BlockModelBuilder AddRawBlockModel(RawBlockModel blockModel, VariantModelJson? modelJson = null)
     {
         foreach (var blockFace in blockModel.Faces)
-            AddQuad(blockFace);
+            AddQuad(blockFace, modelJson);
         
         return this;
+    }
+
+    private static void ApplyVariant(in TexturedQuad quad, in VariantModelJson json)
+    {
+        if (json.X.HasValue)
+        {
+            float xRad = json.X.Value * (MathF.PI / 180f);
+            Matrix3 xRot = Matrix3.CreateRotationX(xRad);
+
+            quad.Vertices[0] = xRot * quad.Vertices[0];
+            quad.Vertices[1] = xRot * quad.Vertices[1];
+            quad.Vertices[2] = xRot * quad.Vertices[2];
+            quad.Vertices[3] = xRot * quad.Vertices[3];
+        }
+
+        if (json.Y.HasValue)
+        {
+            float yRad = json.Y.Value * (MathF.PI / 180f);
+            Matrix3 yRot = Matrix3.CreateRotationY(yRad);
+            
+            quad.Vertices[0] = yRot * quad.Vertices[0];
+            quad.Vertices[1] = yRot * quad.Vertices[1];
+            quad.Vertices[2] = yRot * quad.Vertices[2];
+            quad.Vertices[3] = yRot * quad.Vertices[3];
+        }
     }
 
     private static Vector3 CalculateNormal(Vector3 a, Vector3 b, Vector3 c)

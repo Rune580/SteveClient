@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using SteveClient.Minecraft.BlockStructs;
+using SteveClient.Minecraft.Data.Structs;
+using SteveClient.Minecraft.Numerics;
 using SteveClient.Minecraft.Utils;
 
 namespace SteveClient.Minecraft.DataGen.Generators;
@@ -47,7 +49,8 @@ public static class BlocksGen
                     currentState.GetProperty("air").GetBoolean(),
                     currentState.GetProperty("liquid").GetBoolean(),
                     currentState.GetProperty("collisionShape").GetString()!,
-                    currentState.GetProperty("occlusionShape").GetString()!
+                    currentState.GetProperty("occlusionShape").GetString()!,
+                    GetBlockProperties(currentState)
                 );
 
                 blockStates[blockStateId] = blockState;
@@ -70,6 +73,22 @@ public static class BlocksGen
         Data.Blocks.LoadFromArray(blocks.ToArray());
         blocks.Clear();
     }
+
+    private static BlockProperties GetBlockProperties(in JsonElement json)
+    {
+        List<BlockProperty> blockProperties = new List<BlockProperty>();
+        
+        var enumerator = json.GetProperty("properties").EnumerateObject();
+        while (enumerator.MoveNext())
+        {
+            var current = enumerator.Current;
+
+            blockProperties.Add(BlockProperty.Parse(current.Name, current.Value.GetRawText()));
+        }
+
+        return new BlockProperties(blockProperties.ToArray());
+    }
+    
 
     private static string GetBlocksJsonPath()
     {

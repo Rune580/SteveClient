@@ -1,4 +1,5 @@
 ﻿using SteveClient.Minecraft.Data;
+using SteveClient.Minecraft.Data.Structs;
 using SteveClient.Minecraft.Numerics;
 
 namespace SteveClient.Minecraft.BlockStructs;
@@ -13,8 +14,17 @@ public readonly struct BlockState
     public readonly bool Liquid;
     public readonly int CollisionVoxelShapeId;
     public readonly int OcclusionVoxelShapeId;
+    public readonly BlockProperties BlockProperties;
     
-    public BlockState(int blockId, int stateId, int opacity, bool occludes, bool air, bool liquid, string collisionShapeData, string occlusionShapeData)
+    public BlockState(int blockId,
+        int stateId,
+        int opacity,
+        bool occludes,
+        bool air,
+        bool liquid,
+        string collisionShapeData,
+        string occlusionShapeData,
+        BlockProperties blockProperties)
     {
         BlockId = blockId;
         StateId = stateId;
@@ -22,6 +32,7 @@ public readonly struct BlockState
         Occludes = occludes;
         Air = air;
         Liquid = liquid;
+        BlockProperties = blockProperties;
 
         CollisionVoxelShapeId = VoxelShapes.Add(collisionShapeData);
         OcclusionVoxelShapeId = VoxelShapes.Add(occlusionShapeData);

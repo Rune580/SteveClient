@@ -1,21 +1,23 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using SteveClient.Minecraft.BlockStructs;
 using SteveClient.Minecraft.Data.Schema.BlockStates;
 
 namespace SteveClient.Minecraft.Data.Schema.JsonConverters;
 
-public class VariantsJsonConverter : JsonConverter<Dictionary<string, VariantModelJson[]>>
+public class VariantsJsonConverter : JsonConverter<VariantModels>
 {
-    public override Dictionary<string, VariantModelJson[]>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override VariantModels? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        Dictionary<string, VariantModelJson[]> variants = new Dictionary<string, VariantModelJson[]>();
+        VariantModels variants = new VariantModels();
 
         while (reader.Read())
         {
             if (reader.TokenType == JsonTokenType.EndObject)
                 break;
             
-            string key = reader.GetString()!;
+            string keyText = reader.GetString()!;
+            BlockProperties key = new BlockProperties(keyText);
 
             List<VariantModelJson> modelJsons = new List<VariantModelJson>();
 
@@ -76,13 +78,13 @@ public class VariantsJsonConverter : JsonConverter<Dictionary<string, VariantMod
                 }
             } while (reader.Read());
             
-            variants[key] = modelJsons.ToArray();
+            variants.Add(key, modelJsons.ToArray());
         }
         
         return variants;
     }
 
-    public override void Write(Utf8JsonWriter writer, Dictionary<string, VariantModelJson[]> value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, VariantModels value, JsonSerializerOptions options)
     {
         
     }

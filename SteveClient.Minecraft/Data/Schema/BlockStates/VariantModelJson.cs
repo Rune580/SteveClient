@@ -19,9 +19,3 @@ public class VariantModelJson
     [JsonPropertyName("weight")]
     public int? Weight { get; set; }
 }
-
-public class VariantModelsJson
-{
-    public VariantModelJson[]? VariantModels { get; set; }
-    public VariantModelJson? VariantModel { get; set; }
-}

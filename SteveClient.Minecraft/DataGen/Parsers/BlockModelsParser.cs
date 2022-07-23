@@ -47,11 +47,6 @@ public class BlockModelsParser : IMinecraftAssetParser
 
         foreach (var (key, modelJson) in modelJsons)
         {
-            // if (key.Contains("cauldron"))
-            // {
-            //     Console.WriteLine("s");
-            // }
-            
             var textureMap = GetTextureMap(modelJson, modelJsons);
             var elements = GetElements(modelJson, modelJsons);
 
@@ -66,12 +61,12 @@ public class BlockModelsParser : IMinecraftAssetParser
                     face.Texture = textureMap[face.Texture];
             }
 
-            if (blockFaces.Count == 0)
-                continue;
+            // if (blockFaces.Count == 0)
+            //     continue;
 
             RawBlockModel model = new RawBlockModel(key, blockFaces.ToArray());
             
-            BlockModels.Add(key, model);
+            BlockModelLoaders.Add(key, model);
         }
     }
 
@@ -101,7 +96,9 @@ public class BlockModelsParser : IMinecraftAssetParser
         
         if (faces.East is not null)
             blockFaces.Add(GetBlockFace(element.From, element.To, Directions.East, faces.East));
-
+        
+        element.ApplyRotation(blockFaces);
+        
         return blockFaces;
     }
 
@@ -121,11 +118,6 @@ public class BlockModelsParser : IMinecraftAssetParser
         Vector3 min = from / 16;
         Vector3 max = to / 16;
 
-        if (faceJson.Texture.Contains("#log") && faceJson.Rotation.HasValue)
-        {
-            Console.WriteLine("s");
-        }
-
         Vector2 uvMin;
         Vector2 uvMax;
 
@@ -139,13 +131,13 @@ public class BlockModelsParser : IMinecraftAssetParser
 
                 if (faceJson.Uv.HasValue)
                 {
-                    uvMin = faceJson.Uv.Value.Xy / 16f;
-                    uvMax = faceJson.Uv.Value.Zw / 16f;
+                    uvMin = faceJson.Uv.Value.Zw / 16f;
+                    uvMax = faceJson.Uv.Value.Xy / 16f;
                 }
                 else
                 {
-                    uvMin = new Vector2(min.X, min.Z);
-                    uvMax = new Vector2(max.X, max.Z);
+                    uvMin = new Vector2(max.X, max.Z);
+                    uvMax = new Vector2(min.X, min.Z);
                 }
                 break;
             case Directions.Up:
@@ -156,13 +148,13 @@ public class BlockModelsParser : IMinecraftAssetParser
 
                 if (faceJson.Uv.HasValue)
                 {
-                    uvMin = faceJson.Uv.Value.Xy / 16f;
-                    uvMax = faceJson.Uv.Value.Zw / 16f;
+                    uvMin = faceJson.Uv.Value.Zw / 16f;
+                    uvMax = faceJson.Uv.Value.Xy / 16f;
                 }
                 else
                 {
-                    uvMin = new Vector2(min.X, min.Z);
-                    uvMax = new Vector2(max.X, max.Z);
+                    uvMin = new Vector2(max.X, max.Z);
+                    uvMax = new Vector2(min.X, min.Z);
                 }
                 break;
             case Directions.North:

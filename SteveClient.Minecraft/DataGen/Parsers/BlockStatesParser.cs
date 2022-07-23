@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using SteveClient.Minecraft.Data;
 using SteveClient.Minecraft.Data.Schema.BlockStates;
 
 namespace SteveClient.Minecraft.DataGen.Parsers;
@@ -25,13 +26,13 @@ public class BlockStatesParser : IMinecraftAssetParser
     {
         string[] files = Directory.GetFiles(LocalPath, "*.json", SearchOption.AllDirectories);
 
-        List<BlockStateJson> blockStateJsons = new List<BlockStateJson>();
-
         foreach (var file in files)
         {
             var blockState = JsonSerializer.Deserialize<BlockStateJson>(File.ReadAllText(file)) ?? throw new InvalidOperationException();
+
+            string resourceName = Path.GetFileNameWithoutExtension(file);
             
-            blockStateJsons.Add(blockState);
+            BlockStateModels.Add(resourceName, blockState);
         }
     }
 }

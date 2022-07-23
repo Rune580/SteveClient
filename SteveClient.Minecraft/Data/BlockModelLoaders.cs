@@ -2,7 +2,7 @@
 
 namespace SteveClient.Minecraft.Data;
 
-public static class BlockModels
+public static class BlockModelLoaders
 {
     private static readonly Dictionary<string, RawBlockModel> Models = new();
 
@@ -16,9 +16,14 @@ public static class BlockModels
         return Models[resourceName];
     }
 
-    public static RawBlockModel[] GetBlockModels()
+    public static RawBlockModel[] GetBlockModelsArray()
     {
         return Models.Values.ToArray();
+    }
+
+    public static Dictionary<string, RawBlockModel> GetBlockModels()
+    {
+        return Models;
     }
 
     public static void Clear()

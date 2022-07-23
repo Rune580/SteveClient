@@ -38,14 +38,24 @@ public class Blocks
         }
     }
 
-    public static Block GetBlockFromId(int id)
+    public static Block GetBlock(int id)
     {
         return Instance._blocks[id];
+    }
+
+    public static Block[] GetBlocks()
+    {
+        return Instance._blocks.Values.ToArray();
     }
 
     public static BlockState GetBlockState(int blockStateId)
     {
         return Instance._blockStates[blockStateId];
+    }
+
+    public static BlockState[] GetBlockStates()
+    {
+        return Instance._blockStates.Values.ToArray();
     }
 
     public static ref readonly BlockState GetDefaultBlockState(string blockResourceName)

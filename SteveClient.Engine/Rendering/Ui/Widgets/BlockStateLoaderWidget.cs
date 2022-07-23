@@ -2,6 +2,7 @@
 using OpenTK.Mathematics;
 using SteveClient.Engine.AssetManagement;
 using SteveClient.Engine.Engines.Tools;
+using SteveClient.Engine.Rendering.Models;
 using SteveClient.Engine.Rendering.Ui.Elements;
 using SteveClient.Minecraft.Data;
 
@@ -48,7 +49,7 @@ public class BlockStateLoaderWidget : BaseElementContainer
     {
         string resourceName = _inputField.Text;
 
-        var model = ModelRegistry.BlockModels[resourceName];
+        BlockModel model = default; //ModelRegistry.BlockModels[resourceName];
 
         StringBuilder obj = new StringBuilder();
 
