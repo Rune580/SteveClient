@@ -1,7 +1,7 @@
-﻿layout(std430, binding = 0) buffer chunkLightData {
-    int skyLights[4096];
-    int blockLights[4096];
-};
+﻿//layout(std430, binding = 0) buffer chunkLightData {
+//    int skyLights[4096];
+//    int blockLights[4096];
+//};
 
 struct LightingProperties {
     vec3 ambientStrength;
@@ -31,10 +31,12 @@ vec3 CalculateDirectionLight(int blockPos, vec4 texSample, vec3 normal, vec3 vie
     vec3 diffuse = props.diffuseStrength * diff * texSample.rgb;
     vec3 specular = props.specularStrength * spec * texSample.rgb;
     
-    int skyLight = skyLights[blockPos];
-    int blockLight = blockLights[blockPos];
+//    int skyLight = skyLights[blockPos];
+//    int blockLight = blockLights[blockPos];
+//    
+//    float lightModifier = (1 + max(skyLight, blockLight)) / 16.0;
     
-    float lightModifier = (1 + max(skyLight, blockLight)) / 16.0;
+    float lightModifier = 1;
     
     return (ambient + diffuse + specular) * lightModifier;
 }

@@ -15,7 +15,7 @@ public class ChunkDataAndUpdateLightPacket : ClientBoundPacket
 
     public override void Read(in InPacketBuffer packetBuffer)
     {
-        Vector2i chunkPos = packetBuffer.ReadChunkPos();
+        Vector2i chunkPos = packetBuffer.ReadChunkPosInt();
         NbtCompound heightMaps = packetBuffer.ReadNbtCompound();
 
         ChunkSection[] chunkSections = LoadChunkSections(packetBuffer);

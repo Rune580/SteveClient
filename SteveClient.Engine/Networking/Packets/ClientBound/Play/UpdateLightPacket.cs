@@ -10,7 +10,7 @@ public class UpdateLightPacket : ClientBoundPacket
 {
     public override void Read(in InPacketBuffer packetBuffer)
     {
-        Vector2i chunkPos = packetBuffer.ReadChunkPos();
+        Vector2i chunkPos = packetBuffer.ReadChunkPosVarInt();
         Chunk chunk = World.ServerWorld!.GetChunk(chunkPos);
 
         bool trustEdges = packetBuffer.ReadBool();

@@ -53,9 +53,9 @@ public class ChunkRenderLayer : BaseRenderLayer
         _verticesOffset = 0;
         _indicesOffset = 0;
 
-        GL.GenBuffers(1, out _chunkLightDataBuffer);
-        GL.BindBuffer(BufferTarget.ShaderStorageBuffer, _chunkLightDataBuffer);
-        GL.NamedBufferData(_chunkLightDataBuffer, 4096 * 2 * sizeof(int), IntPtr.Zero, BufferUsageHint.DynamicRead);
+        // GL.GenBuffers(1, out _chunkLightDataBuffer);
+        // GL.BindBuffer(BufferTarget.ShaderStorageBuffer, _chunkLightDataBuffer);
+        // GL.NamedBufferData(_chunkLightDataBuffer, 4096 * 2 * sizeof(int), IntPtr.Zero, BufferUsageHint.DynamicRead);
     }
 
     public override Shader Shader => _shader;
@@ -146,8 +146,8 @@ public class ChunkRenderLayer : BaseRenderLayer
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         
-        GL.BindBuffer(BufferTarget.ShaderStorageBuffer, _chunkLightDataBuffer);
-        GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, _chunkLightDataBuffer);
+        // GL.BindBuffer(BufferTarget.ShaderStorageBuffer, _chunkLightDataBuffer);
+        // GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, _chunkLightDataBuffer);
         
         Shader.Use();
         Shader.SetInt("textureSampler", 0);
@@ -184,9 +184,9 @@ public class ChunkRenderLayer : BaseRenderLayer
 
         foreach (var chunkPointer in _chunks)
         {
-            const int lightDataSize = 4096 * sizeof(int);
-            GL.NamedBufferSubData(_chunkLightDataBuffer, (IntPtr)0, lightDataSize, chunkPointer.BakedSection.SkyLights);
-            GL.NamedBufferSubData(_chunkLightDataBuffer, (IntPtr)lightDataSize, lightDataSize, chunkPointer.BakedSection.BlockLights);
+            // const int lightDataSize = 4096 * sizeof(int);
+            // GL.NamedBufferSubData(_chunkLightDataBuffer, (IntPtr)0, lightDataSize, chunkPointer.BakedSection.SkyLights);
+            // GL.NamedBufferSubData(_chunkLightDataBuffer, (IntPtr)lightDataSize, lightDataSize, chunkPointer.BakedSection.BlockLights);
 
             Shader.SetMatrix4("model", chunkPointer.Model);
 

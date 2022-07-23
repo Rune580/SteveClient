@@ -76,9 +76,14 @@ public class InPacketBuffer : Stream
         return reader.ReadAsTag();
     }
 
-    public Vector2i ReadChunkPos()
+    public Vector2i ReadChunkPosInt()
     {
         return new Vector2i(ReadInt(), ReadInt());
+    }
+
+    public Vector2i ReadChunkPosVarInt()
+    {
+        return new Vector2i(ReadVarInt(), ReadVarInt());
     }
 
     public Vector3d ReadVector3d()
