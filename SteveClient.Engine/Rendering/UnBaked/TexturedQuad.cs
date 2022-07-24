@@ -9,7 +9,7 @@ public class TexturedQuad
     public readonly Vector2[] Uvs;
     public readonly uint[] Triangles;
     public readonly string TextureResourceName;
-    public readonly Directions CullFace;
+    public Directions CullFace;
 
     public TexturedQuad(Vector3[] vertices, Vector2[] uvs, uint[] triangles, string textureResourceName, Directions cullFace = Directions.None)
     {

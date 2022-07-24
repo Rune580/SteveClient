@@ -7,6 +7,8 @@ public class VoxelShape : IEnumerable<Aabb>
 {
     private readonly List<Aabb> _aabbs;
 
+    public int Count => _aabbs.Count;
+
     public VoxelShape()
     {
         _aabbs = new List<Aabb>();

@@ -1,6 +1,7 @@
 ﻿#version 460 core
 
 #include "Common/Lighting.glsl"
+#include "Common/Wireframe.glsl"
 
 out vec4 FragColor;
 
@@ -18,6 +19,11 @@ uniform sampler2DArray textureSampler;
 uniform vec3 viewPos;
 
 void main() {
+    if(wireframe) {
+        FragColor = tint;
+        return;
+    }
+    
     vec2 uv = texCoords;
     if(uv.x > 1.0 || uv.y > 1.0 || uv.x < 0.0 || uv.y < 0.0)
         discard;

@@ -150,6 +150,9 @@ public readonly struct BakedChunkSection
 
     private static bool OcclusionShapeTest(VoxelShape current, VoxelShape neighbor, Vector3 dir)
     {
+        if (current.Count != neighbor.Count)
+            return false;
+        
         Aabb curAabb = current.Closest(dir);
         Aabb neighborAabb = neighbor.Closest(-dir);
 

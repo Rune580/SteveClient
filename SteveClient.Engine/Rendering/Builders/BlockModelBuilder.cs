@@ -3,6 +3,7 @@ using SteveClient.Engine.Rendering.Models;
 using SteveClient.Engine.Rendering.UnBaked;
 using SteveClient.Minecraft.Data.Schema.BlockStates;
 using SteveClient.Minecraft.ModelLoading;
+using SteveClient.Minecraft.Numerics;
 
 namespace SteveClient.Engine.Rendering.Builders;
 
@@ -117,27 +118,95 @@ public class BlockModelBuilder
 
     private static void ApplyVariant(in TexturedQuad quad, in VariantModelJson json)
     {
+        bool uvLock = json.UvLock ?? false;
+        
         if (json.X.HasValue)
         {
             float xRad = json.X.Value * (MathF.PI / 180f);
             Matrix3 xRot = Matrix3.CreateRotationX(xRad);
 
-            quad.Vertices[0] = xRot * quad.Vertices[0];
-            quad.Vertices[1] = xRot * quad.Vertices[1];
-            quad.Vertices[2] = xRot * quad.Vertices[2];
-            quad.Vertices[3] = xRot * quad.Vertices[3];
+            ApplyRotation(quad.Vertices, xRot);
+
+            if (uvLock)
+            {
+                Matrix2 rot = Matrix2.CreateRotation(-xRad);
+                //ApplyRotation(quad.Uvs, rot);
+            }
         }
 
         if (json.Y.HasValue)
         {
+            quad.CullFace = quad.CullFace.RotateAroundY(json.Y.Value);
+            
             float yRad = json.Y.Value * (MathF.PI / 180f);
             Matrix3 yRot = Matrix3.CreateRotationY(yRad);
             
-            quad.Vertices[0] = yRot * quad.Vertices[0];
-            quad.Vertices[1] = yRot * quad.Vertices[1];
-            quad.Vertices[2] = yRot * quad.Vertices[2];
-            quad.Vertices[3] = yRot * quad.Vertices[3];
+            ApplyRotation(quad.Vertices, yRot);
+
+            if (uvLock && SameAxis(quad.Vertices, Vector3.UnitY))
+            {
+                Matrix2 rot = Matrix2.CreateRotation(-yRad);
+                ApplyRotation(quad.Uvs, rot);
+            }
         }
+    }
+
+    private static void ApplyTranslation(in Vector3[] vertices, Vector3 translation)
+    {
+        for (int i = 0; i < vertices.Length; i++)
+            vertices[i] += translation;
+    }
+
+    private static void ApplyRotation(in Vector3[] vertices, Matrix3 rotation)
+    {
+        Vector3 origin = new Vector3(0.5f, 0.5f, 0.5f);
+        
+        ApplyTranslation(vertices, -origin);
+        
+        for (int i = 0; i < vertices.Length; i++)
+            vertices[i] = rotation * vertices[i];
+        
+        ApplyTranslation(vertices, origin);
+    }
+
+    private static void ApplyTranslation(in Vector2[] vertices, Vector2 translation)
+    {
+        for (int i = 0; i < vertices.Length; i++)
+            vertices[i] += translation;
+    }
+    
+    private static void ApplyRotation(in Vector2[] vertices, Matrix2 rotation)
+    {
+        Vector2 origin = new Vector2(0.5f, 0.5f);
+        
+        ApplyTranslation(vertices, -origin);
+        
+        for (int i = 0; i < vertices.Length; i++)
+            vertices[i] = rotation * vertices[i];
+        
+        ApplyTranslation(vertices, origin);
+    }
+
+    private static bool SameAxis(in Vector3[] vertices, Vector3 axis)
+    {
+        Vector3[] temp = new Vector3[vertices.Length];
+
+        for (int i = 0; i < temp.Length; i++)
+        {
+            Vector3 vertex = TruncateVertex(vertices[i]);
+            temp[i] = (vertex + Vector3.One) * axis;
+        }
+
+        var val = temp.First();
+
+        return temp.All(vertex => vertex == val);
+    }
+
+    private static Vector3 TruncateVertex(in Vector3 vertex, int digits = 4)
+    {
+        return new Vector3((float)Math.Round(vertex.X, digits, MidpointRounding.ToEven),
+            (float)Math.Round(vertex.Y, digits, MidpointRounding.ToEven),
+            (float)Math.Round(vertex.Z, digits, MidpointRounding.ToEven));
     }
 
     private static Vector3 CalculateNormal(Vector3 a, Vector3 b, Vector3 c)
