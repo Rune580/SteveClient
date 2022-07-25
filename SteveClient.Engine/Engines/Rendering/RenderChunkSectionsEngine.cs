@@ -41,12 +41,18 @@ public class RenderChunkSectionsEngine : RenderingEngine
                 if (!sectionComponent.ShouldRender)
                     continue;
 
+                if (!_world.IsChunkLoaded(sectionComponent.ChunkPos + Vector2i.UnitX) ||
+                    !_world.IsChunkLoaded(sectionComponent.ChunkPos + Vector2i.UnitY) ||
+                    !_world.IsChunkLoaded(sectionComponent.ChunkPos - Vector2i.UnitX) ||
+                    !_world.IsChunkLoaded(sectionComponent.ChunkPos - Vector2i.UnitY))
+                    continue;
+
                 sectionComponent.ShouldRender = false;
                 
                 Vector3i sectionPos = new Vector3i(sectionComponent.ChunkPos.X, sectionComponent.SectionIndex, sectionComponent.ChunkPos.Y);
                 float distance = Vector3.Distance(sectionPos, _chunkSectionRenderer.PlayerPos);
 
-                if (distance > 3)
+                if (distance > ClientSettings.RenderDistance)
                     continue;
                 
                 _chunkSectionRenderer.EnqueueChunkSection(sectionPos);

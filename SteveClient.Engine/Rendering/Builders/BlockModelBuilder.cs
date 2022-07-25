@@ -122,6 +122,8 @@ public class BlockModelBuilder
         
         if (json.X.HasValue)
         {
+            quad.CullFace = quad.CullFace.RotateAroundX(json.X.Value);
+            
             float xRad = json.X.Value * (MathF.PI / 180f);
             Matrix3 xRot = Matrix3.CreateRotationX(xRad);
 

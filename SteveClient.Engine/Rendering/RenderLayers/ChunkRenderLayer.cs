@@ -2,6 +2,7 @@
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using SteveClient.Engine.AssetManagement;
+using SteveClient.Engine.Game;
 using SteveClient.Engine.Rendering.Baked;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Models;
@@ -25,9 +26,7 @@ public class ChunkRenderLayer : BaseRenderLayer
     private readonly ConcurrentQueue<BakedChunkSection> _chunkQueue = new();
     private readonly Dictionary<Vector3i, int> _posToChunkMap = new();
     private readonly List<BakedChunkPointer> _chunks = new();
-
-    private readonly int _chunkLightDataBuffer;
-
+    
     private int _verticesOffset;
     private int _indicesOffset;
     
@@ -52,10 +51,6 @@ public class ChunkRenderLayer : BaseRenderLayer
 
         _verticesOffset = 0;
         _indicesOffset = 0;
-
-        // GL.GenBuffers(1, out _chunkLightDataBuffer);
-        // GL.BindBuffer(BufferTarget.ShaderStorageBuffer, _chunkLightDataBuffer);
-        // GL.NamedBufferData(_chunkLightDataBuffer, 4096 * 2 * sizeof(int), IntPtr.Zero, BufferUsageHint.DynamicRead);
     }
 
     public override Shader Shader => _shader;
@@ -146,13 +141,21 @@ public class ChunkRenderLayer : BaseRenderLayer
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
         
-        // GL.BindBuffer(BufferTarget.ShaderStorageBuffer, _chunkLightDataBuffer);
-        // GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, _chunkLightDataBuffer);
-        
         Shader.Use();
         Shader.SetInt("textureSampler", 0);
+        Shader.SetInt("skyLightTex", 1);
+        Shader.SetInt("blockLightTex", 2);
         
         TextureRegistry.BlockTextureAtlas.Use();
+        
+        if (World.ServerWorld is null)
+            return;
+        
+        LightMap lightMap = World.ServerWorld.LightMap;
+        lightMap.Use(1);
+        
+        Shader.SetInt("lightMapWidth", lightMap.Width);
+        Shader.SetInt("lightMapHeight", lightMap.Height);
     }
     
     public override void BeforeRender()
@@ -184,10 +187,6 @@ public class ChunkRenderLayer : BaseRenderLayer
 
         foreach (var chunkPointer in _chunks)
         {
-            // const int lightDataSize = 4096 * sizeof(int);
-            // GL.NamedBufferSubData(_chunkLightDataBuffer, (IntPtr)0, lightDataSize, chunkPointer.BakedSection.SkyLights);
-            // GL.NamedBufferSubData(_chunkLightDataBuffer, (IntPtr)lightDataSize, lightDataSize, chunkPointer.BakedSection.BlockLights);
-
             Shader.SetMatrix4("model", chunkPointer.Model);
 
             GL.DrawElementsBaseVertex(_definition.PrimitiveType, chunkPointer.IndicesCount, DrawElementsType.UnsignedInt, (IntPtr)chunkPointer.IndicesOffset, baseVertex);

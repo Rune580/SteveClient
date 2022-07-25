@@ -1,9 +1,4 @@
-﻿//layout(std430, binding = 0) buffer chunkLightData {
-//    int skyLights[4096];
-//    int blockLights[4096];
-//};
-
-struct LightingProperties {
+﻿struct LightingProperties {
     vec3 ambientStrength;
     vec3 diffuseStrength;
     vec3 specularStrength;
@@ -15,10 +10,13 @@ struct DirectionalLight {
     vec3 color;
 };
 
+uniform sampler3D skyLightTex;
+uniform sampler3D blockLightTex;
+
 uniform LightingProperties props;
 uniform DirectionalLight directionalLight;
 
-vec3 CalculateDirectionLight(int blockPos, vec4 texSample, vec3 normal, vec3 viewDir) {
+vec3 CalculateDirectionLight(vec3 lightMapPos, vec4 texSample, vec3 normal, vec3 viewDir) {
     vec3 lightDir = normalize(-directionalLight.direction);
     
     float diff = max(dot(normal, lightDir), 0.0);
@@ -31,12 +29,10 @@ vec3 CalculateDirectionLight(int blockPos, vec4 texSample, vec3 normal, vec3 vie
     vec3 diffuse = props.diffuseStrength * diff * texSample.rgb;
     vec3 specular = props.specularStrength * spec * texSample.rgb;
     
-//    int skyLight = skyLights[blockPos];
-//    int blockLight = blockLights[blockPos];
-//    
-//    float lightModifier = (1 + max(skyLight, blockLight)) / 16.0;
+    float skyLight = texture(skyLightTex, lightMapPos).r;
+    float blockLight = texture(blockLightTex, lightMapPos).r;
     
-    float lightModifier = 1;
+    float lightModifier = (1 + max(skyLight, blockLight)) / 16.0;
     
     return (ambient + diffuse + specular) * lightModifier;
 }

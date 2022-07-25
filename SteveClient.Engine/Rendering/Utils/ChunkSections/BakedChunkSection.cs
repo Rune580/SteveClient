@@ -19,18 +19,14 @@ public readonly struct BakedChunkSection
     public readonly uint[] Indices;
     public readonly Matrix4 Transform;
     public readonly ChunkRenderLayer TargetLayer;
-    public readonly int[] SkyLights;
-    public readonly int[] BlockLights;
 
-    private BakedChunkSection(Vector3i chunkPos, float[] vertices, uint[] indices, Matrix4 transform, ChunkRenderLayer targetLayer, ChunkSection section)
+    private BakedChunkSection(Vector3i chunkPos, float[] vertices, uint[] indices, Matrix4 transform, ChunkRenderLayer targetLayer)
     {
         ChunkPos = chunkPos;
         Vertices = vertices;
         Indices = indices;
         Transform = transform;
         TargetLayer = targetLayer;
-        SkyLights = section.GetSkyLights();
-        BlockLights = section.GetBlockLights();
     }
 
     public static BakedChunkSection BakeChunkSection(World world, Vector3i sectionPos)
@@ -42,9 +38,8 @@ public readonly struct BakedChunkSection
 
         Vector3i worldPos = new Vector3i(sectionPos.X * 16, (sectionPos.Y - 4) * 16, sectionPos.Z * 16);
         Matrix4 transform = Matrix4.CreateTranslation(worldPos);
-        ChunkSection section = world.GetChunkSection(sectionPos);
 
-        return new BakedChunkSection(sectionPos, vertices.ToArray(), indices.ToArray(), transform, RenderLayerDefinitions.OpaqueBlockLayer, section);
+        return new BakedChunkSection(sectionPos, vertices.ToArray(), indices.ToArray(), transform, RenderLayerDefinitions.OpaqueBlockLayer);
     }
 
     private static void GenerateQuads(World world, Vector3i sectionPos, in List<float> vertices, in List<uint> indices)
@@ -83,7 +78,7 @@ public readonly struct BakedChunkSection
         if (!blockState.TryGetBlockModel(out BlockModel blockModel))
             return;
         
-        int blockNum = (localPos.Y * ChunkSection.Height + localPos.Z) * ChunkSection.Width + localPos.X;
+        // int blockNum = (localPos.Y * ChunkSection.Height + localPos.Z) * ChunkSection.Width + localPos.X;
 
         foreach (var modelQuad in blockModel.Quads)
         {
@@ -111,7 +106,9 @@ public readonly struct BakedChunkSection
 
             uint offset = (uint)(vertexList.Count / BlockVertex.Size);
 
-            float[] vertices = BakeVertexData(quadVertices, modelQuad.Uvs, blockModel.Normals[modelQuad.Normal], modelQuad.TextureResourceName, blockNum);
+            int lightMapPos = CalculateLightMapPos(world, blockPos, modelQuad.CullFace);
+
+            float[] vertices = BakeVertexData(quadVertices, modelQuad.Uvs, blockModel.Normals[modelQuad.Normal], modelQuad.TextureResourceName, lightMapPos);
             uint[] indices = { offset + 0, offset + 2, offset + 1, offset + 3, offset + 1, offset + 2 };
 
             vertexList.AddRange(vertices);
@@ -146,6 +143,24 @@ public readonly struct BakedChunkSection
 
         // Next do a full check
         return OcclusionShapeTest(current.OcclusionShape, neighbor.OcclusionShape, neighborPos - currentPos);
+    }
+
+    private static int CalculateLightMapPos(World world, Vector3i worldPos, Directions cullFaceDir)
+    {
+        Vector3i blockPos = worldPos + cullFaceDir.AsVector3i();
+        Vector3i sectionPos = World.ChunkSectionPosFromBlockPos(blockPos);
+        Vector3i lightMapPos = world.LightMap.GetLightMapPos(sectionPos);
+
+        Vector3i pos = new Vector3i(blockPos.X - (sectionPos.X * 16), (blockPos.Y + 64) - (sectionPos.Y * 16), blockPos.Z - (sectionPos.Z * 16));
+
+        if (pos.X < 16)
+            pos.X = 16 + pos.X;
+        if (pos.Z < 16)
+            pos.Z = 16 + pos.Z;
+
+        pos += lightMapPos;
+
+        return (pos.Y * ChunkSection.Height + pos.Z) * ChunkSection.Width + pos.X;
     }
 
     private static bool OcclusionShapeTest(VoxelShape current, VoxelShape neighbor, Vector3 dir)

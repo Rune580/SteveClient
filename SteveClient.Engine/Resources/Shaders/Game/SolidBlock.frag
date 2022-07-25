@@ -12,7 +12,7 @@ layout(location = 3) in vec3 FragPos;
 layout(location = 4) in vec3 tangentLightDir;
 layout(location = 5) in vec3 tangentViewPos;
 layout(location = 6) in vec3 tangentFragPos;
-layout(location = 7) flat in int blockNum;
+layout(location = 7) in vec3 lightMapPos;
 
 uniform vec4 tint;
 uniform sampler2DArray textureSampler;
@@ -35,7 +35,7 @@ void main() {
     vec3 normal = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
     
-    color.rgb = CalculateDirectionLight(blockNum, color, normal, viewDir);
+    color.rgb = CalculateDirectionLight(lightMapPos, color, normal, viewDir);
     
     FragColor = color;
 }

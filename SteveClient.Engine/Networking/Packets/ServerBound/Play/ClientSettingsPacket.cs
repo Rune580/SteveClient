@@ -6,7 +6,7 @@ namespace SteveClient.Engine.Networking.Packets.ServerBound.Play;
 public class ClientSettingsPacket : ServerBoundPacket
 {
     public String Locale = "en_US";
-    public sbyte ViewDistance = 12;
+    public sbyte ViewDistance = ClientSettings.RenderDistance;
     public ChatMode ChatMode = ChatMode.Enabled;
     public bool ChatColors = true;
     public DisplayedSkinParts DisplayedSkinParts = DisplayedSkinParts.All;
