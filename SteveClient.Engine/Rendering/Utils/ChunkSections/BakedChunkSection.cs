@@ -149,18 +149,18 @@ public readonly struct BakedChunkSection
     {
         Vector3i blockPos = worldPos + cullFaceDir.AsVector3i();
         Vector3i sectionPos = World.ChunkSectionPosFromBlockPos(blockPos);
-        Vector3i lightMapPos = world.LightMap.GetLightMapPos(sectionPos);
+        // Vector3i lightMapPos = world.LightMap.GetLightMapPos(sectionPos);
 
         Vector3i pos = new Vector3i(blockPos.X - (sectionPos.X * 16), (blockPos.Y + 64) - (sectionPos.Y * 16), blockPos.Z - (sectionPos.Z * 16));
 
-        if (pos.X < 16)
+        if (pos.X < 0)
             pos.X = 16 + pos.X;
-        if (pos.Z < 16)
+        if (pos.Z < 0)
             pos.Z = 16 + pos.Z;
 
-        pos += lightMapPos;
+        // pos += lightMapPos;
 
-        return (pos.Y * ChunkSection.Height + pos.Z) * ChunkSection.Width + pos.X;
+        return world.LightMap.EncodeBlockPosOnLightMap(sectionPos, pos);
     }
 
     private static bool OcclusionShapeTest(VoxelShape current, VoxelShape neighbor, Vector3 dir)

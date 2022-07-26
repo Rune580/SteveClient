@@ -10,13 +10,16 @@ struct DirectionalLight {
     vec3 color;
 };
 
-uniform sampler3D skyLightTex;
-uniform sampler3D blockLightTex;
+layout(binding = 1) uniform sampler3D skyLightTex;
+layout(binding = 2) uniform sampler3D blockLightTex;
+
+uniform int lightMapWidth;
+uniform int lightMapHeight;
 
 uniform LightingProperties props;
 uniform DirectionalLight directionalLight;
 
-vec3 CalculateDirectionLight(vec3 lightMapPos, vec4 texSample, vec3 normal, vec3 viewDir) {
+vec3 CalculateDirectionLight(ivec3 pos, vec4 texSample, vec3 normal, vec3 viewDir) {
     vec3 lightDir = normalize(-directionalLight.direction);
     
     float diff = max(dot(normal, lightDir), 0.0);
@@ -29,10 +32,10 @@ vec3 CalculateDirectionLight(vec3 lightMapPos, vec4 texSample, vec3 normal, vec3
     vec3 diffuse = props.diffuseStrength * diff * texSample.rgb;
     vec3 specular = props.specularStrength * spec * texSample.rgb;
     
-    float skyLight = texture(skyLightTex, lightMapPos).r;
-    float blockLight = texture(blockLightTex, lightMapPos).r;
+    float skyLight = texelFetch(skyLightTex, pos, 0).r;
+    float blockLight = texelFetch(blockLightTex, pos, 0).r;
     
-    float lightModifier = (1 + max(skyLight, blockLight)) / 16.0;
+    float lightModifier = max(skyLight, blockLight);
     
     return (ambient + diffuse + specular) * lightModifier;
 }

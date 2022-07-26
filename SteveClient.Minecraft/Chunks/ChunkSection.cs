@@ -11,15 +11,15 @@ public class ChunkSection
     
     private readonly List<int> _palette = new();
     private readonly short[] _blockStates;
-    private readonly int[] _skyLights;
-    private readonly int[] _blockLights;
+    private readonly float[] _skyLights;
+    private readonly float[] _blockLights;
 
     private short _blockCount;
 
     private ChunkSection()
     {
-        _skyLights = new int[4096];
-        _blockLights = new int[4096];
+        _skyLights = new float[4096];
+        _blockLights = new float[4096];
         
         Array.Fill(_skyLights, 0);
         Array.Fill(_blockLights, 0);
@@ -56,17 +56,17 @@ public class ChunkSection
         _blockStates[GetBlockNumber(x, y, z)] = blockStateId;
     }
 
-    public void SetSkyLight(int x, int y, int z, int value) => _skyLights[GetBlockNumber(x, y, z)] = value;
+    public void SetSkyLight(int x, int y, int z, int value) => _skyLights[GetBlockNumber(x, y, z)] = (value + 1) / 16f;
 
-    public int GetSkyLight(int x, int y, int z) => _skyLights[GetBlockNumber(x, y, z)];
+    public int GetSkyLight(int x, int y, int z) => (int)(_skyLights[GetBlockNumber(x, y, z)] * 16f - 1);
 
-    public int[] GetSkyLights() => _skyLights;
+    public float[] GetSkyLights() => _skyLights;
 
-    public void SetBlockLight(int x, int y, int z, int value) => _blockLights[GetBlockNumber(x, y, z)] = value;
+    public void SetBlockLight(int x, int y, int z, int value) => _blockLights[GetBlockNumber(x, y, z)] = (value + 1) / 16f;
 
-    public int GetBlockLight(int x, int y, int z) => _blockLights[GetBlockNumber(x, y, z)];
+    public int GetBlockLight(int x, int y, int z) => (int)(_blockLights[GetBlockNumber(x, y, z)] * 16f - 1);
 
-    public int[] GetBlockLights() => _blockLights;
+    public float[] GetBlockLights() => _blockLights;
 
     public void LoadSkyLightData(byte[] data)
     {

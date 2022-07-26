@@ -26,19 +26,6 @@ public class World
     public void LoadChunk(Chunk chunk)
     {
         _chunks[chunk.Position] = chunk;
-
-        for (int i = 0; i < Chunk.ChunkSectionCount; i++)
-        {
-            ChunkSection section = chunk.GetChunkSection(i);
-            
-            if(!section.TrustEdges)
-                continue;
-
-            Vector3i sectionPos = new Vector3i(chunk.Position.X, i, chunk.Position.Y);
-
-            LightMap.ReserveChunkSection(sectionPos);
-            LightMap.UploadLightData(sectionPos, section);
-        }
     }
 
     public Chunk GetChunk(Vector2i pos)
