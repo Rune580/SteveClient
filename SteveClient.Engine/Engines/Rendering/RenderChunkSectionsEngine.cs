@@ -98,8 +98,6 @@ public class RenderChunkSectionsEngine : RenderingEngine
 
     private void UploadChunkLightData(Vector3i sectionPos)
     {
-        _world.LightMap.ReserveChunkSection(sectionPos);
-
         ChunkSection chunkSection = _world.GetChunkSection(sectionPos);
         _world.LightMap.UploadLightData(sectionPos, chunkSection);
     }

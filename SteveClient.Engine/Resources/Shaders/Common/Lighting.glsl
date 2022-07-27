@@ -32,8 +32,8 @@ vec3 CalculateDirectionLight(ivec3 pos, vec4 texSample, vec3 normal, vec3 viewDi
     vec3 diffuse = props.diffuseStrength * diff * texSample.rgb;
     vec3 specular = props.specularStrength * spec * texSample.rgb;
     
-    float skyLight = texelFetch(skyLightTex, pos, 0).r;
-    float blockLight = texelFetch(blockLightTex, pos, 0).r;
+    float skyLight = ((texelFetch(skyLightTex, pos, 0).r * 255) + 1) / 16;
+    float blockLight = ((texelFetch(blockLightTex, pos, 0).r * 255) + 1) / 16;
     
     float lightModifier = max(skyLight, blockLight);
     

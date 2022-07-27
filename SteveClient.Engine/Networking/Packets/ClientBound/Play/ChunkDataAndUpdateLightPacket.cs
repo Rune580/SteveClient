@@ -91,7 +91,7 @@ public class ChunkDataAndUpdateLightPacket : ClientBoundPacket
             if (i is 0 or 21)
                 continue;
             
-            chunkSections[i].LoadSkyLightData(data);
+            chunkSections[i - 1].LoadSkyLightData(data);
         }
 
         int blockLightArrayCount = packetBuffer.ReadVarInt();
@@ -106,7 +106,7 @@ public class ChunkDataAndUpdateLightPacket : ClientBoundPacket
             if (i is 0 or 21)
                 continue;
             
-            chunkSections[i].LoadBlockLightData(data);
+            chunkSections[i - 1].LoadBlockLightData(data);
         }
 
         return chunkSections;

@@ -27,13 +27,12 @@ uniform int lightMapWidth;
 uniform int lightMapHeight;
 
 ivec3 CalculateLightMapPos(int blockPos) {
-    float width = lightMapWidth * 16;
-    float height = lightMapHeight * 16;
-    float depth = width * width;
-
-    float y = int(floor(blockPos / depth));
-    float z = int(floor((blockPos - (y * depth)) / width));
-    float x = int(floor(blockPos - ((y * depth) + (z * width))));
+    int widthMask = 0xFFF >> 1;
+    int heightMask = widthMask >> 1;
+    
+    int x = blockPos >> 22;
+    int y = blockPos & heightMask;
+    int z = (blockPos >> 11) & widthMask;
 
     return ivec3(x, z, y);
 }

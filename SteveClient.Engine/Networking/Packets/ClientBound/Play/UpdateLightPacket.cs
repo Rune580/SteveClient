@@ -28,7 +28,7 @@ public class UpdateLightPacket : ClientBoundPacket
         {
             if (emptySkyLightMask[i])
             {
-                chunk.GetChunkSection(i).LoadSkyLightData(new byte[2048]);
+                chunk.GetChunkSection(i - 1).LoadSkyLightData(new byte[2048]);
                 continue;
             }
             
@@ -40,7 +40,7 @@ public class UpdateLightPacket : ClientBoundPacket
             if (i is 0 or 21)
                 continue;
             
-            chunk.GetChunkSection(i).LoadSkyLightData(data);
+            chunk.GetChunkSection(i - 1).LoadSkyLightData(data);
         }
 
         int blockLightArrayCount = packetBuffer.ReadVarInt();
@@ -48,7 +48,7 @@ public class UpdateLightPacket : ClientBoundPacket
         {
             if (emptyBlockLightMask[i])
             {
-                chunk.GetChunkSection(i).LoadBlockLightData(new byte[2048]);
+                chunk.GetChunkSection(i - 1).LoadBlockLightData(new byte[2048]);
                 continue;
             }
             
@@ -60,7 +60,7 @@ public class UpdateLightPacket : ClientBoundPacket
             if (i is 0 or 21)
                 continue;
             
-            chunk.GetChunkSection(i).LoadBlockLightData(data);
+            chunk.GetChunkSection(i - 1).LoadBlockLightData(data);
         }
     }
 }
