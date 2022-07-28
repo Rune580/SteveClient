@@ -4,7 +4,7 @@ using SteveClient.Engine.Networking.Packets.ClientBound.Play;
 using SteveClient.Engine.Rendering.Models;
 using Svelto.ECS;
 
-namespace SteveClient.Engine.Engines.PacketProcessing;
+namespace SteveClient.Engine.Engines.PacketProcessing.EntityManipulation;
 
 public class SpawnPlayerEntityEngine : PacketProcessingEngine<JoinGamePacket>
 {
@@ -31,6 +31,7 @@ public class SpawnPlayerEntityEngine : PacketProcessingEngine<JoinGamePacket>
         
         initializer.Init(new TransformComponent());
         initializer.Init(new MinecraftEntityComponent(joinGamePacket.EntityId));
+        initializer.Init(new HeadComponent());
         initializer.Init(new ModelFilterComponent(Primitives.Cube));
         initializer.Init(new PlayerComponent());
     }

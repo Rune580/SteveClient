@@ -6,6 +6,7 @@ using SteveClient.Engine.Components;
 using SteveClient.Engine.Descriptors;
 using SteveClient.Engine.Engines;
 using SteveClient.Engine.Engines.PacketProcessing;
+using SteveClient.Engine.Engines.PacketProcessing.EntityManipulation;
 using SteveClient.Engine.Engines.Rendering;
 using SteveClient.Engine.Engines.ServerWorld;
 using SteveClient.Engine.Engines.Tools;
@@ -54,6 +55,7 @@ public class CompositionRoot
         var blockUpdateChunkSectionEngine = new BlockUpdateChunkSectionEngine(world);
         var moveEntityEngine = new MoveEntityEngine(world);
         var moveAndRotateEntityEngine = new MoveAndRotateEntityEngine(world);
+        var rotateEntityEngine = new RotateEntityEngine(world);
         var teleportEntityEngine = new TeleportEntityEngine(world);
         var spawnBlockEntityEngine = new SpawnBlockModelEntityEngine(entityFactory);
         
@@ -61,6 +63,7 @@ public class CompositionRoot
         var renderModelFiltersEngine = new RenderModelFiltersEngine();
         var renderMeshFiltersEngine = new RenderMeshFiltersEngine();
         var renderChunkSectionsEngine = new RenderChunkSectionsEngine(world);
+        var renderEntityLookDirEngine = new RenderEntityLookDirEngine();
         
         // Add engines
         enginesRoot.AddEngine(applyVelocityToSimpleRigidBodiesEngine);
@@ -72,6 +75,7 @@ public class CompositionRoot
         enginesRoot.AddEngine(blockUpdateChunkSectionEngine);
         enginesRoot.AddEngine(moveEntityEngine);
         enginesRoot.AddEngine(moveAndRotateEntityEngine);
+        enginesRoot.AddEngine(rotateEntityEngine);
         enginesRoot.AddEngine(teleportEntityEngine);
         enginesRoot.AddEngine(spawnBlockEntityEngine);
         
@@ -80,6 +84,7 @@ public class CompositionRoot
         enginesRoot.AddEngine(renderModelFiltersEngine);
         enginesRoot.AddEngine(renderMeshFiltersEngine);
         enginesRoot.AddEngine(renderChunkSectionsEngine);
+        enginesRoot.AddEngine(renderEntityLookDirEngine);
         
         // Register scheduled engines
         Scheduler.RegisterScheduledEngine(applyVelocityToSimpleRigidBodiesEngine);
@@ -91,6 +96,7 @@ public class CompositionRoot
         Scheduler.RegisterScheduledEngine(blockUpdateChunkSectionEngine);
         Scheduler.RegisterScheduledEngine(moveEntityEngine);
         Scheduler.RegisterScheduledEngine(moveAndRotateEntityEngine);
+        Scheduler.RegisterScheduledEngine(rotateEntityEngine);
         Scheduler.RegisterScheduledEngine(teleportEntityEngine);
         Scheduler.RegisterScheduledEngine(spawnBlockEntityEngine);
 
@@ -98,6 +104,7 @@ public class CompositionRoot
         GraphicsScheduler.RegisterScheduledEngine(renderModelFiltersEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderMeshFiltersEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderChunkSectionsEngine);
+        GraphicsScheduler.RegisterScheduledEngine(renderEntityLookDirEngine);
         
         BuildCamera(entityFactory);
     }

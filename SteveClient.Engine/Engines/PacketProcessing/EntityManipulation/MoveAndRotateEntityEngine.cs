@@ -4,7 +4,7 @@ using SteveClient.Engine.Game;
 using SteveClient.Engine.Networking.Packets.ClientBound.Play;
 using Svelto.ECS;
 
-namespace SteveClient.Engine.Engines.PacketProcessing;
+namespace SteveClient.Engine.Engines.PacketProcessing.EntityManipulation;
 
 public class MoveAndRotateEntityEngine : PacketProcessingEngine<EntityPositionAndRotationPacket>
 {
@@ -25,17 +25,22 @@ public class MoveAndRotateEntityEngine : PacketProcessingEngine<EntityPositionAn
             return;
         }
         
-        foreach (var ((transforms, entities, count), _) in entitiesDB.QueryEntities<TransformComponent, MinecraftEntityComponent>(GameGroups.MinecraftEntities.Groups))
+        foreach (var ((transforms, heads, entities, count), _) in entitiesDB.QueryEntities<TransformComponent, HeadComponent, MinecraftEntityComponent>(GameGroups.MinecraftEntities.Groups))
         {
             for (int i = 0; i < count; i++)
             {
-                ref var transform = ref transforms[i];
                 ref var entity = ref entities[i];
 
                 if (entity.EntityId != packet.EntityId)
                     continue;
                 
+                ref var transform = ref transforms[i];
+                ref var head = ref heads[i];
+                
                 transform.Position = ApplyDelta(transform.Position, packet.Delta);
+                transform.Rotation = Quaternion.FromEulerAngles(0, -AngleToRadians(packet.Yaw), 0);
+
+                head.Pitch = AngleToRadians(packet.Pitch);
                 
                 consumablePacket.MarkConsumed();
                 break;
@@ -53,5 +58,14 @@ public class MoveAndRotateEntityEngine : PacketProcessingEngine<EntityPositionAn
         current += delta;
 
         return new Vector3(current.X / 128f / 32f, current.Y / 128f / 32f, current.Z / 128f / 32f);
+    }
+
+    private static float AngleToRadians(byte angle)
+    {
+        float angleToDegrees = (1 / 256f) * 360;
+
+        float degrees = angle * angleToDegrees;
+
+        return degrees * (MathF.PI / 180f);
     }
 }

@@ -4,7 +4,7 @@ using SteveClient.Engine.ECS;
 using SteveClient.Engine.Networking.Packets.ClientBound.Play;
 using static SteveClient.Engine.Networking.Packets.ClientBound.Play.PlayerPositionAndLookPacket;
 
-namespace SteveClient.Engine.Engines.PacketProcessing;
+namespace SteveClient.Engine.Engines.PacketProcessing.EntityManipulation;
 
 public class TeleportPlayerEntityEngine : PacketProcessingEngine<PlayerPositionAndLookPacket>
 {

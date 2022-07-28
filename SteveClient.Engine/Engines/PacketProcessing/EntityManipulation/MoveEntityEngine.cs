@@ -4,7 +4,7 @@ using SteveClient.Engine.Game;
 using SteveClient.Engine.Networking.Packets.ClientBound.Play;
 using Svelto.ECS;
 
-namespace SteveClient.Engine.Engines.PacketProcessing;
+namespace SteveClient.Engine.Engines.PacketProcessing.EntityManipulation;
 
 public class MoveEntityEngine : PacketProcessingEngine<EntityPositionPacket>
 {

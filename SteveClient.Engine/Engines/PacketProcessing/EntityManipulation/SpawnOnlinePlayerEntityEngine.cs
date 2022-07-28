@@ -6,7 +6,7 @@ using SteveClient.Engine.Networking.Packets.ClientBound.Play;
 using SteveClient.Engine.Rendering.Models;
 using Svelto.ECS;
 
-namespace SteveClient.Engine.Engines.PacketProcessing;
+namespace SteveClient.Engine.Engines.PacketProcessing.EntityManipulation;
 
 public class SpawnOnlinePlayerEntityEngine : PacketProcessingEngine<SpawnPlayerPacket>
 {
@@ -37,6 +37,7 @@ public class SpawnOnlinePlayerEntityEngine : PacketProcessingEngine<SpawnPlayerP
         
         initializer.Init(new TransformComponent((Vector3)packet.Position));
         initializer.Init(new MinecraftEntityComponent(packet.EntityId));
+        initializer.Init(new HeadComponent());
         initializer.Init(new ModelFilterComponent(Primitives.Cube));
 
         _world.MinecraftEntityIdMap[packet.EntityId] = id;

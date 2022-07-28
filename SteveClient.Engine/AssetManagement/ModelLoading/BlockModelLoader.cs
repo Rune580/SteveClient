@@ -1,5 +1,6 @@
 ﻿using SteveClient.Engine.Rendering.Builders;
 using SteveClient.Engine.Rendering.Models;
+using SteveClient.Engine.Rendering.Models.BlockModelVariants;
 using SteveClient.Minecraft.BlockStructs;
 using SteveClient.Minecraft.Data;
 using SteveClient.Minecraft.Data.Schema.BlockStates;
@@ -26,19 +27,40 @@ public static class BlockModelLoader
 
             foreach (var (blockStateId, blockState) in block.BlockStates)
             {
-                var variantJson = variants.Get(blockState.BlockProperties)[0];
+                var variantJson = variants.Get(blockState.BlockProperties);
 
-                string modelPath = variantJson.Model
-                    .Replace("minecraft:", "")
-                    .Replace("block/", "");
-                RawBlockModel model = blockModels[modelPath];
+                var variantBlockModel = BuildVariantModel(builder, blockModels, variantJson);
 
-                builder.AddRawBlockModel(model, variantJson);
-
-                ModelRegistry.BlockStateModels[blockStateId] = builder.Build();
+                ModelRegistry.BlockStateModels[blockStateId] = variantBlockModel;
             }
         }
         
         BlockModelLoaders.Clear();
+    }
+
+    private static VariantBlockModel BuildVariantModel(in BlockModelBuilder builder, in Dictionary<string, RawBlockModel> blockModels, in VariantModelJson[] variantModels)
+    {
+        int count = variantModels.Length;
+
+        VariantBlockModel variantBlockModel = new VariantBlockModel(count);
+
+        for (int i = 0; i < count; i++)
+        {
+            var variantJson = variantModels[i];
+            
+            string modelPath = variantJson.Model
+                .Replace("minecraft:", "")
+                .Replace("block/", "");
+            RawBlockModel rawModel = blockModels[modelPath];
+
+            builder.AddRawBlockModel(rawModel, variantJson);
+            var model = builder.Build();
+
+            int weight = variantJson.Weight ?? 1;
+            
+            variantBlockModel.Add(model, weight);
+        }
+
+        return variantBlockModel;
     }
 }

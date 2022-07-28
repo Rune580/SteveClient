@@ -126,7 +126,7 @@ public class RenderChunkSectionsEngine : RenderingEngine
             for (int i = 0; i < count; i++)
             {
                 ref var sectionComponent = ref sectionComponents[i];
-                sectionComponent.ShouldRender = false;
+                sectionComponent.ShouldRender = true;
                 sectionComponent.InRange = false;
             }
         }

@@ -69,6 +69,7 @@ public static class PacketRegistry
         play.Register<JoinGamePacket>(0x23);
         play.Register<EntityPositionPacket>(0x26);
         play.Register<EntityPositionAndRotationPacket>(0x27);
+        play.Register<EntityRotationPacket>(0x28);
         play.Register<PlayerPositionAndLookPacket>(0x36);
         play.Register<TeleportEntityPacket>(0x63);
 

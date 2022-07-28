@@ -3,6 +3,7 @@ using SteveClient.Engine.AssetManagement;
 using SteveClient.Engine.Game;
 using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Models;
+using SteveClient.Engine.Rendering.Models.BlockModelVariants;
 using SteveClient.Engine.Rendering.RenderLayers;
 using SteveClient.Engine.Rendering.VertexData;
 using SteveClient.Minecraft.BlockStructs;
@@ -75,12 +76,24 @@ public readonly struct BakedChunkSection
             return;
 
         BlockState blockState = Blocks.GetBlockState(blockStateId);
-        if (!blockState.TryGetBlockModel(out BlockModel blockModel))
+        if (!blockState.TryGetBlockModel(out IBlockModel blockModel))
             return;
-        
-        // int blockNum = (localPos.Y * ChunkSection.Height + localPos.Z) * ChunkSection.Width + localPos.X;
 
-        foreach (var modelQuad in blockModel.Quads)
+        BlockModel model = default;
+        
+        if (blockModel is VariantBlockModel variantModel)
+        {
+            int seed = HashCode.Combine(blockPos.X, blockPos.Y, blockPos.Z); // TODO world seed
+            
+            Random random = new Random(seed);
+            model = variantModel.Get(random);
+        }
+        else
+        {
+            return;
+        }
+
+        foreach (var modelQuad in model.Quads)
         {
             // Exclude if occluded and the face has matching cull direction
             if (aboveOccluded && modelQuad.CullFace == Directions.Up)
@@ -98,17 +111,17 @@ public readonly struct BakedChunkSection
 
             Vector3[] quadVertices =
             {
-                blockModel.Vertices[modelQuad.Vertices[0]] + localPos,
-                blockModel.Vertices[modelQuad.Vertices[1]] + localPos,
-                blockModel.Vertices[modelQuad.Vertices[2]] + localPos,
-                blockModel.Vertices[modelQuad.Vertices[3]] + localPos
+                model.Vertices[modelQuad.Vertices[0]] + localPos,
+                model.Vertices[modelQuad.Vertices[1]] + localPos,
+                model.Vertices[modelQuad.Vertices[2]] + localPos,
+                model.Vertices[modelQuad.Vertices[3]] + localPos
             };
 
             uint offset = (uint)(vertexList.Count / BlockVertex.Size);
 
             int lightMapPos = 0; //CalculateLightMapPos(world, blockPos, modelQuad.CullFace);
 
-            float[] vertices = BakeVertexData(quadVertices, modelQuad.Uvs, blockModel.Normals[modelQuad.Normal], modelQuad.TextureResourceName, lightMapPos);
+            float[] vertices = BakeVertexData(quadVertices, modelQuad.Uvs, model.Normals[modelQuad.Normal], modelQuad.TextureResourceName, lightMapPos);
             uint[] indices = { offset + 0, offset + 2, offset + 1, offset + 3, offset + 1, offset + 2 };
 
             vertexList.AddRange(vertices);
