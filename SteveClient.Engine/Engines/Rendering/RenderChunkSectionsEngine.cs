@@ -37,59 +37,59 @@ public class RenderChunkSectionsEngine : RenderingEngine
         
         foreach (var ((sectionComponents, count), _) in entitiesDB.QueryEntities<ChunkSectionComponent>(GameGroups.ChunkSections.Groups))
         {
+            // for (int i = 0; i < count; i++)
+            // {
+            //     ref var sectionComponent = ref sectionComponents[i];
+            //     Vector3i sectionPos = new Vector3i(sectionComponent.ChunkPos.X, sectionComponent.SectionIndex, sectionComponent.ChunkPos.Y);
+            //
+            //     if (sectionComponent.InRange)
+            //         continue;
+            //
+            //     if (!_world.GetChunkSection(sectionPos).TrustEdges)
+            //         continue;
+            //
+            //     if (!_world.IsChunkLoaded(sectionComponent.ChunkPos + Vector2i.UnitX) ||
+            //         !_world.IsChunkLoaded(sectionComponent.ChunkPos + Vector2i.UnitY) ||
+            //         !_world.IsChunkLoaded(sectionComponent.ChunkPos - Vector2i.UnitX) ||
+            //         !_world.IsChunkLoaded(sectionComponent.ChunkPos - Vector2i.UnitY))
+            //         continue;
+            //
+            //     float distance = Vector3.Distance(sectionPos, _chunkSectionRenderer.PlayerPos);
+            //     
+            //     if (distance <= ClientSettings.RenderDistance + 1)
+            //     {
+            //         if (!_world.LightMap.ContainsChunkSection(sectionPos))
+            //         {
+            //             UploadChunkLightData(sectionPos);
+            //             continue;
+            //         }
+            //     }
+            //     
+            //     if (distance <= ClientSettings.RenderDistance)
+            //     {
+            //         if (ChunkHasSurroundingLightMap(sectionPos))
+            //         {
+            //             Log.Verbose("Chunk Section {ChunkSectionPos} has surrounding lightmap data!", sectionPos);
+            //             
+            //             sectionComponent.ShouldRender = true;
+            //             sectionComponent.InRange = true;
+            //         }
+            //     }
+            // }
+
             for (int i = 0; i < count; i++)
             {
                 ref var sectionComponent = ref sectionComponents[i];
-                Vector3i sectionPos = new Vector3i(sectionComponent.ChunkPos.X, sectionComponent.SectionIndex, sectionComponent.ChunkPos.Y);
-
-                if (sectionComponent.InRange)
-                    continue;
-
-                if (!_world.GetChunkSection(sectionPos).TrustEdges)
-                    continue;
-
-                if (!_world.IsChunkLoaded(sectionComponent.ChunkPos + Vector2i.UnitX) ||
-                    !_world.IsChunkLoaded(sectionComponent.ChunkPos + Vector2i.UnitY) ||
-                    !_world.IsChunkLoaded(sectionComponent.ChunkPos - Vector2i.UnitX) ||
-                    !_world.IsChunkLoaded(sectionComponent.ChunkPos - Vector2i.UnitY))
-                    continue;
-
-                float distance = Vector3.Distance(sectionPos, _chunkSectionRenderer.PlayerPos);
-                
-                if (distance <= ClientSettings.RenderDistance + 1)
-                {
-                    if (!_world.LightMap.ContainsChunkSection(sectionPos))
-                    {
-                        UploadChunkLightData(sectionPos);
-                        continue;
-                    }
-                }
-                
-                if (distance <= ClientSettings.RenderDistance)
-                {
-                    if (ChunkHasSurroundingLightMap(sectionPos))
-                    {
-                        Log.Verbose("Chunk Section {ChunkSectionPos} has surrounding lightmap data!", sectionPos);
-                        
-                        sectionComponent.ShouldRender = true;
-                        sectionComponent.InRange = true;
-                    }
-                }
-            }
-
-            for (int i = 0; i < count; i++)
-            {
-                ref var sectionComponent = ref sectionComponents[i];
-                Vector3i sectionPos = new Vector3i(sectionComponent.ChunkPos.X, sectionComponent.SectionIndex, sectionComponent.ChunkPos.Y);
-                
-                float distance = Vector3.Distance(sectionPos, _chunkSectionRenderer.PlayerPos);
-                if (distance > ClientSettings.RenderDistance)
-                    sectionComponent.InRange = false;
-
-                if (!sectionComponent.ShouldRender || !sectionComponent.InRange)
+                if (!sectionComponent.ShouldRender)
                     continue;
                 
                 sectionComponent.ShouldRender = false;
+                
+                Vector3i sectionPos = new Vector3i(sectionComponent.ChunkPos.X, sectionComponent.SectionIndex, sectionComponent.ChunkPos.Y);
+                float distance = Vector3.Distance(sectionPos, _chunkSectionRenderer.PlayerPos);
+
+                if (distance > ClientSettings.RenderDistance)
+                    continue;
 
                 _chunkSectionRenderer.EnqueueChunkSection(sectionPos);
             }

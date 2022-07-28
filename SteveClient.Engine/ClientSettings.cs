@@ -2,5 +2,5 @@
 
 public static class ClientSettings
 {
-    public static sbyte RenderDistance = 6;
+    public static sbyte RenderDistance = 3;
 }

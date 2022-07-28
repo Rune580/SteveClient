@@ -106,7 +106,7 @@ public readonly struct BakedChunkSection
 
             uint offset = (uint)(vertexList.Count / BlockVertex.Size);
 
-            int lightMapPos = CalculateLightMapPos(world, blockPos, modelQuad.CullFace);
+            int lightMapPos = 0; //CalculateLightMapPos(world, blockPos, modelQuad.CullFace);
 
             float[] vertices = BakeVertexData(quadVertices, modelQuad.Uvs, blockModel.Normals[modelQuad.Normal], modelQuad.TextureResourceName, lightMapPos);
             uint[] indices = { offset + 0, offset + 2, offset + 1, offset + 3, offset + 1, offset + 2 };
