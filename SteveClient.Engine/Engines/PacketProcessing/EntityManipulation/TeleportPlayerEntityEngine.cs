@@ -11,12 +11,13 @@ public class TeleportPlayerEntityEngine : PacketProcessingEngine<PlayerPositionA
     protected override void Execute(float delta, ConsumablePacket<PlayerPositionAndLookPacket> consumablePacket)
     {
         var packet = consumablePacket.Get();
-        var optionalTransform = entitiesDB.QueryUniqueEntityOptional<TransformComponent>(GameGroups.Player.BuildGroup);
+        var optional = entitiesDB.QueryUniqueEntityOptional<TransformComponent, HeadComponent>(GameGroups.Player.BuildGroup);
 
-        if (!optionalTransform.HasValue)
+        if (!optional.HasValue)
             return;
 
-        ref var transform = ref optionalTransform.Get1();
+        ref var transform = ref optional.Get1();
+        ref var head = ref optional.Get2();
 
         Vector3 targetPosition = transform.Position;
 
@@ -49,10 +50,26 @@ public class TeleportPlayerEntityEngine : PacketProcessingEngine<PlayerPositionA
 
         transform.Position = targetPosition;
 
-        Quaternion yaw = Quaternion.FromAxisAngle(Vector3.UnitZ, packet.Yaw);
-        Quaternion pitch = Quaternion.FromAxisAngle(Vector3.UnitY, packet.Pitch);
-
-        // transform.Rotation = yaw * pitch;
+        float yaw = -(packet.Yaw * (MathF.PI / 180f));
+        if ((packet.Flags & RelativeFlags.XRot) != 0)
+        {
+            var currentYaw = transform.Rotation.ToEulerAngles().Y * (MathF.PI) / 180f;
+            transform.Rotation = Quaternion.FromEulerAngles(0, currentYaw + yaw, 0);
+        }
+        else
+        {
+            transform.Rotation = Quaternion.FromEulerAngles(0, yaw, 0);
+        }
+        
+        float pitch = packet.Pitch * (MathF.PI / 180f);
+        if ((packet.Flags & RelativeFlags.YRot) != 0)
+        {
+            head.Pitch += pitch;
+        }
+        else
+        {
+            head.Pitch = pitch;
+        }
         
         consumablePacket.MarkConsumed();
     }

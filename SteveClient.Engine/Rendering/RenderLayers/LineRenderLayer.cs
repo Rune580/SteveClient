@@ -6,5 +6,5 @@ namespace SteveClient.Engine.Rendering.RenderLayers;
 
 public class LineRenderLayer : DefaultRenderLayer<Position>
 {
-    public LineRenderLayer() : base(Lines, PositionColorShader, TargetSpace.WorldSpace) { }
+    public LineRenderLayer() : base(Lines, LineShader, TargetSpace.WorldSpace) { }
 }
