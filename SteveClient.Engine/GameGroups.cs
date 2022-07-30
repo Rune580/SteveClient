@@ -13,12 +13,13 @@ public static class GameGroups
     public abstract class Entities : GroupTag<Entities> { }
     public abstract class PlayerTag : GroupTag<PlayerTag> { }
     public abstract class WorldBlocks : GroupTag<WorldBlocks> { }
+    public abstract class RigidBodies : GroupTag<RigidBodies> { }
 
     // Groups
-    public abstract class MinecraftEntities : GroupCompound<Entities, ModelFilters> { }
+    public abstract class MinecraftEntities : GroupCompound<Entities, RigidBodies, ModelFilters> { }
 
     // Exclusive Groups / Singleton Entities
     public abstract class MainCamera : GroupCompound<SimpleRigidBodies, Cameras, Controllable> { }
-    public abstract class Player : GroupCompound<PlayerTag, Entities, ModelFilters> { }
+    public abstract class Player : GroupCompound<PlayerTag, Entities, RigidBodies, ModelFilters> { }
     public abstract class ChunkSections : GroupTag<ChunkSections> { }
 }

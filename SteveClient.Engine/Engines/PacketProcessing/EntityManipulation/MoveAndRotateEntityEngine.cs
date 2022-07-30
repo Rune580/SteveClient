@@ -25,7 +25,8 @@ public class MoveAndRotateEntityEngine : PacketProcessingEngine<EntityPositionAn
             return;
         }
         
-        foreach (var ((transforms, heads, entities, count), _) in entitiesDB.QueryEntities<TransformComponent, HeadComponent, MinecraftEntityComponent>(GameGroups.MinecraftEntities.Groups))
+        foreach (var ((transforms, heads, entities, count), _) in entitiesDB
+                     .QueryEntities<TransformComponent, HeadComponent, MinecraftEntityComponent>(GameGroups.MinecraftEntities.Groups))
         {
             for (int i = 0; i < count; i++)
             {

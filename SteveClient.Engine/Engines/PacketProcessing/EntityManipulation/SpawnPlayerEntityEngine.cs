@@ -30,6 +30,7 @@ public class SpawnPlayerEntityEngine : PacketProcessingEngine<JoinGamePacket>
             _entityFactory.BuildEntity<PlayerDescriptor>(Egid.NextId, GameGroups.Player.BuildGroup);
         
         initializer.Init(new TransformComponent());
+        initializer.Init(new RigidBodyComponent());
         initializer.Init(new MinecraftEntityComponent(joinGamePacket.EntityId));
         initializer.Init(new HeadComponent());
         initializer.Init(new ModelFilterComponent(Primitives.Cube));

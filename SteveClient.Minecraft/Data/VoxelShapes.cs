@@ -1,10 +1,13 @@
-﻿using SteveClient.Minecraft.Numerics;
+﻿using OpenTK.Mathematics;
+using SteveClient.Minecraft.Numerics;
 
 namespace SteveClient.Minecraft.Data;
 
 public static class VoxelShapes
 {
     private static readonly List<VoxelShape> VoxelShapeList = new();
+
+    //public static int PlayerShapeIndex = Add(new VoxelShape(new Aabb(new Vector3(-0.3f, 0f, -0.3f), new Vector3(0.3f, 1.8f, 0.3f))));
 
     public static int Add(VoxelShape voxelShape)
     {

@@ -3,7 +3,7 @@ using Svelto.ECS;
 
 namespace SteveClient.Engine.Descriptors;
 
-public class MinecraftEntityDescriptor : GenericEntityDescriptor<TransformComponent, MinecraftEntityComponent, HeadComponent, ModelFilterComponent>
+public class MinecraftEntityDescriptor : GenericEntityDescriptor<TransformComponent, RigidBodyComponent, MinecraftEntityComponent, HeadComponent, ModelFilterComponent>
 {
     
 }

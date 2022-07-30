@@ -71,6 +71,7 @@ public static class PacketRegistry
         play.Register<EntityPositionAndRotationPacket>(0x27);
         play.Register<EntityRotationPacket>(0x28);
         play.Register<PlayerPositionAndLookPacket>(0x36);
+        play.Register<SetEntityVelocityPacket>(0x4F);
         play.Register<TeleportEntityPacket>(0x63);
 
         ClientBoundPacketMap[ConnectionState.Play] = play;

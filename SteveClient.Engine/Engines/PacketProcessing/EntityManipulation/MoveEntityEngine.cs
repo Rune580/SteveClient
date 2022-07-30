@@ -25,7 +25,8 @@ public class MoveEntityEngine : PacketProcessingEngine<EntityPositionPacket>
             return;
         }
         
-        foreach (var ((transforms, entities, count), _) in entitiesDB.QueryEntities<TransformComponent, MinecraftEntityComponent>(GameGroups.MinecraftEntities.Groups))
+        foreach (var ((transforms, entities, count), _) in entitiesDB
+                     .QueryEntities<TransformComponent, MinecraftEntityComponent>(GameGroups.MinecraftEntities.Groups))
         {
             for (int i = 0; i < count; i++)
             {

@@ -37,6 +37,8 @@ public readonly struct BlockState
         CollisionVoxelShapeId = VoxelShapes.Add(collisionShapeData);
         OcclusionVoxelShapeId = VoxelShapes.Add(occlusionShapeData);
     }
+
+    public Block Block => Blocks.GetBlock(BlockId);
     
     public VoxelShape CollisionShape => VoxelShapes.Get(CollisionVoxelShapeId);
     public VoxelShape OcclusionShape => VoxelShapes.Get(OcclusionVoxelShapeId);

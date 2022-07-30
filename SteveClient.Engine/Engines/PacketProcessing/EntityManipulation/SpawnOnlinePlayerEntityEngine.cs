@@ -36,6 +36,7 @@ public class SpawnOnlinePlayerEntityEngine : PacketProcessingEngine<SpawnPlayerP
             _entityFactory.BuildEntity<MinecraftEntityDescriptor>(id, GameGroups.MinecraftEntities.BuildGroup);
         
         initializer.Init(new TransformComponent((Vector3)packet.Position));
+        initializer.Init(new RigidBodyComponent());
         initializer.Init(new MinecraftEntityComponent(packet.EntityId));
         initializer.Init(new HeadComponent());
         initializer.Init(new ModelFilterComponent(Primitives.Cube));

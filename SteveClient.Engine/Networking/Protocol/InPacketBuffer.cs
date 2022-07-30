@@ -100,6 +100,15 @@ public class InPacketBuffer : Stream
         return new Vector3i(x, y, z);
     }
 
+    public Vector3d ReadVelocity()
+    {
+        short x = ReadShort();
+        short y = ReadShort();
+        short z = ReadShort();
+
+        return new Vector3d(x / 8000d, y / 8000d, z / 8000d);
+    }
+
     public Vector3i ReadPosition()
     {
         ulong posEncodedLong = ReadUnsignedLong();

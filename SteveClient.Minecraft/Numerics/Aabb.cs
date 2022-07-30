@@ -78,6 +78,22 @@ public struct Aabb
         return new Aabb(Min + offset, Max + offset);
     }
 
+    public Aabb Offset(Directions direction, float offset)
+    {
+        Vector3d axisOffset = direction.AsVector3() * offset;
+
+        return new Aabb(Min + axisOffset, Max + axisOffset);
+    }
+    
+    public Aabb Offset(Directions direction, double offset)
+    {
+        Vector3d axisOffset = direction.AsVector3();
+
+        axisOffset *= offset;
+
+        return new Aabb(Min + axisOffset, Max + axisOffset);
+    }
+
     public Aabb Extend(Vector3d extend)
     {
         Vector3d min = new Vector3d(Min);
@@ -118,6 +134,11 @@ public struct Aabb
         return Extend((Vector3d)extend);
     }
 
+    public Aabb Extend(Directions direction)
+    {
+        return Extend(direction.AsVector3());
+    }
+
     public Aabb Grow(double size)
     {
         return new Aabb(Min.Sub(size), Max.Add(size));
@@ -136,6 +157,47 @@ public struct Aabb
     public Aabb Shrink(float size)
     {
         return Grow(-size);
+    }
+
+    public double ComputeOffset(Aabb other, double offset, Directions direction)
+    {
+        if (!Offset(direction, offset).Intersects(other))
+            return offset;
+
+        double thisMin = GetMin(direction);
+        double thisMax = GetMax(direction);
+        double otherMin = other.GetMin(direction);
+        double otherMax = other.GetMax(direction);
+
+        if (offset > 0 && thisMin <= otherMax + offset)
+            return Math.Min(thisMin - otherMax, offset);
+
+        if (offset < 0 && thisMax >= otherMin + offset)
+            return Math.Min(thisMax - otherMin, offset);
+
+        return offset;
+    }
+
+    private double GetMin(Directions directions)
+    {
+        return directions switch
+        {
+            Directions.West or Directions.East => Min.X,
+            Directions.Down or Directions.Up => Min.Y,
+            Directions.North or Directions.South => Min.Z,
+            _ => throw new ArgumentOutOfRangeException(nameof(directions), directions, null)
+        };
+    }
+
+    private double GetMax(Directions directions)
+    {
+        return directions switch
+        {
+            Directions.West or Directions.East => Max.X,
+            Directions.Down or Directions.Up => Max.Y,
+            Directions.North or Directions.South => Max.Z,
+            _ => throw new ArgumentOutOfRangeException(nameof(directions), directions, null)
+        };
     }
     
     public override int GetHashCode()

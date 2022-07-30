@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using System.Timers;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using SteveClient.Engine.InputManagement;
 using SteveClient.Engine.Menus;
@@ -7,6 +8,7 @@ using SteveClient.Engine.Rendering.Definitions;
 using SteveClient.Engine.Rendering.Font;
 using SteveClient.Engine.Rendering.Textures.Atlas;
 using SteveClient.Engine.Rendering.Ui;
+using Timer = System.Timers.Timer;
 
 namespace SteveClient.Engine;
 
@@ -27,7 +29,10 @@ public class SteveGameLoop
     private uint _framesRendered;
     private float _avgMsPerFrameASecond;
 
-    public SteveGameLoop(EngineScheduler scheduler, EngineScheduler graphicsScheduler)
+    private int _ticks;
+    private int _lastTicksPerSecond;
+
+    public SteveGameLoop(EngineScheduler scheduler, EngineScheduler graphicsScheduler, EngineScheduler gameScheduler)
     {
         _graphicsScheduler = graphicsScheduler;
         
@@ -37,10 +42,27 @@ public class SteveGameLoop
         _framesRendered = 1;
         _avgMsPerFrameASecond = 0;
 
+        _ticks = 0;
+        _lastTicksPerSecond = 0;
+
+        var tickTimer = new Timer(1000);
+        tickTimer.AutoReset = true;
+        tickTimer.Elapsed += (sender, args) =>
+        {
+            _lastTicksPerSecond = _ticks;
+            _ticks = 0;
+        };
+        tickTimer.Start();
+
         _main = new ScheduledAction(() => scheduler.Execute(GetLastDelta()), 1, false);
         _graphics = new ScheduledAction(Render, _graphicsFrameRate, false);
 
-        _gameTicks = new ScheduledAction(() => AtlasAnimatedTexture.TickAnimations(), TicksPerSecond / 20, true);
+        _gameTicks = new ScheduledAction(() =>
+        {
+            AtlasAnimatedTexture.TickAnimations();
+            gameScheduler.Execute(GetLastDelta());
+            _ticks++;
+        }, TicksPerSecond / 20, false);
     }
     
     private void Render()
@@ -59,7 +81,7 @@ public class SteveGameLoop
 
         UiRenderer.Render();
 
-        FontRenderer.DrawTextScreenSpace($"{1000 / _avgMsPerFrameASecond:F0}Fps, {_avgMsPerFrameASecond:F0}ms per frame", new Vector2(0, 0), (1.5f / 4f));
+        FontRenderer.DrawTextScreenSpace($"{1000 / _avgMsPerFrameASecond:F0}Fps, {_avgMsPerFrameASecond:F0}ms per frame, TPS: {_lastTicksPerSecond}", new Vector2(0, 0), (1.5f / 4f));
 
         // FontRenderer.DrawText(new FontString("Ligma Balls"), new Vector3(0, 1, 4), (1f / 32f) / 4f, DirectionMenu.Direction);
         // FontRenderer.DrawText(new FontString("Bigma Lalls"), new Vector3(0, 1, 5), (1f / 32f) / 4f, DirectionMenu.Direction, Color4.Red);

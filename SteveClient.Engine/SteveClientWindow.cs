@@ -45,7 +45,7 @@ public class SteveClientWindow : GameWindow
         ImGuiController = new ImGuiController(ClientSize.X, ClientSize.Y);
         
         var logic = new CompositionRoot();
-        _gameLoop = new SteveGameLoop(logic.Scheduler, logic.GraphicsScheduler);
+        _gameLoop = new SteveGameLoop(logic.Scheduler, logic.GraphicsScheduler, logic.GameScheduler);
         _gameLoop.SetGraphicsFrameRate(144);
         
         ShaderDefinitions.LoadShaders();

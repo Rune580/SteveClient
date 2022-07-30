@@ -26,6 +26,7 @@ public class CompositionRoot
 
     public EngineScheduler Scheduler { get; }
     public EngineScheduler GraphicsScheduler { get; }
+    public EngineScheduler GameScheduler { get; }
 
     public CompositionRoot()
     {
@@ -37,6 +38,7 @@ public class CompositionRoot
 
         Scheduler = new EngineScheduler(_submissionScheduler);
         GraphicsScheduler = new EngineScheduler(_submissionScheduler);
+        GameScheduler = new EngineScheduler(_submissionScheduler);
 
         var enginesRoot = new EnginesRoot(_submissionScheduler);
         var entityFactory = enginesRoot.GenerateEntityFactory();
@@ -58,12 +60,16 @@ public class CompositionRoot
         var rotateEntityEngine = new RotateEntityEngine(world);
         var teleportEntityEngine = new TeleportEntityEngine(world);
         var spawnBlockEntityEngine = new SpawnBlockModelEntityEngine(entityFactory);
-        
+        var setEntityVelocityEngine = new SetEntityVelocityEngine(world);
+
         // Create render engines
         var renderModelFiltersEngine = new RenderModelFiltersEngine();
         var renderMeshFiltersEngine = new RenderMeshFiltersEngine();
         var renderChunkSectionsEngine = new RenderChunkSectionsEngine(world);
         var renderEntityLookDirEngine = new RenderEntityLookDirEngine();
+        
+        // Create game tick engines
+        var applyVelocityOnRigidBodiesEngine = new ApplyVelocityOnRigidBodiesEngine(world);
         
         // Add engines
         enginesRoot.AddEngine(applyVelocityToSimpleRigidBodiesEngine);
@@ -78,6 +84,7 @@ public class CompositionRoot
         enginesRoot.AddEngine(rotateEntityEngine);
         enginesRoot.AddEngine(teleportEntityEngine);
         enginesRoot.AddEngine(spawnBlockEntityEngine);
+        enginesRoot.AddEngine(setEntityVelocityEngine);
         
         // Add render engines
         enginesRoot.AddEngine(updateCameraStateFromCamerasEngine);
@@ -85,6 +92,9 @@ public class CompositionRoot
         enginesRoot.AddEngine(renderMeshFiltersEngine);
         enginesRoot.AddEngine(renderChunkSectionsEngine);
         enginesRoot.AddEngine(renderEntityLookDirEngine);
+        
+        // Add game tick engines
+        enginesRoot.AddEngine(applyVelocityOnRigidBodiesEngine);
         
         // Register scheduled engines
         Scheduler.RegisterScheduledEngine(applyVelocityToSimpleRigidBodiesEngine);
@@ -99,12 +109,15 @@ public class CompositionRoot
         Scheduler.RegisterScheduledEngine(rotateEntityEngine);
         Scheduler.RegisterScheduledEngine(teleportEntityEngine);
         Scheduler.RegisterScheduledEngine(spawnBlockEntityEngine);
+        Scheduler.RegisterScheduledEngine(setEntityVelocityEngine);
 
         GraphicsScheduler.RegisterScheduledEngine(updateCameraStateFromCamerasEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderModelFiltersEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderMeshFiltersEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderChunkSectionsEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderEntityLookDirEngine);
+        
+        GameScheduler.RegisterScheduledEngine(applyVelocityOnRigidBodiesEngine);
         
         BuildCamera(entityFactory);
     }

@@ -14,6 +14,11 @@ public class VoxelShape : IEnumerable<Aabb>
         _aabbs = new List<Aabb>();
     }
 
+    public VoxelShape(params Aabb[] aabbs)
+    {
+        _aabbs = new List<Aabb>(aabbs);
+    }
+
     public VoxelShape(IEnumerable<Aabb> aabbs)
     {
         _aabbs = new List<Aabb>(aabbs);
@@ -66,6 +71,13 @@ public class VoxelShape : IEnumerable<Aabb>
             _aabbs.Remove(aabb);
     }
 
+    public VoxelShape Offset(Vector3d offset)
+    {
+        List<Aabb> aabbs = _aabbs.Select(aabb => aabb.Offset(offset)).ToList();
+
+        return new VoxelShape(aabbs);
+    }
+
     public Aabb Closest(Vector3d pos)
     {
         Aabb? closest = null;
@@ -83,6 +95,16 @@ public class VoxelShape : IEnumerable<Aabb>
         }
 
         return closest ?? Aabb.Empty;
+    }
+
+    public double ComputeOffset(Aabb other, double offset, Directions direction)
+    {
+        double result = offset;
+
+        foreach (var aabb in _aabbs)
+            result = aabb.ComputeOffset(other, result, direction);
+
+        return result;
     }
     
     public static VoxelShape operator +(VoxelShape left, Vector3 right)

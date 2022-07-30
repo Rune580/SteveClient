@@ -31,8 +31,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Physics" />
         <Folder Include="Resources" />
-        <Folder Include="SimpleData" />
     </ItemGroup>
 
     <ItemGroup>
