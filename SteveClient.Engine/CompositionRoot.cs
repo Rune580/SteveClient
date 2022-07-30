@@ -50,7 +50,7 @@ public class CompositionRoot
         var applyVelocityToSimpleRigidBodiesEngine = new ApplyVelocityToSimpleRigidBodiesEngine();
         var cameraControlsEngine = new CameraControlsEngine();
         var updateCameraStateFromCamerasEngine = new UpdateCameraStateFromCamerasEngine();
-        var spawnPlayerEntityEngine = new SpawnPlayerEntityEngine(entityFactory);
+        var spawnPlayerEntityEngine = new SpawnPlayerEntityEngine(entityFactory, world);
         var teleportPlayerEntityEngine = new TeleportPlayerEntityEngine();
         var spawnOnlineEntityEngine = new SpawnOnlinePlayerEntityEngine(entityFactory, world);
         var spawnChunkSectionEntityEngine = new SpawnChunkSectionEntityEngine(entityFactory, world);
