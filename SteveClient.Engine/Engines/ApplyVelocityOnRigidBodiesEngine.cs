@@ -35,20 +35,45 @@ public class ApplyVelocityOnRigidBodiesEngine : BaseEngine
 
     private void HandlePhysics(ref RigidBodyComponent rigidBody, ref TransformComponent transform)
     {
-        //rigidBody.Velocity.Y = 0; //TODO: Gravity
+        HandleGravity(ref rigidBody, transform.Position);
         
         if (rigidBody.Velocity == Vector3d.Zero)
             return;
-        
+
         Vector3d nextPosition = transform.Position + rigidBody.Velocity;
         VoxelShape collisions = GetCollisionShapeForMovement(nextPosition, rigidBody.BoxCollider);
 
-        Vector3d collisionMovement = AdjustMovementForCollisions(nextPosition, rigidBody.BoxCollider, collisions);
+        Vector3d collisionMovement = AdjustMovementForCollisions(rigidBody.Velocity, rigidBody.BoxCollider.Offset(nextPosition), collisions);
         
         float friction = GetFriction(rigidBody.BoxCollider, transform.Position);
         ReduceVelocity(ref rigidBody, friction);
 
-        transform.Position = (Vector3)collisionMovement;
+        transform.Position += (Vector3)collisionMovement;
+    }
+
+    private void HandleGravity(ref RigidBodyComponent rigidBody, Vector3 pos)
+    {
+        Aabb feet = new Aabb(new Vector3d(-0.3d, -0.001d, -0.3d), new Vector3d(0.3d, 0, 0.3d));
+        Aabb aabb = feet.Offset(pos);
+        var blocks = aabb.GetBlockPositions();
+
+        rigidBody.OnGround = false;
+
+        foreach (var blockPos in blocks)
+        {
+            if (_world.GetBlockState(blockPos).CollisionShape.Offset(blockPos).Intersects(aabb))
+                rigidBody.OnGround = true;
+        }
+
+        if (rigidBody.OnGround)
+            return;
+
+        double velocity = rigidBody.Velocity.Y;
+
+        velocity -= 0.08f;
+        velocity *= 0.2f;
+
+        rigidBody.Velocity.Y = velocity;
     }
 
     private float GetFriction(Aabb aabb, Vector3 pos)
