@@ -35,18 +35,20 @@ public class ApplyVelocityOnRigidBodiesEngine : BaseEngine
 
     private void HandlePhysics(ref RigidBodyComponent rigidBody, ref TransformComponent transform)
     {
-        rigidBody.Velocity.Y = 0; //TODO: Gravity
+        //rigidBody.Velocity.Y = 0; //TODO: Gravity
         
         if (rigidBody.Velocity == Vector3d.Zero)
             return;
         
-        float friction = GetFriction(rigidBody.BoxCollider, transform.Position);
-        
         Vector3d nextPosition = transform.Position + rigidBody.Velocity;
+        VoxelShape collisions = GetCollisionShapeForMovement(nextPosition, rigidBody.BoxCollider);
+
+        Vector3d collisionMovement = AdjustMovementForCollisions(nextPosition, rigidBody.BoxCollider, collisions);
         
+        float friction = GetFriction(rigidBody.BoxCollider, transform.Position);
         ReduceVelocity(ref rigidBody, friction);
 
-        transform.Position = (Vector3)nextPosition;
+        transform.Position = (Vector3)collisionMovement;
     }
 
     private float GetFriction(Aabb aabb, Vector3 pos)
@@ -84,11 +86,11 @@ public class ApplyVelocityOnRigidBodiesEngine : BaseEngine
         velocity.X *= friction;
         velocity.Z *= friction;
 
-        if (velocity.X < 1.0E-4)
+        if (velocity.X < 1.0E-7)
             velocity.X = 0;
-        if (velocity.Y < 1.0E-4)
+        if (velocity.Y < 1.0E-7)
             velocity.Y = 0;
-        if (velocity.Z < 1.0E-4)
+        if (velocity.Z < 1.0E-7)
             velocity.Z = 0;
 
         rigidBody.Velocity = velocity;
@@ -108,5 +110,52 @@ public class ApplyVelocityOnRigidBodiesEngine : BaseEngine
         }
 
         return result;
+    }
+
+    private Vector3d AdjustMovementForCollisions(Vector3d movement, Aabb aabb, VoxelShape collisions)
+    {
+        Aabb adjustedAabb = new Aabb(aabb);
+        Vector3d adjustedMovement = new Vector3d(movement);
+
+        adjustedMovement.Y = CheckMovement(collisions, ref adjustedAabb, Directions.Down, adjustedMovement.Y, true);
+
+        bool zHasPriority = adjustedMovement.Z > adjustedMovement.X;
+
+        if (zHasPriority)
+            adjustedMovement.Z = CheckMovement(collisions, ref adjustedAabb, Directions.North, adjustedMovement.Z, true);
+
+        adjustedMovement.X = CheckMovement(collisions, ref adjustedAabb, Directions.East, adjustedMovement.X, true);
+
+        if (!zHasPriority)
+            adjustedMovement.Z = CheckMovement(collisions, ref adjustedAabb, Directions.North, adjustedMovement.Z, false);
+
+        if (adjustedMovement.Length > movement.Length)
+            return Vector3d.Zero;
+
+        return adjustedMovement;
+    }
+
+    private double CheckMovement(in VoxelShape collisions, ref Aabb adjustedAabb, Directions direction, double origValue, bool offsetAabb)
+    {
+        double value = origValue;
+        if (value == 0 || Math.Abs(value) < 1.0E-7)
+            return 0;
+
+        value = collisions.ComputeOffset(adjustedAabb, value, direction);
+
+        if (offsetAabb && value != 0)
+        {
+            Vector3d offset = direction switch
+            {
+                Directions.East or Directions.West=> new Vector3d(value, 0, 0),
+                Directions.Up or Directions.Down => new Vector3d(0, value, 0),
+                Directions.North or Directions.South => new Vector3d(0, 0, value),
+                _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
+            };
+
+            adjustedAabb = adjustedAabb.Offset(offset);
+        }
+
+        return value;
     }
 }

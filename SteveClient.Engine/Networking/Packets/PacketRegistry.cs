@@ -36,6 +36,7 @@ public static class PacketRegistry
         ServerBoundPacketMap[typeof(ClientStatusPacket)] = 0x06;
         ServerBoundPacketMap[typeof(ClientSettingsPacket)] = 0x07;
         ServerBoundPacketMap[typeof(KeepAliveResponsePacket)] = 0x11;
+        ServerBoundPacketMap[typeof(SyncPlayerPositionPacket)] = 0x13;
     }
     
     private static void RegisterClientBoundHandshakePackets()

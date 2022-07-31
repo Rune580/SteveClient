@@ -7,6 +7,7 @@ using SteveClient.Engine.Descriptors;
 using SteveClient.Engine.Engines;
 using SteveClient.Engine.Engines.PacketProcessing;
 using SteveClient.Engine.Engines.PacketProcessing.EntityManipulation;
+using SteveClient.Engine.Engines.Player;
 using SteveClient.Engine.Engines.Rendering;
 using SteveClient.Engine.Engines.ServerWorld;
 using SteveClient.Engine.Engines.Tools;
@@ -60,7 +61,6 @@ public class CompositionRoot
         var rotateEntityEngine = new RotateEntityEngine(world);
         var teleportEntityEngine = new TeleportEntityEngine(world);
         var spawnBlockEntityEngine = new SpawnBlockModelEntityEngine(entityFactory);
-        var setEntityVelocityEngine = new SetEntityVelocityEngine(world);
 
         // Create render engines
         var renderModelFiltersEngine = new RenderModelFiltersEngine();
@@ -69,7 +69,9 @@ public class CompositionRoot
         var renderEntityLookDirEngine = new RenderEntityLookDirEngine();
         
         // Create game tick engines
+        var setEntityVelocityEngine = new SetEntityVelocityEngine(world);
         var applyVelocityOnRigidBodiesEngine = new ApplyVelocityOnRigidBodiesEngine(world);
+        var syncPlayerPositionEngine = new SyncPlayerPositionEngine();
         
         // Add engines
         enginesRoot.AddEngine(applyVelocityToSimpleRigidBodiesEngine);
@@ -84,8 +86,7 @@ public class CompositionRoot
         enginesRoot.AddEngine(rotateEntityEngine);
         enginesRoot.AddEngine(teleportEntityEngine);
         enginesRoot.AddEngine(spawnBlockEntityEngine);
-        enginesRoot.AddEngine(setEntityVelocityEngine);
-        
+
         // Add render engines
         enginesRoot.AddEngine(updateCameraStateFromCamerasEngine);
         enginesRoot.AddEngine(renderModelFiltersEngine);
@@ -94,7 +95,9 @@ public class CompositionRoot
         enginesRoot.AddEngine(renderEntityLookDirEngine);
         
         // Add game tick engines
+        enginesRoot.AddEngine(setEntityVelocityEngine);
         enginesRoot.AddEngine(applyVelocityOnRigidBodiesEngine);
+        enginesRoot.AddEngine(syncPlayerPositionEngine);
         
         // Register scheduled engines
         Scheduler.RegisterScheduledEngine(applyVelocityToSimpleRigidBodiesEngine);
@@ -109,7 +112,6 @@ public class CompositionRoot
         Scheduler.RegisterScheduledEngine(rotateEntityEngine);
         Scheduler.RegisterScheduledEngine(teleportEntityEngine);
         Scheduler.RegisterScheduledEngine(spawnBlockEntityEngine);
-        Scheduler.RegisterScheduledEngine(setEntityVelocityEngine);
 
         GraphicsScheduler.RegisterScheduledEngine(updateCameraStateFromCamerasEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderModelFiltersEngine);
@@ -117,7 +119,9 @@ public class CompositionRoot
         GraphicsScheduler.RegisterScheduledEngine(renderChunkSectionsEngine);
         GraphicsScheduler.RegisterScheduledEngine(renderEntityLookDirEngine);
         
+        GameScheduler.RegisterScheduledEngine(setEntityVelocityEngine);
         GameScheduler.RegisterScheduledEngine(applyVelocityOnRigidBodiesEngine);
+        GameScheduler.RegisterScheduledEngine(syncPlayerPositionEngine);
         
         BuildCamera(entityFactory);
     }

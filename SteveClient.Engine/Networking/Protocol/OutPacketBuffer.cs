@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using OpenTK.Mathematics;
 using SteveClient.Engine.Networking.Protocol.Utils;
 
 namespace SteveClient.Engine.Networking.Protocol;
@@ -17,6 +18,18 @@ public class OutPacketBuffer
     public OutPacketBuffer(OutPacketBuffer buffer)
     {
         ByteBuffer.AddRange(buffer.ByteBuffer);
+    }
+
+    public void WriteVector3d(Vector3d value)
+    {
+        WriteDouble(value.X);
+        WriteDouble(value.Y);
+        WriteDouble(value.Z);
+    }
+
+    public void WriteDouble(double value)
+    {
+        ByteBuffer.AddRange(BitConverter.GetBytes(value).Reverse());
     }
 
     public void WriteByteArray(byte[] bytes)

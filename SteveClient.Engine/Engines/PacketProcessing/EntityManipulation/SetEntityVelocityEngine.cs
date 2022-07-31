@@ -36,7 +36,7 @@ public class SetEntityVelocityEngine : PacketProcessingEngine<SetEntityVelocityP
 
                 ref var rigidBody = ref rigidBodies[i];
 
-                rigidBody.Velocity += packet.Velocity;
+                rigidBody.Velocity = packet.Velocity;
                 
                 consumablePacket.MarkConsumed();
                 break;
